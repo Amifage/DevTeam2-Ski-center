@@ -1,6 +1,6 @@
 ﻿namespace Servicelager
 {
-    public class Class1
+    public class BokningController
     {
 
     }

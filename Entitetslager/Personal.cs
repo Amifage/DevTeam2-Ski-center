@@ -6,7 +6,7 @@ using System.Threading.Tasks;
 
 namespace Entitetslager
 {
-    internal class Personal
+    public class Personal
     {
         public int AnställningsNummer { get; set; }
         public string Roll { get; set; } 
