@@ -6,7 +6,7 @@ using System.Threading.Tasks;
 
 namespace Entitetslager
 {
-    internal class FöretagsKund : Kund
+    public class FöretagsKund : Kund
     {
         public string FöretagsNamn { get; set; } 
         public int? Rabatt { get; set; }

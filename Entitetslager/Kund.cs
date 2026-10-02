@@ -6,7 +6,7 @@ using System.Threading.Tasks;
 
 namespace Entitetslager
 {
-    internal class Kund
+    public class Kund
     {
         public int KundNummer { get; set; }
         public string Epost { get; set; } 

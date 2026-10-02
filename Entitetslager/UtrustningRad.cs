@@ -15,8 +15,12 @@ namespace Entitetslager
         public DateTime SenastUppdaterad { get; set; }
 
 
+        public int? UtrustningPaketNummer { get; set; }
+        public virtual UtrustningPaket utrustningPaket { get; set; } // nav prop
+
         public string? UtrustningNummer { get; set; }
         public virtual Utrustning utrustning { get; set; } //nav prop
+
         public int? BokningsNummer { get; set; }
         public virtual Bokning bokning { get; set; } //nav prop
     }
