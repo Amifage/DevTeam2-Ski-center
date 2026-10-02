@@ -11,7 +11,7 @@ namespace Entitetslager
         public int PrisNummer { get; set; }
         public  int ArtikelNummer { get; set; }
         public string PrisRegelNummer { get; set; }
-            public decimal PrisBelopp { get; set; }
+        public decimal PrisBelopp { get; set; }
         public int? AntalDagar { get; set; }
         public int? Vecka { get; set; }
         public int? År { get; set; }
