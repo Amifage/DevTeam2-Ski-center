@@ -1,12 +1,31 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
+﻿using System.Windows;
+using System.Windows.Input;
+using Presentationslager.Command;
 
 namespace Presentationslager.ViewModel
 {
-    class StartsidaViewModel
+    public class StartsidaViewModel
     {
+        // Kommandot som knappen binder till i XAML
+        public ICommand OpenMenuCommand { get; }
+
+        public StartsidaViewModel()
+        {
+            // Kopplar kommandot till metoden som körs vid klick
+            OpenMenuCommand = new RelayCommand(ExecuteOpenMenu);
+        }
+
+        private void ExecuteOpenMenu(object parameter)
+        {
+            // 1. Skapa och visa menyfönstret
+            Meny menyFönster = new Meny();
+            menyFönster.Show();
+
+            // 2. Stäng det nuvarande fönstret (Startsidan) på ett säkert sätt via CommandParameter
+            if (parameter is Window window)
+            {
+                window.Close();
+            }
+        }
     }
 }

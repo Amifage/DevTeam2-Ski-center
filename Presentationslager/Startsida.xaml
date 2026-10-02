@@ -2,14 +2,19 @@
         xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
         xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
         xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+        xmlns:vm="clr-namespace:Presentationslager.ViewModel"
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
         xmlns:local="clr-namespace:Presentationslager"
         mc:Ignorable="d" FontFamily="OpenSans-Medium" FontWeight="SemiBold"
         Title="Ski-Center Startsida" Height="500" Width="700"
         WindowStartupLocation="CenterScreen">
 
+    <!-- Kopplar ihop XAML med din ViewModel -->
+    <Window.DataContext>
+        <vm:StartsidaViewModel />
+    </Window.DataContext>
+
     <Grid>
-        <!-- Bakgrundspanel med Isblå ton -->
         <Border Background="{StaticResource IsBlaBrush}" Margin="40" CornerRadius="12" Padding="30">
             <StackPanel VerticalAlignment="Center" HorizontalAlignment="Center" Width="350">
 
@@ -22,7 +27,11 @@
                 <TextBlock Text="Lösenord" Margin="0,0,0,5"/>
                 <PasswordBox x:Name="txtLosenord" Height="35" Padding="5" Margin="0,0,0,25"/>
 
-                <Button Content="Logga in" Click="BtnLoggaIn_Click" HorizontalAlignment="Stretch" Height="40"/>
+                <!-- Här binder vi knappen till OpenMenuCommand och skickar med fönstret som parameter -->
+                <Button Content="Logga in" 
+                        Command="{Binding OpenMenuCommand}" 
+                        CommandParameter="{Binding RelativeSource={RelativeSource AncestorType=Window}}"
+                        HorizontalAlignment="Stretch" Height="40"/>
 
             </StackPanel>
         </Border>
