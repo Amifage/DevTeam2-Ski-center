@@ -4,6 +4,45 @@
              xmlns:local="clr-namespace:Presentationslager"
              StartupUri="MainWindow.xaml">
     <Application.Resources>
-         
+
+        <!-- Ski-Center Färgpalett -->
+        <SolidColorBrush x:Key="FjallBlaBrush" Color="#1E4F8C"/>
+        <SolidColorBrush x:Key="IsBlaBrush" Color="#DCEAF7"/>
+        <SolidColorBrush x:Key="SnovitBrush" Color="#F8FAFC"/>
+        <SolidColorBrush x:Key="MidnattsgraBrush" Color="#2A2F36"/>
+        <SolidColorBrush x:Key="SolnedgangOrangeBrush" Color="#F4A261"/>
+        <SolidColorBrush x:Key="AuroraGronBrush" Color="#52B788"/>
+
+        <!-- Global fönsterstil - pekar på OpenSans-Medium -->
+        <Style TargetType="{x:Type Window}">
+            <Setter Property="FontFamily" Value="/Fonts/#OpenSans-Medium"/>
+            <Setter Property="FontSize" Value="16"/>
+            <Setter Property="Background" Value="{StaticResource SnovitBrush}"/>
+            <Setter Property="Foreground" Value="{StaticResource MidnattsgraBrush}"/>
+        </Style>
+
+        <!-- Global TextBlock-stil -->
+        <Style TargetType="{x:Type TextBlock}">
+            <Setter Property="Foreground" Value="{StaticResource MidnattsgraBrush}"/>
+        </Style>
+
+        <!-- Rubrikstil - pekar på Poppins-SemiBold -->
+        <Style x:Key="HeaderTextStyle" TargetType="{x:Type TextBlock}">
+            <Setter Property="FontFamily" Value="/Fonts/#Poppins-SemiBold"/>
+            <Setter Property="FontWeight" Value="SemiBold"/>
+            <Setter Property="FontSize" Value="28"/>
+            <Setter Property="Foreground" Value="{StaticResource FjallBlaBrush}"/>
+        </Style>
+
+        <!-- Primär Knappstil - pekar på Poppins-SemiBold -->
+        <Style TargetType="{x:Type Button}">
+            <Setter Property="Background" Value="{StaticResource SolnedgangOrangeBrush}"/>
+            <Setter Property="Foreground" Value="White"/>
+            <Setter Property="FontFamily" Value="/Fonts/#Poppins-SemiBold"/>
+            <Setter Property="FontWeight" Value="SemiBold"/>
+            <Setter Property="Padding" Value="15,8"/>
+            <Setter Property="Cursor" Value="Hand"/>
+        </Style>
+
     </Application.Resources>
 </Application>
