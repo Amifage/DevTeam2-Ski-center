@@ -48,7 +48,7 @@ namespace Datalager
         public GenericRepository<Bokning> BokningRepository { private set; get; }
         public GenericRepository<Faktura> FakturaRepository { get; private set; }
 
-        public UnitOfWork(SkiContext dbContext)
+        public UnitofWork(SkiContext dbContext)
         {
             _skiContext = dbContext ?? throw new ArgumentNullException(nameof(dbContext));
 
