@@ -10,9 +10,9 @@ namespace Entitetslager
 
     {
         public int BokningsNummer { get; set; }
-    // public Kund Kund { get; set; } = null!;
+    // public Kund Kund { get; set; } 
     public DateTime BokningsDatum { get; set; }
-    public string Status { get; set; } = null!;
+    public string Status { get; set; }
     public DateTime SenastUppdaterad { get; set; }
 
     //   public List<KonferansRad>? KonferansRader { get; set; }

@@ -8,7 +8,7 @@ namespace Entitetslager
 {
     internal class FöretagsKund : Kund
     {
-        public string FöretagsNamn { get; set; } = null!;
+        public string FöretagsNamn { get; set; } 
         public int? Rabatt { get; set; }
         public decimal? Kredit { get; set; }
     }

@@ -9,11 +9,11 @@ namespace Entitetslager
     internal class Kund
     {
         public int KundNummer { get; set; }
-        public string Epost { get; set; } = null!;
-        public string Telefonnummer { get; set; } = null!;
-        public string Adress { get; set; } = null!;
-        public string Postnummer { get; set; } = null!;
-        public string Ort { get; set; } = null!;
+        public string Epost { get; set; } 
+        public string Telefonnummer { get; set; } 
+        public string Adress { get; set; }
+        public string Postnummer { get; set; } 
+        public string Ort { get; set; } 
         public DateTime SenastUppdaterad { get; set; }
     }
 }
