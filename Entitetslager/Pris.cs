@@ -6,7 +6,7 @@ using System.Threading.Tasks;
 
 namespace Entitetslager
 {
-    internal class Pris
+    public class Pris
     { 
         public int PrisNummer { get; set; }
         public  int ArtikelNummer { get; set; }
