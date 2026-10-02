@@ -1,0 +1,23 @@
+﻿using System;
+using System.Collections.Generic;
+using System.Linq;
+using System.Text;
+using System.Threading.Tasks;
+
+namespace Entitetslager
+{
+    public class LogiRad
+    {
+        public int LogiRadNummer { get; set; }      
+        public DateTime StartDatum { get; set; }
+        public DateTime SlutDatum { get; set; }
+        public decimal LogiBelopp { get; set; }
+        public int AntalPersoner { get; set; }
+
+        public string? LogiNummer {  get; set; }
+        public virtual Logi logi { get; set; } //dont know
+
+        public int? BokningsNummer { get; set; }
+        public virtual Bokning bokning { get; set; } // nav prop
+    }
+}
