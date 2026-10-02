@@ -4,7 +4,7 @@
         xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
         xmlns:local="clr-namespace:Presentationslager"
-        mc:Ignorable="d"
+        mc:Ignorable="d" FontFamily="OpenSans-Medium" FontWeight="SemiBold"
         Title="Ski-Center Startsida" Height="500" Width="700"
         WindowStartupLocation="CenterScreen">
 
@@ -13,13 +13,13 @@
         <Border Background="{StaticResource IsBlaBrush}" Margin="40" CornerRadius="12" Padding="30">
             <StackPanel VerticalAlignment="Center" HorizontalAlignment="Center" Width="350">
 
-                <TextBlock Text="Ski-Center" Style="{StaticResource HeaderTextStyle}" HorizontalAlignment="Center" Margin="0,0,0,5"/>
-                <TextBlock Text="Personalportal - Inloggning" FontSize="14" HorizontalAlignment="Center" Margin="0,0,0,30"/>
+                <TextBlock Text="Ski-Center" Style="{StaticResource HeaderTextStyle}" HorizontalAlignment="Center" Margin="0,0,0,5" />
+                <TextBlock Text="Personalportal - Inloggning" FontSize="14" HorizontalAlignment="Center" Margin="0,0,0,30" FontWeight="Bold" />
 
-                <TextBlock Text="Användarnamn" FontWeight="SemiBold" Margin="0,0,0,5"/>
+                <TextBlock Text="Användarnamn" Margin="0,0,0,5" />
                 <TextBox x:Name="txtAnvandarnamn" Height="35" Padding="5" Margin="0,0,0,15" FontSize="14"/>
 
-                <TextBlock Text="Lösenord" FontWeight="SemiBold" Margin="0,0,0,5"/>
+                <TextBlock Text="Lösenord" Margin="0,0,0,5"/>
                 <PasswordBox x:Name="txtLosenord" Height="35" Padding="5" Margin="0,0,0,25"/>
 
                 <Button Content="Logga in" Click="BtnLoggaIn_Click" HorizontalAlignment="Stretch" Height="40"/>
