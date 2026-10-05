@@ -6,4 +6,9 @@
     <Nullable>enable</Nullable>
   </PropertyGroup>
 
+  <ItemGroup>
+    <ProjectReference Include="..\Datalager\Datalager.csproj" />
+    <ProjectReference Include="..\Entitetslager\Entitetslager.csproj" />
+  </ItemGroup>
+
 </Project>

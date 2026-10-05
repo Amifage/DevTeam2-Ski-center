@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.ComponentModel.DataAnnotations;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
@@ -8,7 +9,7 @@ namespace Entitetslager
 {
     public class UtrustningPaketRad
     {
-        public int UtrustningPaketRadNummer { get; set; }
+        [Key] public int UtrustningPaketRadNummer { get; set; }
 
 
         public string? UtrustningNummer { get; set; }

@@ -8,7 +8,7 @@ using Microsoft.EntityFrameworkCore;
 
 namespace Datalager
 {
-    public class UnitofWork : IDisposable
+    public class UnitOfWork : IDisposable
     {
         private readonly SkiContext _skiContext;
 
@@ -48,7 +48,7 @@ namespace Datalager
         public GenericRepository<Bokning> BokningRepository { private set; get; }
         public GenericRepository<Faktura> FakturaRepository { get; private set; }
 
-        public UnitofWork(SkiContext dbContext)
+        public UnitOfWork(SkiContext dbContext)
         {
             _skiContext = dbContext ?? throw new ArgumentNullException(nameof(dbContext));
 

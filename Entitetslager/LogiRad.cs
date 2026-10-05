@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.ComponentModel.DataAnnotations;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
@@ -8,7 +9,7 @@ namespace Entitetslager
 {
     public class LogiRad
     {
-        public int LogiRadNummer { get; set; }      
+        [Key] public int LogiRadNummer { get; set; }      
         public DateTime StartDatum { get; set; }
         public DateTime SlutDatum { get; set; }
         public decimal LogiBelopp { get; set; }

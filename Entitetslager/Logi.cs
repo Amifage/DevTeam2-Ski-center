@@ -1,8 +1,10 @@
-﻿namespace Entitetslager
+﻿using System.ComponentModel.DataAnnotations;
+
+namespace Entitetslager
 {
     public class Logi
     {
-        public string LogiNummer { get; set; }
+        [Key] public string LogiNummer { get; set; }
         public int LogiKapacitet { get; set; }
         public string Status { get; set; }
         public DateTime SenastUppdaterad { get; set; }

@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.ComponentModel.DataAnnotations;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
@@ -8,7 +9,7 @@ namespace Entitetslager
 {
     public class SkidlektionRad
     {
-        public int SkidLektionRadNummer { get; set; }
+        [Key] public int SkidLektionRadNummer { get; set; }
         public DateTime Datum { get; set; }
         public decimal SkidlektionBelopp { get; set; }
         public int AntalPersoner { get; set; }       

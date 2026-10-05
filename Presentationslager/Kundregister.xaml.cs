@@ -22,6 +22,7 @@ namespace Presentationslager
         public Kundregister()
         {
             InitializeComponent();
+            DataContext = new ViewModel.KundregisterViewModel();
         }
     }
 }

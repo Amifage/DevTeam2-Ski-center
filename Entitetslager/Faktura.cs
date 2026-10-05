@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.ComponentModel.DataAnnotations;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
@@ -8,7 +9,7 @@ namespace Entitetslager
 {
     public class Faktura
     {
-        public int FakturaNummer { get; set; }
+        [Key] public int FakturaNummer { get; set; }
 
         public int BokningsNummer { get; set; }
 

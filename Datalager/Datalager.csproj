@@ -18,7 +18,6 @@
 
   <ItemGroup>
     <ProjectReference Include="..\Entitetslager\Entitetslager.csproj" />
-    <ProjectReference Include="..\Servicelager\Servicelager.csproj" />
   </ItemGroup>
 
 </Project>

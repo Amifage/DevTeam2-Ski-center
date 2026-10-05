@@ -35,6 +35,11 @@ namespace Datalager
             _dbSet.Remove(entity);
         }
 
+        public IEnumerable<T> GetAll()
+        {
+            return _dbSet.ToList();
+        }
+
         #endregion
     }
 }

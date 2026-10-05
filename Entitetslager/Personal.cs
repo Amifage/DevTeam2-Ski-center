@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.ComponentModel.DataAnnotations;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
@@ -8,7 +9,7 @@ namespace Entitetslager
 {
     public class Personal
     {
-        public int AnställningsNummer { get; set; }
+        [Key] public int AnställningsNummer { get; set; }
         public string Roll { get; set; } 
         public string Förnamn { get; set; }
         public string Efternamn { get; set; } 

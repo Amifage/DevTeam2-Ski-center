@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.ComponentModel.DataAnnotations;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
@@ -8,7 +9,7 @@ namespace Entitetslager
 {
     public class KonferensRad
     {
-        public int KonferensRadNummer { get; set; }
+        [Key] public int KonferensRadNummer { get; set; }
         public DateTime SenastUppdaterad { get; set; }
         public DateTime StartTid { get; set; }
         public DateTime SlutTid { get; set; }
