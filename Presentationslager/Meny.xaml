@@ -56,10 +56,11 @@
                 </StackPanel>
             </Button>
 
+            <!-- NY KNAPP: Statistik (Ersätter Systemadmin i nätverk) -->
             <Button Margin="10" Width="160" Height="100">
                 <StackPanel HorizontalAlignment="Center" VerticalAlignment="Center">
-                    <TextBlock Text="⚙️" FontSize="28" HorizontalAlignment="Center" Margin="0,0,0,5"/>
-                    <TextBlock Text="Systemadmin" HorizontalAlignment="Center"/>
+                    <TextBlock Text="📊" FontSize="28" HorizontalAlignment="Center" Margin="0,0,0,5"/>
+                    <TextBlock Text="Statistik" HorizontalAlignment="Center"/>
                 </StackPanel>
             </Button>
 
@@ -79,13 +80,26 @@
 
         </UniformGrid>
 
+        <!-- FLYTTAD KNAPP: Systemadmin (Nere till vänster) -->
         <Button Grid.Row="2" 
-        Command="{Binding LoggaUtCommand}"
-        CommandParameter="{Binding RelativeSource={RelativeSource AncestorType=Window}}"
-        HorizontalAlignment="Right" 
-        VerticalAlignment="Bottom" 
-        Margin="0,20,0,0"
-        Width="150" Height="50">
+                HorizontalAlignment="Left" 
+                VerticalAlignment="Bottom" 
+                Margin="0,20,0,0"
+                Width="150" Height="50">
+            <StackPanel Orientation="Horizontal" HorizontalAlignment="Center" VerticalAlignment="Center">
+                <TextBlock Text="⚙️️" FontSize="18" Margin="0,0,8,0" VerticalAlignment="Center"/>
+                <TextBlock Text="Systemadmin" VerticalAlignment="Center"/>
+            </StackPanel>
+        </Button>
+
+        <!-- Logga ut -->
+        <Button Grid.Row="2" 
+                Command="{Binding LoggaUtCommand}"
+                CommandParameter="{Binding RelativeSource={RelativeSource AncestorType=Window}}"
+                HorizontalAlignment="Right" 
+                VerticalAlignment="Bottom" 
+                Margin="0,20,0,0"
+                Width="150" Height="50">
             <StackPanel Orientation="Horizontal" HorizontalAlignment="Center" VerticalAlignment="Center">
                 <TextBlock Text="🚪" FontSize="18" Margin="0,0,8,0" VerticalAlignment="Center"/>
                 <TextBlock Text="Logga ut" VerticalAlignment="Center"/>
