@@ -1,16 +1,96 @@
 ﻿<Window x:Class="Presentationslager.Meny"
         xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
         xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
-        xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
-        xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
-        xmlns:local="clr-namespace:Presentationslager"
-        mc:Ignorable="d" WindowStartupLocation="CenterScreen"
-        Title="Meny" Height="450" Width="800">
-   
-    
+        Title="Meny" Height="600" Width="800" FontWeight="Bold"
+        WindowStartupLocation="CenterScreen">
 
+    <Grid Margin="20" Background="{StaticResource IsBlå}">
+        <Grid.RowDefinitions>
+            <RowDefinition Height="Auto"/>
+            <RowDefinition Height="*"/>
+            <RowDefinition Height="Auto"/>
+        </Grid.RowDefinitions>
 
-    <Grid Background="{StaticResource IsBlaBrush}">
-        
+        <!-- Header -->
+        <TextBlock Grid.Row="0" 
+                   Text="Välkommen tillbaka!" 
+                   Style="{StaticResource HeaderTextStyle}" 
+                   HorizontalAlignment="Center" 
+                   Margin="0,20,0,40"/>
+
+        <!-- Menyknappar -->
+        <UniformGrid Grid.Row="1" Columns="4" Rows="2" HorizontalAlignment="Center" VerticalAlignment="Center">
+
+            <Button Margin="10" Width="160" Height="100">
+                <StackPanel HorizontalAlignment="Center" VerticalAlignment="Center">
+                    <TextBlock Text="📅" FontSize="28" HorizontalAlignment="Center" Margin="0,0,0,5"/>
+                    <TextBlock Text="Skapa bokning" HorizontalAlignment="Center"/>
+                </StackPanel>
+            </Button>
+
+            <Button Margin="10" Width="160" Height="100">
+                <StackPanel HorizontalAlignment="Center" VerticalAlignment="Center">
+                    <TextBlock Text="🛏️" FontSize="28" HorizontalAlignment="Center" Margin="0,0,0,5"/>
+                    <TextBlock Text="Logi" HorizontalAlignment="Center"/>
+                </StackPanel>
+            </Button>
+
+            <Button Margin="10" Width="160" Height="100">
+                <StackPanel HorizontalAlignment="Center" VerticalAlignment="Center">
+                    <TextBlock Text="💼" FontSize="28" HorizontalAlignment="Center" Margin="0,0,0,5"/>
+                    <TextBlock Text="Konferens" HorizontalAlignment="Center"/>
+                </StackPanel>
+            </Button>
+
+            <Button Margin="10" Width="160" Height="100">
+                <StackPanel HorizontalAlignment="Center" VerticalAlignment="Center">
+                    <TextBlock Text="⛷️" FontSize="28" HorizontalAlignment="Center" Margin="0,0,0,5"/>
+                    <TextBlock Text="Skidlektion" HorizontalAlignment="Center"/>
+                </StackPanel>
+            </Button>
+
+            <Button Margin="10" Width="160" Height="100">
+                <StackPanel HorizontalAlignment="Center" VerticalAlignment="Center">
+                    <TextBlock Text="🎿" FontSize="28" HorizontalAlignment="Center" Margin="0,0,0,5"/>
+                    <TextBlock Text="Utrustning" HorizontalAlignment="Center"/>
+                </StackPanel>
+            </Button>
+
+            <Button Margin="10" Width="160" Height="100">
+                <StackPanel HorizontalAlignment="Center" VerticalAlignment="Center">
+                    <TextBlock Text="⚙️" FontSize="28" HorizontalAlignment="Center" Margin="0,0,0,5"/>
+                    <TextBlock Text="Systemadmin" HorizontalAlignment="Center"/>
+                </StackPanel>
+            </Button>
+
+            <Button Margin="10" Width="160" Height="100">
+                <StackPanel HorizontalAlignment="Center" VerticalAlignment="Center">
+                    <TextBlock Text="👥" FontSize="28" HorizontalAlignment="Center" Margin="0,0,0,5"/>
+                    <TextBlock Text="Kundregister" HorizontalAlignment="Center"/>
+                </StackPanel>
+            </Button>
+
+            <Button Margin="10" Width="160" Height="100">
+                <StackPanel HorizontalAlignment="Center" VerticalAlignment="Center">
+                    <TextBlock Text="💳" FontSize="28" HorizontalAlignment="Center" Margin="0,0,0,5"/>
+                    <TextBlock Text="Betalstatus" HorizontalAlignment="Center"/>
+                </StackPanel>
+            </Button>
+
+        </UniformGrid>
+
+        <Button Grid.Row="2" 
+        Command="{Binding LoggaUtCommand}"
+        CommandParameter="{Binding RelativeSource={RelativeSource AncestorType=Window}}"
+        HorizontalAlignment="Right" 
+        VerticalAlignment="Bottom" 
+        Margin="0,20,0,0"
+        Width="150" Height="50">
+            <StackPanel Orientation="Horizontal" HorizontalAlignment="Center" VerticalAlignment="Center">
+                <TextBlock Text="🚪" FontSize="18" Margin="0,0,8,0" VerticalAlignment="Center"/>
+                <TextBlock Text="Logga ut" VerticalAlignment="Center"/>
+            </StackPanel>
+        </Button>
+
     </Grid>
 </Window>

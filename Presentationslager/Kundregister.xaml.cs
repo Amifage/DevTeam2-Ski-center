@@ -1,5 +1,4 @@
-﻿using Presentationslager.ViewModel;
-using System;
+﻿using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
@@ -16,14 +15,13 @@ using System.Windows.Shapes;
 namespace Presentationslager
 {
     /// <summary>
-    /// Interaction logic for Meny.xaml
+    /// Interaction logic for Kundregister.xaml
     /// </summary>
-    public partial class Meny : Window
+    public partial class Kundregister : Window
     {
-        public Meny()
+        public Kundregister()
         {
             InitializeComponent();
-            DataContext = new MenyViewModel();
         }
     }
 }

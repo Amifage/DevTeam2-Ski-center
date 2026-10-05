@@ -6,34 +6,34 @@
     <Application.Resources>
 
         <!-- Ski-Center Färgpalett -->
-        <SolidColorBrush x:Key="FjallBlaBrush" Color="#1E4F8C"/>
-        <SolidColorBrush x:Key="IsBlaBrush" Color="#DCEAF7"/>
-        <SolidColorBrush x:Key="SnovitBrush" Color="#F8FAFC"/>
-        <SolidColorBrush x:Key="MidnattsgraBrush" Color="#2A2F36"/>
-        <SolidColorBrush x:Key="SolnedgangOrangeBrush" Color="#F4A261"/>
-        <SolidColorBrush x:Key="AuroraGronBrush" Color="#52B788"/>
+        <SolidColorBrush x:Key="FjällBlå" Color="#1E4F8C"/> <!--Primärfärg--> 
+        <SolidColorBrush x:Key="IsBlå" Color="#DCEAF7"/> <!--Bakgrundfärg-->
+        <SolidColorBrush x:Key="Snövit" Color="#F8FAFC"/> <!--Vit bas-->
+        <SolidColorBrush x:Key="Midnattsgrå" Color="#2A2F36"/> <!--Text och kontrast-->
+        <SolidColorBrush x:Key="SolnedgångOrange" Color="#F4A261"/> <!--Call-To- Action-->
+        <SolidColorBrush x:Key="AuroraGrön" Color="#52B788"/> <!--AI-->
 
          <!--Global fönsterstil (Open Sans Medium)--> 
         <Style TargetType="{x:Type Window}">
             <Setter Property="FontFamily" Value="pack://application:,,,/Fonts/#OpenSans Medium"/>
             <Setter Property="FontSize" Value="16"/>
-            <Setter Property="Background" Value="{StaticResource SnovitBrush}"/>
-            <Setter Property="Foreground" Value="{StaticResource MidnattsgraBrush}"/>
+            <Setter Property="Background" Value="{StaticResource Snövit}"/>
+            <Setter Property="Foreground" Value="{StaticResource Midnattsgrå}"/>
         </Style>
 
          <!--Rubrikstil (Poppins SemiBold)--> 
         <Style x:Key="HeaderTextStyle" TargetType="{x:Type TextBlock}">
-            <Setter Property="FontFamily" Value="pack://application:,,,/Fonts/#Poppins"/>
+            <Setter Property="FontFamily" Value="pack://application:,,,/Fonts/#Poppins-SemiBold"/>
             <Setter Property="FontWeight" Value="SemiBold"/>
             <Setter Property="FontSize" Value="28"/>
-            <Setter Property="Foreground" Value="{StaticResource FjallBlaBrush}"/>
+            <Setter Property="Foreground" Value="{StaticResource FjällBlå}"/>
         </Style>
 
          <!--Primär Knappstil--> 
         <Style TargetType="{x:Type Button}">
-            <Setter Property="Background" Value="{StaticResource SolnedgangOrangeBrush}"/>
-            <Setter Property="Foreground" Value="White"/>
-            <Setter Property="FontFamily" Value="pack://application:,,,/Fonts/#Poppins"/>
+            <Setter Property="Background" Value="{StaticResource SolnedgångOrange}"/>
+            <Setter Property="Foreground" Value="{StaticResource Snövit}"/>
+            <Setter Property="FontFamily" Value="pack://application:,,,/Fonts/#Poppins-SemiBold"/>
             <Setter Property="FontWeight" Value="SemiBold"/>
             <Setter Property="Padding" Value="15,8"/>
             <Setter Property="Cursor" Value="Hand"/>

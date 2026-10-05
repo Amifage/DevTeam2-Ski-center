@@ -5,30 +5,29 @@
         xmlns:vm="clr-namespace:Presentationslager.ViewModel"
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
         xmlns:local="clr-namespace:Presentationslager"
-        mc:Ignorable="d" FontFamily="OpenSans-Medium" FontWeight="SemiBold"
+        mc:Ignorable="d" FontFamily="OpenSans-Medium" FontWeight="Bold"
         Title="Ski-Center Startsida" Height="500" Width="700"
         WindowStartupLocation="CenterScreen">
 
-    <!-- Kopplar ihop XAML med din ViewModel -->
     <Window.DataContext>
         <vm:StartsidaViewModel />
     </Window.DataContext>
 
     <Grid>
-        <Border Background="{StaticResource IsBlaBrush}" Margin="40" CornerRadius="12" Padding="30">
+        <Border Background="{StaticResource IsBlå}" Margin="40" CornerRadius="12" Padding="30">
             <StackPanel VerticalAlignment="Center" HorizontalAlignment="Center" Width="350">
 
                 <TextBlock Text="Ski-Center" Style="{StaticResource HeaderTextStyle}" HorizontalAlignment="Center" Margin="0,0,0,5" />
                 <TextBlock Text="Personalportal - Inloggning" FontSize="14" HorizontalAlignment="Center" Margin="0,0,0,30" FontWeight="Bold" />
 
-                <TextBlock Text="Användarnamn" Margin="0,0,0,5" />
-                <TextBox x:Name="txtAnvandarnamn" Height="35" Padding="5" Margin="0,0,0,15" FontSize="14"/>
+                <TextBlock Text="Email" Margin="0,0,0,5"/>
+                <TextBox x:Name="txtEmailInlogg" Height="35" Padding="5" Margin="0,0,0,15" FontSize="14"/>
 
                 <TextBlock Text="Lösenord" Margin="0,0,0,5"/>
-                <PasswordBox x:Name="txtLosenord" Height="35" Padding="5" Margin="0,0,0,25"/>
+                <PasswordBox x:Name="txtLösenord" Height="35" Padding="5" Margin="0,0,0,25"/>
 
-                <!-- Här binder vi knappen till OpenMenuCommand och skickar med fönstret som parameter -->
                 <Button Content="Logga in" 
+                        FontWeight="Bold"
                         Command="{Binding OpenMenuCommand}" 
                         CommandParameter="{Binding RelativeSource={RelativeSource AncestorType=Window}}"
                         HorizontalAlignment="Stretch" Height="40"/>
