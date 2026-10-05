@@ -94,6 +94,7 @@ namespace Presentationslager.ViewModel
                     Efternamn = NyttEfternamn,
                     Rabatt = NyRabatt,
                     Kredit = NyKredit,
+                    SenastUppdaterad = DateTime.Now,
                 };
                 _kundController.SkapaKund(nyPrivatkund);
             }
@@ -110,6 +111,8 @@ namespace Presentationslager.ViewModel
                     Ort = NyOrt,                   
                     Rabatt = NyRabatt,
                     Kredit = NyKredit,
+                    SenastUppdaterad = DateTime.Now,
+
                 };
                 _kundController.SkapaKund(nyForetagsKund);
             }
