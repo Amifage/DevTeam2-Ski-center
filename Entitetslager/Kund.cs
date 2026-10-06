@@ -20,5 +20,21 @@ namespace Entitetslager
         public string Ort { get; set; } 
         public DateTime SenastUppdaterad { get; set; }
 
+
+        public string VisningsNamn
+        {
+            get
+            {
+                if (this is PrivatKund privat)
+                {
+                    return $"{privat.Förnamn} {privat.Efternamn}";
+                }
+                else if (this is FöretagsKund foretag)
+                {
+                    return foretag.FöretagsNamn ?? ""; 
+                }
+                return "Okänt";
+            }
+        }
     }
 }

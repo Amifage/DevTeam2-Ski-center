@@ -23,5 +23,12 @@ public class KundController
             using var _unitofwork = new UnitOfWork(new SkiContext());
             return _unitofwork.KundRepository.GetAll().ToList();
         }
+        public void UppdateraKund(Kund kund)
+        {
+            using var _unitofwork = new UnitOfWork(new SkiContext());
+
+            _unitofwork.KundRepository.Update(kund);
+            _unitofwork.Save(); 
+        }
     }
 }

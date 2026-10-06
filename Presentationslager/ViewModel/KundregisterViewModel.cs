@@ -8,12 +8,15 @@ using System.Windows;
 
 namespace Presentationslager.ViewModel
 {
-    public class KundregisterViewModel : INotifyPropertyChanged // Antar att du har en BaseViewModel för INotifyPropertyChanged
+    public class KundregisterViewModel : INotifyPropertyChanged
     {
         private readonly KundController _kundController;
 
+
         public ObservableCollection<Kund> Kunder { get; set; }
         public ICommand TillbakaCommand { get; set; }
+
+        public ICommand UppdaterakundCommand { get; set; }
 
         public KundregisterViewModel()
         {
@@ -23,6 +26,9 @@ namespace Presentationslager.ViewModel
             SparaKundCommand = new RelayCommand(SparaKund);
             RensaFormularCommand = new RelayCommand(RensaFormular);
             TillbakaCommand = new RelayCommand(TillbakaTillMeny);
+            UppdaterakundCommand = new RelayCommand(UppdateraKund);
+
+            NyKredit = 12000;
         }
 
         private Kund _valdKund;
@@ -33,11 +39,14 @@ namespace Presentationslager.ViewModel
             {
                 _valdKund = value;
                 OnPropertyChanged(nameof(ValdKund));
-                // Här kan du lägga in logik för att fylla formuläret om man vill redigera en befintlig kund
+                if (ValdKund != null)
+                {
+                    FyllFormularForUppdatering();
+                }
             }
         }
 
-        // 0 = Privat, 1 = Företag
+
         private int _valdKundTypIndex = 0;
 
         public event PropertyChangedEventHandler? PropertyChanged;
@@ -66,17 +75,17 @@ namespace Presentationslager.ViewModel
 
         public string NyPostnummer { get; set; }
 
-        public string NyOrt {  get; set; }
+        public string NyOrt { get; set; }
 
-        public int NyRabatt {  get; set; }
+        public decimal NyRabatt { get; set; }
 
-        public int NyKredit { get; set; }
+        public decimal NyKredit { get; set; }
         public string NyttFöretagsnamn { get; set; }
 
         public ICommand SparaKundCommand { get; set; }
         public ICommand RensaFormularCommand { get; set; }
 
-        
+
 
         private void SparaKund(object obj)
         {
@@ -93,7 +102,7 @@ namespace Presentationslager.ViewModel
                     Förnamn = NyttFörnamn,
                     Efternamn = NyttEfternamn,
                     Rabatt = NyRabatt,
-                    Kredit = NyKredit,
+                    Kredit = 12000,
                     SenastUppdaterad = DateTime.Now,
                 };
                 _kundController.SkapaKund(nyPrivatkund);
@@ -108,9 +117,9 @@ namespace Presentationslager.ViewModel
                     Telefonnummer = NyTelefon,
                     Adress = NyAdress,
                     Postnummer = NyPostnummer,
-                    Ort = NyOrt,                   
+                    Ort = NyOrt,
                     Rabatt = NyRabatt,
-                    Kredit = NyKredit,
+                    Kredit = 0,
                     SenastUppdaterad = DateTime.Now,
 
                 };
@@ -131,6 +140,15 @@ namespace Presentationslager.ViewModel
 
             // Notifiera vyn att uppdatera alla inmatningsfält
             OnPropertyChanged(string.Empty);
+
+            if (ValdKundTypIndex == 0)
+            {
+                NyKredit = 12000;
+            }
+            else
+            {
+                NyKredit = 0;
+            }
         }
 
         private void UppdateraKundLista()
@@ -152,6 +170,62 @@ namespace Presentationslager.ViewModel
             {
                 nuvarandeFonster.Close();
             }
+        }
+
+        private void FyllFormularForUppdatering()
+        {
+            NyEpost = ValdKund.Epost;
+            NyTelefon = ValdKund.Telefonnummer;
+            NyAdress = ValdKund.Adress;
+            NyPostnummer = ValdKund.Postnummer;
+            NyOrt = ValdKund.Ort;
+
+            if (ValdKund is PrivatKund privat)
+            {
+                ValdKundTypIndex = 0;
+                NyttFörnamn = privat.Förnamn;
+                NyttEfternamn = privat.Efternamn;
+                NyRabatt = privat.Rabatt;
+                NyKredit = privat.Kredit;
+            }
+            else if (ValdKund is FöretagsKund foretag)
+            {
+                ValdKundTypIndex = 1;
+                NyttFöretagsnamn = foretag.FöretagsNamn;
+                NyRabatt = foretag.Rabatt;
+                NyKredit = foretag.Kredit;
+            }
+            OnPropertyChanged(string.Empty);
+
+        }
+
+
+        private void UppdateraKund(object obj)
+        {
+            if (ValdKund == null) return;
+
+            ValdKund.Epost = NyEpost;
+            ValdKund.Telefonnummer = NyTelefon;
+            ValdKund.Adress = NyAdress;
+            ValdKund.Postnummer = NyPostnummer;
+            ValdKund.Ort = NyOrt;
+
+            if (ValdKund is PrivatKund privat)
+            {
+                privat.Förnamn = NyttFörnamn;
+                privat.Efternamn = NyttEfternamn;
+                privat.Rabatt = NyRabatt;
+                privat.Kredit = NyKredit;
+            }
+            else if (ValdKund is FöretagsKund foretag)
+            {
+                foretag.FöretagsNamn = NyttFöretagsnamn;
+                foretag.Rabatt = NyRabatt;
+                foretag.Kredit = NyKredit;
+            }
+            _kundController.UppdateraKund(ValdKund);
+            UppdateraKundLista();
+            RensaFormular(null);
         }
     }
 }
