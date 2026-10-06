@@ -1,0 +1,61 @@
+﻿<Window x:Class="Presentationslager.Skidlektion"
+        xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+        xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+        xmlns:vm="clr-namespace:Presentationslager.ViewModel"
+        mc:Ignorable="d"
+        x:Name="skidlektionFönster"
+        Title="Skidlektion" Height="500" Width="850"
+        WindowStartupLocation="CenterScreen" Background="#F4F6F9">
+
+    <Window.DataContext>
+        <vm:SkidlektionViewModel />
+    </Window.DataContext>
+
+    <Grid Margin="20">
+        <Grid.RowDefinitions>
+            <RowDefinition Height="Auto"/>
+            <RowDefinition Height="Auto"/>
+            <RowDefinition Height="*"/>
+            <RowDefinition Height="Auto"/>
+        </Grid.RowDefinitions>
+
+        <TextBlock Grid.Row="0" Text="Tillgängliga Skidlektioner" FontSize="22" FontWeight="Bold" Foreground="#2C3E50" Margin="0,0,0,15"/>
+
+        <Border Grid.Row="1" Background="White" CornerRadius="5" Padding="15" Margin="0,0,0,15">
+            <Border.Effect>
+                <DropShadowEffect BlurRadius="5" Color="Gray" Opacity="0.1"/>
+            </Border.Effect>
+            <StackPanel Orientation="Horizontal">
+                <StackPanel Orientation="Vertical" Margin="0,0,15,0">
+                    <TextBlock Text="Filtrera på anställningsnummer:" FontSize="12" Foreground="#7F8C8D" Margin="0,0,0,5"/>
+                    <TextBox Text="{Binding SöktAnställningsNummer, UpdateSourceTrigger=PropertyChanged}" Width="180" Height="30" VerticalContentAlignment="Center" Padding="5,0"/>
+                </StackPanel>
+
+                <Button Content="Sök / Filtrera" Command="{Binding SökCommand}" Width="120" Height="30" VerticalAlignment="Bottom" 
+                        Background="#3498DB" Foreground="White" FontWeight="SemiBold" BorderThickness="0" Cursor="Hand"/>
+
+                <Button Content="Visa alla lektioner" Command="{Binding VisaAllaCommand}" Width="130" Height="30" VerticalAlignment="Bottom" Margin="10,0,0,0"
+                        Background="#95A5A6" Foreground="White" FontWeight="SemiBold" BorderThickness="0" Cursor="Hand"/>
+            </StackPanel>
+        </Border>
+
+        <DataGrid Grid.Row="2" ItemsSource="{Binding VisadeLektioner}" AutoGenerateColumns="False" IsReadOnly="True" 
+                  GridLinesVisibility="Horizontal" HeadersVisibility="Column" Background="White" RowHeight="35">
+            <DataGrid.Columns>
+                <DataGridTextColumn Header="Lektions-ID" Binding="{Binding SkidlektionsID}" Width="100"/>
+                <DataGridTextColumn Header="Typ / Nivå" Binding="{Binding Typ}" Width="150"/>
+                <DataGridTextColumn Header="Datum &amp; Tid" Binding="{Binding StartTid, StringFormat={}{0:yyyy-MM-dd HH:mm}}" Width="160"/>
+                <DataGridTextColumn Header="Max deltagare" Binding="{Binding MaxDeltagare}" Width="110"/>
+                <DataGridTextColumn Header="Anställningsnr" Binding="{Binding Personal.AnställningsNummer}" Width="120"/>
+                <DataGridTextColumn Header="Instruktör" Binding="{Binding Personal.Förnamn}" Width="*"/>
+            </DataGrid.Columns>
+        </DataGrid>
+
+        <StackPanel Grid.Row="3" Orientation="Horizontal" HorizontalAlignment="Right" Margin="0,15,0,0">
+            <Button Content="Stäng" Command="{Binding StängCommand}" CommandParameter="{Binding ElementName=skidlektionFönster}" Width="100" Height="32" 
+                    Background="#E74C3C" Foreground="White" FontWeight="SemiBold" BorderThickness="0" Cursor="Hand"/>
+        </StackPanel>
+    </Grid>
+</Window>
