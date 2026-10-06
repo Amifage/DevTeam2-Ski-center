@@ -98,5 +98,71 @@ namespace Servicelager
             _unitOfWork.UtrustningRepository.Update(utrustning);
             _unitOfWork.Save();
         }
+
+
+        //För bokning
+        public List<UtrustningPaketInnehåll> HamtaPaketInnehall(int utrustningPaketNummer)
+        {
+            return _unitOfWork.UtrustningPaketInnehållRepository
+                .GetAll()
+                .Where(x => x.UtrustningPaketNummer == utrustningPaketNummer)
+                .ToList();
+        }
+
+        public HashSet<string> HamtaUpptagnaUtrustningsNummer(
+            DateTime startDatum,
+            DateTime slutDatum)
+        {
+            HashSet<string> upptagna = new HashSet<string>();
+
+            var upptagnaRader = _unitOfWork.UtrustningRadRepository
+                .GetAll()
+                .Where(r =>
+                    r.StartDatum < slutDatum &&
+                    r.SlutDatum > startDatum)
+                .ToList();
+
+            foreach (UtrustningRad rad in upptagnaRader)
+            {
+                if (!string.IsNullOrWhiteSpace(rad.UtrustningNummer))
+                {
+                    upptagna.Add(rad.UtrustningNummer);
+                }
+            }
+
+            var radNummer = upptagnaRader
+                .Select(r => r.UtrustningRadNummer)
+                .ToHashSet();
+
+            var paketRader = _unitOfWork.UtrustningPaketRadRepository
+                .GetAll()
+                .Where(r =>
+                    r.UtrustningRadNummer.HasValue &&
+                    radNummer.Contains(r.UtrustningRadNummer.Value))
+                .ToList();
+
+            foreach (UtrustningPaketRad paketRad in paketRader)
+            {
+                if (!string.IsNullOrWhiteSpace(paketRad.UtrustningNummer))
+                {
+                    upptagna.Add(paketRad.UtrustningNummer);
+                }
+            }
+
+            return upptagna;
+        }
+
+        public List<Utrustning> HamtaLedigaUtrustningar(
+            DateTime startDatum,
+            DateTime slutDatum)
+        {
+            HashSet<string> upptagna =
+                HamtaUpptagnaUtrustningsNummer(startDatum, slutDatum);
+
+            return _unitOfWork.UtrustningRepository
+                .GetAll()
+                .Where(u => !upptagna.Contains(u.UtrustningNummer))
+                .ToList();
+        }
     }
 }

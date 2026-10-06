@@ -7,6 +7,7 @@ using System.ComponentModel;
 using System.Linq;
 using System.Runtime.CompilerServices;
 using System.Windows.Input;
+using UtrustningEntitet = Entitetslager.Utrustning;
 
 namespace Presentationslager.ViewModel
 {
@@ -24,10 +25,17 @@ namespace Presentationslager.ViewModel
         private decimal? _aktuelltLogiPris;
 
 
+        private string? _valdUtrustningTyp;
+        private UtrustningPaket? _valtUtrustningPaket;
+        public UtrustningEntitet? _valdEnskildUtrustning;
+        private int? _antalUtrustningsPaket;
+        private decimal? _aktuelltUtrustningPris;
+
+
 
         public event Action<string>? VisaMeddelande;
 
-        public event Action<string, DateTime, List<LogiRad>>? BokningSparad;
+        public event Action<string, DateTime, List<LogiRad>, List<UtrustningRad>>? BokningSparad;
 
         public event Action? StängFönster;
 
@@ -43,6 +51,18 @@ namespace Presentationslager.ViewModel
         public ObservableCollection<int> AntalPersonerValtLogiAlternativ { get; }
 
         public ObservableCollection<LogiRad> LogiRader { get; }
+
+
+
+        public ObservableCollection<string> UtrustningTyper { get; }
+
+        public ObservableCollection<UtrustningPaket> TillgängligaUtrustningsPaket { get; }
+
+        public ObservableCollection<UtrustningEntitet> TillgängligaEnskildaUtrustningar { get; }
+
+        public ObservableCollection<int> AntalUtrustningsPaketAlternativ { get; }
+
+        public ObservableCollection<UtrustningRad> UtrustningRader { get; }
 
 
         #region Vald kund
@@ -77,6 +97,7 @@ namespace Presentationslager.ViewModel
 
                 UppdateraTillgängligaLogi();
                 UppdateraPris();
+                UppdateraTillgängligUtrustning();
             }
         }
 
@@ -95,6 +116,7 @@ namespace Presentationslager.ViewModel
 
                 UppdateraTillgängligaLogi();
                 UppdateraPris();
+                UppdateraTillgängligUtrustning();
             }
         }
 #endregion
@@ -192,7 +214,14 @@ namespace Presentationslager.ViewModel
         {
             get
             {
-                decimal total = LogiRader.Sum(x => x.LogiBelopp);
+                decimal logiTotal =
+                    LogiRader.Sum(x => x.LogiBelopp);
+
+                decimal utrustningTotal =
+                    UtrustningRader.Sum(x => x.UtrustningBelopp);
+
+                decimal total =
+                    logiTotal + utrustningTotal;
 
                 return $"{total:N0} kr";
             }
@@ -202,6 +231,8 @@ namespace Presentationslager.ViewModel
         public ICommand LäggTillLogiCommand { get; }
         public ICommand SkapaBokningCommand { get; }
         public ICommand AvbrytCommand { get; }
+
+        public ICommand LäggTillUtrustningCommand { get; }
 
         public BokningViewModel()
         {
@@ -219,6 +250,27 @@ namespace Presentationslager.ViewModel
             LäggTillLogiCommand = new RelayCommand(_ => LäggTillLogi());
             SkapaBokningCommand = new RelayCommand(_ => SkapaBokning());
             AvbrytCommand = new RelayCommand(_ => StängFönster?.Invoke());
+
+
+            UtrustningTyper = new ObservableCollection<string>
+            {
+                "Utrustningspaket",
+                "Enskild utrustning"
+            };
+
+            TillgängligaUtrustningsPaket =
+                new ObservableCollection<UtrustningPaket>();
+
+            TillgängligaEnskildaUtrustningar = new ObservableCollection<UtrustningEntitet>();
+
+            AntalUtrustningsPaketAlternativ =
+                new ObservableCollection<int>();
+
+            UtrustningRader =
+                new ObservableCollection<UtrustningRad>();
+
+
+            LäggTillUtrustningCommand = new RelayCommand(_ => LäggTillUtrustning());
         }
 
 
@@ -427,8 +479,9 @@ namespace Presentationslager.ViewModel
                     KundNummer = ValdKund.KundNummer,
                     BokningsDatum = DateTime.Now,
                     Status = "Aktiv",
-                    LogiRader = LogiRader.ToList()
-                };
+                    LogiRader = LogiRader.ToList(),
+                    UtrustningRader = UtrustningRader.ToList()
+            };
 
 
             BokningController bokningController = new BokningController();
@@ -443,7 +496,7 @@ namespace Presentationslager.ViewModel
                 };
 
 
-            BokningSparad?.Invoke(kundText, DateTime.Now, LogiRader.ToList());
+            BokningSparad?.Invoke(kundText, DateTime.Now, LogiRader.ToList(), UtrustningRader.ToList());
         }
 
         private bool ValideraDatum()
@@ -531,6 +584,408 @@ namespace Presentationslager.ViewModel
                 .DefaultIfEmpty(0)
                 .Min();
         }
+
+
+        private void UppdateraTillgängligUtrustning()
+        {
+            TillgängligaUtrustningsPaket.Clear();
+            TillgängligaEnskildaUtrustningar.Clear();
+
+            if (StartDatum == null ||
+                SlutDatum == null ||
+                SlutDatum <= StartDatum)
+            {
+                return;
+            }
+
+            UtrustningController utrustningController =
+                new UtrustningController();
+
+            var ledigaUtrustningar =
+                utrustningController.HamtaLedigaUtrustningar(
+                    StartDatum.Value,
+                    SlutDatum.Value);
+
+            foreach (UtrustningEntitet utrustning in ledigaUtrustningar)
+            {
+                TillgängligaEnskildaUtrustningar.Add(utrustning);
+            }
+
+            foreach (UtrustningPaket paket in utrustningController.HamtaAllaUtrustningsPaket())
+            {
+                int maxAntal =
+                    BeräknaMaxAntalPaket(
+                        paket,
+                        ledigaUtrustningar,
+                        utrustningController);
+
+                if (maxAntal > 0)
+                {
+                    TillgängligaUtrustningsPaket.Add(paket);
+                }
+            }
+        }
+
+        private int BeräknaMaxAntalPaket(
+            UtrustningPaket paket,
+            List<UtrustningEntitet> ledigaUtrustningar,
+            UtrustningController utrustningController)
+        {
+            var innehåll =
+                utrustningController.HamtaPaketInnehall(
+                    paket.UtrustningPaketNummer);
+
+            if (!innehåll.Any())
+            {
+                return 0;
+            }
+
+            int maxAntal = int.MaxValue;
+
+            foreach (UtrustningPaketInnehåll rad in innehåll)
+            {
+                if (!rad.ArtikelTypNummer.HasValue || rad.Antal <= 0)
+                {
+                    return 0;
+                }
+
+                int antalLediga =
+                    ledigaUtrustningar.Count(u =>
+                        u.ArtikelTypNummer == rad.ArtikelTypNummer.Value);
+
+                int möjligtAntal =
+                    antalLediga / rad.Antal;
+
+                maxAntal =
+                    Math.Min(maxAntal, möjligtAntal);
+            }
+
+            return maxAntal == int.MaxValue
+                ? 0
+                : maxAntal;
+        }
+
+        private void UppdateraAntalPaketAlternativ()
+        {
+            AntalUtrustningsPaketAlternativ.Clear();
+            AntalUtrustningsPaket = null;
+
+            if (ValtUtrustningPaket == null ||
+                StartDatum == null ||
+                SlutDatum == null)
+            {
+                return;
+            }
+
+            UtrustningController utrustningController =
+                new UtrustningController();
+
+            var ledigaUtrustningar =
+                utrustningController.HamtaLedigaUtrustningar(
+                    StartDatum.Value,
+                    SlutDatum.Value);
+
+            int maxAntal =
+                BeräknaMaxAntalPaket(
+                    ValtUtrustningPaket,
+                    ledigaUtrustningar,
+                    utrustningController);
+
+            for (int i = 1; i <= maxAntal; i++)
+            {
+                AntalUtrustningsPaketAlternativ.Add(i);
+            }
+        }
+
+        private void UppdateraUtrustningPris()
+        {
+            _aktuelltUtrustningPris = null;
+            OnPropertyChanged(nameof(UtrustningPrisText));
+
+            if (StartDatum == null ||
+                SlutDatum == null)
+            {
+                return;
+            }
+
+            int? artikelTypNummer = null;
+
+            if (ValdUtrustningTyp == "Utrustningspaket" &&
+                ValtUtrustningPaket != null)
+            {
+                artikelTypNummer =
+                    ValtUtrustningPaket.ArtikelTypNummer;
+            }
+
+            if (ValdUtrustningTyp == "Enskild utrustning" &&
+                ValdEnskildUtrustning != null)
+            {
+                artikelTypNummer =
+                    ValdEnskildUtrustning.ArtikelTypNummer;
+            }
+
+            if (!artikelTypNummer.HasValue)
+            {
+                return;
+            }
+
+            PrisController prisController =
+                new PrisController();
+
+            Pris? pris =
+                prisController.HämtaAktuelltPris(
+                    artikelTypNummer.Value,
+                    StartDatum.Value,
+                    SlutDatum.Value);
+
+            if (pris == null)
+            {
+                return;
+            }
+
+            if (ValdUtrustningTyp == "Utrustningspaket")
+            {
+                int antalPaket =
+                    AntalUtrustningsPaket ?? 1;
+
+                _aktuelltUtrustningPris =
+                    pris.PrisBelopp * antalPaket;
+            }
+            else
+            {
+                _aktuelltUtrustningPris =
+                    pris.PrisBelopp;
+            }
+
+            OnPropertyChanged(nameof(UtrustningPrisText));
+        }
+
+        private void LäggTillUtrustning()
+        {
+            if (!ValideraDatum())
+            {
+                return;
+            }
+
+            if (string.IsNullOrWhiteSpace(ValdUtrustningTyp))
+            {
+                VisaMeddelande?.Invoke(
+                    "Du måste välja hur utrustningen ska bokas.");
+
+                return;
+            }
+
+            if (ValdUtrustningTyp == "Enskild utrustning")
+            {
+                LäggTillEnskildUtrustning();
+                return;
+            }
+
+            if (ValdUtrustningTyp == "Utrustningspaket")
+            {
+                LäggTillUtrustningsPaket();
+                return;
+            }
+        }
+
+        private void LäggTillEnskildUtrustning()
+        {
+            if (ValdEnskildUtrustning == null)
+            {
+                VisaMeddelande?.Invoke(
+                    "Du måste välja utrustning.");
+
+                return;
+            }
+
+            if (!ValdEnskildUtrustning.ArtikelTypNummer.HasValue)
+            {
+                VisaMeddelande?.Invoke(
+                    "Den valda utrustningen saknar artikeltyp.");
+
+                return;
+            }
+
+            PrisController prisController =
+                new PrisController();
+
+            Pris? pris =
+                prisController.HämtaAktuelltPris(
+                    ValdEnskildUtrustning.ArtikelTypNummer.Value,
+                    StartDatum!.Value,
+                    SlutDatum!.Value);
+
+            if (pris == null)
+            {
+                VisaMeddelande?.Invoke(
+                    "Kunde inte hitta något pris för utrustningen.");
+
+                return;
+            }
+
+            UtrustningRad utrustningRad =
+                new UtrustningRad
+                {
+                    StartDatum = StartDatum.Value,
+                    SlutDatum = SlutDatum.Value,
+                    UtrustningBelopp = pris.PrisBelopp,
+                    UtrustningNummer =
+                        ValdEnskildUtrustning.UtrustningNummer,
+                    UtrustningPaketNummer = null,
+                    UtrustningDisplayText =
+                        $"Utrustning {ValdEnskildUtrustning.UtrustningNummer}",
+                    SenastUppdaterad = DateTime.Now
+                };
+
+            UtrustningRader.Add(utrustningRad);
+
+            OnPropertyChanged(nameof(TotalBeloppText));
+
+            ValdEnskildUtrustning = null;
+            _aktuelltUtrustningPris = null;
+
+            OnPropertyChanged(nameof(UtrustningPrisText));
+
+            UppdateraTillgängligUtrustning();
+        }
+
+        private void LäggTillUtrustningsPaket()
+        {
+            if (ValtUtrustningPaket == null)
+            {
+                VisaMeddelande?.Invoke(
+                    "Du måste välja ett utrustningspaket.");
+
+                return;
+            }
+
+            if (AntalUtrustningsPaket == null ||
+                AntalUtrustningsPaket <= 0)
+            {
+                VisaMeddelande?.Invoke(
+                    "Du måste välja antal paket.");
+
+                return;
+            }
+
+            if (!ValtUtrustningPaket.ArtikelTypNummer.HasValue)
+            {
+                VisaMeddelande?.Invoke(
+                    "Utrustningspaketet saknar artikeltyp.");
+
+                return;
+            }
+
+            UtrustningController utrustningController =
+                new UtrustningController();
+
+            PrisController prisController =
+                new PrisController();
+
+            Pris? pris =
+                prisController.HämtaAktuelltPris(
+                    ValtUtrustningPaket.ArtikelTypNummer.Value,
+                    StartDatum!.Value,
+                    SlutDatum!.Value);
+
+            if (pris == null)
+            {
+                VisaMeddelande?.Invoke(
+                    "Kunde inte hitta något pris för utrustningspaketet.");
+
+                return;
+            }
+
+            List<UtrustningPaketInnehåll> innehåll =
+                utrustningController.HamtaPaketInnehall(
+                    ValtUtrustningPaket.UtrustningPaketNummer);
+
+            var ledigaUtrustningar =
+                utrustningController.HamtaLedigaUtrustningar(
+                    StartDatum.Value,
+                    SlutDatum.Value);
+
+            HashSet<string> användaNummer =
+                new HashSet<string>();
+
+            for (int paketIndex = 0;
+                 paketIndex < AntalUtrustningsPaket.Value;
+                 paketIndex++)
+            {
+                UtrustningRad utrustningRad =
+                    new UtrustningRad
+                    {
+                        StartDatum = StartDatum.Value,
+                        SlutDatum = SlutDatum.Value,
+                        UtrustningBelopp = pris.PrisBelopp,
+                        UtrustningPaketNummer =
+                            ValtUtrustningPaket.UtrustningPaketNummer,
+                        UtrustningNummer = null,
+                        UtrustningDisplayText =
+                            ValtUtrustningPaket.UtrustningPaketNamn,
+                        SenastUppdaterad = DateTime.Now
+                    };
+
+                foreach (UtrustningPaketInnehåll innehållRad in innehåll)
+                {
+                    if (!innehållRad.ArtikelTypNummer.HasValue)
+                    {
+                        continue;
+                    }
+
+                    var matchandeUtrustningar =
+                        ledigaUtrustningar
+                            .Where(u =>
+                                u.ArtikelTypNummer ==
+                                innehållRad.ArtikelTypNummer.Value)
+
+                            .Where(u =>
+                                !användaNummer.Contains(
+                                    u.UtrustningNummer))
+
+                            .Take(innehållRad.Antal)
+
+                            .ToList();
+
+                    if (matchandeUtrustningar.Count <
+                        innehållRad.Antal)
+                    {
+                        VisaMeddelande?.Invoke(
+                            "Det finns inte tillräckligt med ledig fysisk utrustning för paketet.");
+
+                        return;
+                    }
+
+                    foreach (var utrustning in matchandeUtrustningar)
+                    {
+                        utrustningRad.UtrustningPaketRader.Add(
+                            new UtrustningPaketRad
+                            {
+                                UtrustningNummer =
+                                    utrustning.UtrustningNummer
+                            });
+
+                        användaNummer.Add(
+                            utrustning.UtrustningNummer);
+                    }
+                }
+
+                UtrustningRader.Add(utrustningRad);
+            }
+
+            OnPropertyChanged(nameof(TotalBeloppText));
+
+            ValtUtrustningPaket = null;
+            AntalUtrustningsPaket = null;
+
+            _aktuelltUtrustningPris = null;
+
+            OnPropertyChanged(nameof(UtrustningPrisText));
+
+            UppdateraTillgängligUtrustning();
+        }
+
+
         #endregion
 
         #region PropertyChanged
@@ -542,6 +997,85 @@ namespace Presentationslager.ViewModel
             PropertyChanged?.Invoke( this, new PropertyChangedEventArgs(propertyName));
         }
         #endregion
+
+        public string? ValdUtrustningTyp
+        {
+            get => _valdUtrustningTyp;
+            set
+            {
+                if (_valdUtrustningTyp == value)
+                    return;
+
+                _valdUtrustningTyp = value;
+                OnPropertyChanged();
+
+                OnPropertyChanged(nameof(VisarUtrustningsPaket));
+                OnPropertyChanged(nameof(VisarEnskildUtrustning));
+
+                ValtUtrustningPaket = null;
+                ValdEnskildUtrustning = null;
+                AntalUtrustningsPaket = null;
+            }
+        }
+
+        public bool VisarUtrustningsPaket =>
+            ValdUtrustningTyp == "Utrustningspaket";
+
+        public bool VisarEnskildUtrustning =>
+            ValdUtrustningTyp == "Enskild utrustning";
+
+
+        public UtrustningPaket? ValtUtrustningPaket
+        {
+            get => _valtUtrustningPaket;
+            set
+            {
+                if (_valtUtrustningPaket == value)
+                    return;
+
+                _valtUtrustningPaket = value;
+                OnPropertyChanged();
+
+                UppdateraAntalPaketAlternativ();
+                UppdateraUtrustningPris();
+            }
+        }
+
+
+        public UtrustningEntitet? ValdEnskildUtrustning
+        {
+            get => _valdEnskildUtrustning;
+            set
+            {
+                if (_valdEnskildUtrustning == value)
+                    return;
+
+                _valdEnskildUtrustning = value;
+                OnPropertyChanged();
+                UppdateraUtrustningPris();
+            }
+        }
+
+
+        public int? AntalUtrustningsPaket
+        {
+            get => _antalUtrustningsPaket;
+            set
+            {
+                if (_antalUtrustningsPaket == value)
+                    return;
+
+                _antalUtrustningsPaket = value;
+                OnPropertyChanged();
+                UppdateraUtrustningPris();
+            }
+        }
+
+
+        public string UtrustningPrisText =>
+            _aktuelltUtrustningPris.HasValue
+                ? $"{_aktuelltUtrustningPris.Value:N0} kr"
+                : "0 kr";
 
         #region RelayCommands
 
@@ -575,6 +1109,7 @@ namespace Presentationslager.ViewModel
             {
                 CanExecuteChanged?.Invoke( this, EventArgs.Empty);
             }
+
         }
         #endregion
     }

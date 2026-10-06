@@ -23,8 +23,7 @@ namespace Presentationslager
                 VisaMeddelande;
 
 
-            _viewModel.BokningSparad +=
-                VisaBokningsbekräftelse;
+            _viewModel.BokningSparad += VisaBokningsbekräftelse;
 
 
             _viewModel.StängFönster +=
@@ -43,21 +42,21 @@ namespace Presentationslager
 
 
         private void VisaBokningsbekräftelse(
-            string kundText,
-            DateTime bokningsdatum,
-            List<LogiRad> logiRader)
+                 string kundText,
+                 DateTime bokningsdatum,
+                 List<LogiRad> logiRader,
+                 List<UtrustningRad> utrustningRader)
         {
             Bokningsbekräftelse bekräftelseFönster =
                 new Bokningsbekräftelse(
                     kundText,
                     bokningsdatum,
-                    logiRader);
-
+                    logiRader,
+                    utrustningRader);
 
             bekräftelseFönster.Owner = this;
 
             bekräftelseFönster.ShowDialog();
-
 
             _viewModel.ÅterställFormulär();
         }

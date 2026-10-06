@@ -14,6 +14,7 @@ namespace Presentationslager.ViewModel
         public string BokningsdatumText { get; }
 
         public ObservableCollection<LogiRad> LogiRader { get; }
+        public ObservableCollection<UtrustningRad> UtrustningRader { get; }
 
         public string TotalBeloppText
         {
@@ -25,11 +26,16 @@ namespace Presentationslager.ViewModel
             }
         }
 
-        public BokningsbekräftelseViewModel(string kundText, DateTime bokningsdatum, IEnumerable<LogiRad> logiRader)
+        public BokningsbekräftelseViewModel(
+    string kundText,
+    DateTime bokningsdatum,
+    IEnumerable<LogiRad> logiRader,
+    IEnumerable<UtrustningRad> utrustningRader)
         {
             KundText = kundText;
             BokningsdatumText = bokningsdatum.ToString("yyyy-MM-dd");
-            LogiRader =new ObservableCollection<LogiRad>(logiRader);
+            LogiRader = new ObservableCollection<LogiRad>(logiRader);
+            UtrustningRader = new ObservableCollection<UtrustningRad>(utrustningRader);
         }
 
         public event PropertyChangedEventHandler? PropertyChanged;
