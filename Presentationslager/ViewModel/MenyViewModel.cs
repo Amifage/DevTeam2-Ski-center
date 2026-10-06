@@ -39,6 +39,10 @@ namespace Presentationslager.ViewModel
         {
             Utrustning utrustning = new Utrustning();
             utrustning.Show();
+            if (obj is Window nuvarandeFonster)
+            {
+                nuvarandeFonster.Close();
+            }
         }
 
 
