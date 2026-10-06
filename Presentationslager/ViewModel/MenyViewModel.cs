@@ -12,12 +12,15 @@ namespace Presentationslager.ViewModel
     {
         public ICommand LoggaUtCommand { get; }
         public ICommand ÖppnaKundregisterCommand { get;}
+        public ICommand ÖppnaUtrustningCommand { get; }
         public event PropertyChangedEventHandler? PropertyChanged;
+
 
         public MenyViewModel()
         {
             LoggaUtCommand = new RelayCommand(LoggaUt);
             ÖppnaKundregisterCommand = new RelayCommand(ÖppnaKundregister);
+            ÖppnaUtrustningCommand = new RelayCommand(ÖppnaUtrustning);
 
         }
 
@@ -31,6 +34,13 @@ namespace Presentationslager.ViewModel
                 nuvarandeFonster.Close();
             }
         }
+
+        public void ÖppnaUtrustning(object obj)
+        {
+            Utrustning utrustning = new Utrustning();
+            utrustning.Show();
+        }
+
 
         private void LoggaUt(object parameter)
         {
