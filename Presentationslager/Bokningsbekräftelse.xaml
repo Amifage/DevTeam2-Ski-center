@@ -16,13 +16,17 @@
             <RowDefinition Height="Auto"/>
         </Grid.RowDefinitions>
 
-        <!-- Rubrik -->
+
+        <!-- RUBRIK -->
+
         <TextBlock Grid.Row="0"
                    Text="Bokningsbekräftelse"
                    Style="{StaticResource HeaderTextStyle}"
                    Margin="0,0,0,20"/>
 
-        <!-- Innehåll -->
+
+        <!-- INNEHÅLL -->
+
         <ScrollViewer Grid.Row="1"
                       VerticalScrollBarVisibility="Auto">
 
@@ -32,25 +36,36 @@
 
                 <StackPanel>
 
+
                     <TextBlock Text="Bokningen har sparats!"
                                FontSize="22"
                                FontWeight="SemiBold"
                                Foreground="{StaticResource FjällBlå}"
                                Margin="0,0,0,20"/>
 
+
+                    <!-- KUND -->
+
                     <TextBlock Text="Kund"
                                FontWeight="Bold"/>
 
-                    <TextBlock x:Name="txtKund"
+                    <TextBlock Text="{Binding KundText}"
                                Margin="0,3,0,15"/>
+
+
+                    <!-- BOKNINGSDATUM -->
 
                     <TextBlock Text="Bokningsdatum"
                                FontWeight="Bold"/>
 
-                    <TextBlock x:Name="txtBokningsdatum"
+                    <TextBlock Text="{Binding BokningsdatumText}"
                                Margin="0,3,0,20"/>
 
+
                     <Separator Margin="0,0,0,15"/>
+
+
+                    <!-- BOENDE -->
 
                     <TextBlock Text="Boende"
                                FontSize="18"
@@ -58,9 +73,11 @@
                                Foreground="{StaticResource FjällBlå}"
                                Margin="0,0,0,10"/>
 
-                    <ItemsControl x:Name="lstLogiRader">
+
+                    <ItemsControl ItemsSource="{Binding LogiRader}">
 
                         <ItemsControl.ItemTemplate>
+
                             <DataTemplate>
 
                                 <Border BorderBrush="LightGray"
@@ -76,27 +93,42 @@
                                             <ColumnDefinition Width="Auto"/>
                                         </Grid.ColumnDefinitions>
 
+
                                         <StackPanel>
 
-                                            <TextBlock Text="{Binding LogiNummer}"
+                                            <TextBlock Text="{Binding LogiDisplayText}"
                                                        FontWeight="Bold"/>
 
-                                            <TextBlock>
-                                                <Run Text="Antal personer: "/>
-                                                <Run Text="{Binding AntalPersoner}"/>
-                                            </TextBlock>
 
                                             <TextBlock>
+
+                                                <Run Text="Antal personer: "/>
+
+                                                <Run Text="{Binding AntalPersoner}"/>
+
+                                            </TextBlock>
+
+
+                                            <TextBlock>
+
                                                 <Run Text="Period: "/>
-                                                <Run Text="{Binding StartDatum, StringFormat={}{0:yyyy-MM-dd}}"/>
+
+                                                <Run Text="{Binding StartDatum,
+                                                    StringFormat={}{0:yyyy-MM-dd}}"/>
+
                                                 <Run Text=" - "/>
-                                                <Run Text="{Binding SlutDatum, StringFormat={}{0:yyyy-MM-dd}}"/>
+
+                                                <Run Text="{Binding SlutDatum,
+                                                    StringFormat={}{0:yyyy-MM-dd}}"/>
+
                                             </TextBlock>
 
                                         </StackPanel>
 
+
                                         <TextBlock Grid.Column="1"
-                                                   Text="{Binding LogiBelopp, StringFormat={}{0:N0} kr}"
+                                                   Text="{Binding LogiBelopp,
+                                                   StringFormat={}{0:N0} kr}"
                                                    FontWeight="Bold"
                                                    VerticalAlignment="Center"
                                                    Margin="20,0,0,0"/>
@@ -106,11 +138,16 @@
                                 </Border>
 
                             </DataTemplate>
+
                         </ItemsControl.ItemTemplate>
 
                     </ItemsControl>
 
+
                     <Separator Margin="0,10,0,15"/>
+
+
+                    <!-- TOTAL -->
 
                     <StackPanel Orientation="Horizontal"
                                 HorizontalAlignment="Right">
@@ -120,12 +157,14 @@
                                    FontWeight="Bold"
                                    Margin="0,0,10,0"/>
 
-                        <TextBlock x:Name="txtTotal"
+
+                        <TextBlock Text="{Binding TotalBeloppText}"
                                    FontSize="22"
                                    FontWeight="Bold"
                                    Foreground="{StaticResource FjällBlå}"/>
 
                     </StackPanel>
+
 
                 </StackPanel>
 
@@ -133,7 +172,9 @@
 
         </ScrollViewer>
 
+
         <!-- OK -->
+
         <Button Grid.Row="2"
                 Content="OK"
                 Width="140"
