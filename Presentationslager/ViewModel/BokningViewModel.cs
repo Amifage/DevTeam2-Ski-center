@@ -24,9 +24,6 @@ namespace Presentationslager.ViewModel
         private decimal? _aktuelltLogiPris;
 
 
-        // -------------------------
-        // EVENTS TILL FÖNSTRET
-        // -------------------------
 
         public event Action<string>? VisaMeddelande;
 
@@ -34,10 +31,6 @@ namespace Presentationslager.ViewModel
 
         public event Action? StängFönster;
 
-
-        // -------------------------
-        // LISTOR
-        // -------------------------
 
         public ObservableCollection<Kund> Kunder { get; }
 
@@ -52,9 +45,7 @@ namespace Presentationslager.ViewModel
         public ObservableCollection<LogiRad> LogiRader { get; }
 
 
-        // -------------------------
-        // VALD KUND
-        // -------------------------
+        #region Vald kund
 
         public Kund? ValdKund
         {
@@ -68,11 +59,9 @@ namespace Presentationslager.ViewModel
                 OnPropertyChanged();
             }
         }
+#endregion
 
-
-        // -------------------------
-        // DATUM
-        // -------------------------
+        #region Datum
 
         public DateTime? StartDatum
         {
@@ -108,12 +97,9 @@ namespace Presentationslager.ViewModel
                 UppdateraPris();
             }
         }
+#endregion
 
-
-        // -------------------------
-        // ANTAL PERSONER TOTALT
-        // -------------------------
-
+        #region Antal Personer
         public int? AntalPersonerTotalt
         {
             get => _antalPersonerTotalt;
@@ -130,12 +116,9 @@ namespace Presentationslager.ViewModel
                 UppdateraAntalPersonerFörValtLogi();
             }
         }
+        #endregion 
 
-
-        // -------------------------
-        // BOENDETYP
-        // -------------------------
-
+        #region Vald Logi
         public string? ValdBoendeTyp
         {
             get => _valdBoendeTyp;
@@ -151,11 +134,6 @@ namespace Presentationslager.ViewModel
                 UppdateraTillgängligaLogi();
             }
         }
-
-
-        // -------------------------
-        // VALT LOGI
-        // -------------------------
 
         public Logi? ValtLogi
         {
@@ -190,16 +168,11 @@ namespace Presentationslager.ViewModel
                 OnPropertyChanged();
             }
         }
+        #endregion
 
+        #region Visningstext
 
-        // -------------------------
-        // VISNINGSTEXTER
-        // -------------------------
-
-        public string LogiPrisText =>
-            _aktuelltLogiPris.HasValue
-                ? $"{_aktuelltLogiPris.Value:N0} kr"
-                : "0 kr";
+        public string LogiPrisText => _aktuelltLogiPris.HasValue ? $"{_aktuelltLogiPris.Value:N0} kr" : "0 kr";
 
 
         public string BoendePlaceringText
@@ -208,8 +181,7 @@ namespace Presentationslager.ViewModel
             {
                 int totalt = AntalPersonerTotalt ?? 0;
 
-                int placerade =
-                    LogiRader.Sum(x => x.AntalPersoner);
+                int placerade = LogiRader.Sum(x => x.AntalPersoner);
 
                 return $"{placerade} av {totalt} personer placerade";
             }
@@ -220,81 +192,37 @@ namespace Presentationslager.ViewModel
         {
             get
             {
-                decimal total =
-                    LogiRader.Sum(x => x.LogiBelopp);
+                decimal total = LogiRader.Sum(x => x.LogiBelopp);
 
                 return $"{total:N0} kr";
             }
         }
-
-
-        // -------------------------
-        // COMMANDS
-        // -------------------------
+        #endregion
 
         public ICommand LäggTillLogiCommand { get; }
-
         public ICommand SkapaBokningCommand { get; }
-
         public ICommand AvbrytCommand { get; }
-
-
-        // -------------------------
-        // CONSTRUCTOR
-        // -------------------------
 
         public BokningViewModel()
         {
-            KundController kundController =
-                new KundController();
-
-            Kunder =
-                new ObservableCollection<Kund>(
-                    kundController.HämtaAllaKunder());
-
-
-            AntalPersonerAlternativ =
-                new ObservableCollection<int>(
-                    Enumerable.Range(1, 50));
-
-
-            BoendeTyper =
-                new ObservableCollection<string>
-                {
+            KundController kundController = new KundController();
+            Kunder = new ObservableCollection<Kund>(kundController.HämtaAllaKunder());
+            AntalPersonerAlternativ = new ObservableCollection<int>(Enumerable.Range(1, 50));
+            BoendeTyper = new ObservableCollection<string>
+            {
                     "Lägenhet",
                     "Camping"
-                };
-
-
-            TillgängligaLogi =
-                new ObservableCollection<Logi>();
-
-
-            AntalPersonerValtLogiAlternativ =
-                new ObservableCollection<int>();
-
-
-            LogiRader =
-                new ObservableCollection<LogiRad>();
-
-
-            LäggTillLogiCommand =
-                new RelayCommand(_ => LäggTillLogi());
-
-
-            SkapaBokningCommand =
-                new RelayCommand(_ => SkapaBokning());
-
-
-            AvbrytCommand =
-                new RelayCommand(_ =>
-                    StängFönster?.Invoke());
+            };
+            TillgängligaLogi = new ObservableCollection<Logi>();
+            AntalPersonerValtLogiAlternativ = new ObservableCollection<int>();
+            LogiRader = new ObservableCollection<LogiRad>();
+            LäggTillLogiCommand = new RelayCommand(_ => LäggTillLogi());
+            SkapaBokningCommand = new RelayCommand(_ => SkapaBokning());
+            AvbrytCommand = new RelayCommand(_ => StängFönster?.Invoke());
         }
 
 
-        // =====================================================
-        // BOENDE
-        // =====================================================
+        #region Logi
 
         private void UppdateraTillgängligaLogi()
         {
@@ -314,18 +242,9 @@ namespace Presentationslager.ViewModel
                 return;
 
 
-            LogiController logiController =
-                new LogiController();
-
-
-            var allaLogi =
-                logiController.HämtaAllaLogi();
-
-
-            var upptagnaLogi =
-                logiController.HämtaUpptagnaLogi(
-                    StartDatum.Value,
-                    SlutDatum.Value);
+            LogiController logiController = new LogiController();
+            var allaLogi = logiController.HämtaAllaLogi();
+            var upptagnaLogi =logiController.HämtaUpptagnaLogi(StartDatum.Value, SlutDatum.Value);
 
 
             IEnumerable<Logi> filtreradeLogi;
@@ -333,47 +252,21 @@ namespace Presentationslager.ViewModel
 
             if (ValdBoendeTyp == "Lägenhet")
             {
-                filtreradeLogi =
-                    allaLogi
-                        .Where(l =>
-                            l.ArtikelTypNummer == 1 ||
-                            l.ArtikelTypNummer == 2)
-
-                        .Where(l =>
-                            !LogiRader.Any(r =>
-                                r.LogiNummer ==
-                                l.LogiNummer))
-
-                        .Where(l =>
-                            !upptagnaLogi.Contains(
-                                l.LogiNummer))
-
-                        .OrderBy(l =>
-                            AvståndTillValdaLogi(l))
-
-                        .ThenBy(l =>
-                            HämtaLogiNummer(l));
+                filtreradeLogi = allaLogi
+                    .Where(l => l.ArtikelTypNummer == 1 || l.ArtikelTypNummer == 2)
+                    .Where(l => !LogiRader.Any(r => r.LogiNummer == l.LogiNummer))
+                    .Where(l => !upptagnaLogi.Contains(l.LogiNummer))
+                    .OrderBy(l => AvståndTillValdaLogi(l))
+                    .ThenBy(l => HämtaLogiNummer(l));
             }
             else
             {
-                filtreradeLogi =
-                    allaLogi
-                        .Where(l =>
-                            l.ArtikelTypNummer == 3)
-
-                        .Where(l =>
-                            !LogiRader.Any(r =>
-                                r.LogiNummer ==
-                                l.LogiNummer))
-
-                        .Where(l =>
-                            !upptagnaLogi.Contains(
-                                l.LogiNummer))
-
-                        .OrderBy(l =>
-                            HämtaLogiNummer(l));
+                filtreradeLogi =  allaLogi
+                         .Where(l => l.ArtikelTypNummer == 3)
+                         .Where(l => !LogiRader.Any(r => r.LogiNummer ==  l.LogiNummer))
+                         .Where(l => !upptagnaLogi.Contains(l.LogiNummer))
+                         .OrderBy(l => HämtaLogiNummer(l));
             }
-
 
             foreach (Logi logi in filtreradeLogi)
             {
@@ -389,36 +282,22 @@ namespace Presentationslager.ViewModel
             AntalPersonerValtLogi = null;
 
 
-            if (ValtLogi == null ||
-                AntalPersonerTotalt == null)
+            if (ValtLogi == null || AntalPersonerTotalt == null)
             {
                 return;
             }
 
-
-            int redanPlacerade =
-                LogiRader.Sum(x =>
-                    x.AntalPersoner);
-
-
-            int återstående =
-                AntalPersonerTotalt.Value -
-                redanPlacerade;
-
-
+            int redanPlacerade = LogiRader.Sum(x => x.AntalPersoner);
+            int återstående = AntalPersonerTotalt.Value -  redanPlacerade;
+       
             if (återstående <= 0)
                 return;
 
-
             int maxAntal;
-
 
             if (ValtLogi.LogiKapacitet.HasValue)
             {
-                maxAntal =
-                    Math.Min(
-                        ValtLogi.LogiKapacitet.Value,
-                        återstående);
+                maxAntal = Math.Min(ValtLogi.LogiKapacitet.Value, återstående);
             }
             else
             {
@@ -426,272 +305,179 @@ namespace Presentationslager.ViewModel
                 maxAntal = återstående;
             }
 
-
             for (int i = 1; i <= maxAntal; i++)
             {
                 AntalPersonerValtLogiAlternativ.Add(i);
             }
         }
 
-
         private void UppdateraPris()
         {
             _aktuelltLogiPris = null;
 
-            OnPropertyChanged(
-                nameof(LogiPrisText));
+            OnPropertyChanged(nameof(LogiPrisText));
 
 
-            if (ValtLogi == null ||
-                StartDatum == null ||
-                SlutDatum == null ||
-                ValtLogi.ArtikelTypNummer == null)
+            if (ValtLogi == null || StartDatum == null || SlutDatum == null || ValtLogi.ArtikelTypNummer == null)
             {
                 return;
             }
 
+            PrisController prisController = new PrisController();
 
-            PrisController prisController =
-                new PrisController();
-
-
-            Pris? pris =
-                prisController.HämtaAktuelltPris(
-                    ValtLogi.ArtikelTypNummer.Value,
-                    StartDatum.Value,
-                    SlutDatum.Value);
-
+            Pris? pris = prisController.HämtaAktuelltPris(ValtLogi.ArtikelTypNummer.Value, StartDatum.Value,SlutDatum.Value);
 
             if (pris != null)
             {
-                _aktuelltLogiPris =
-                    pris.PrisBelopp;
+                _aktuelltLogiPris = pris.PrisBelopp;
             }
 
-
-            OnPropertyChanged(
-                nameof(LogiPrisText));
+            OnPropertyChanged(nameof(LogiPrisText));
         }
-
 
         private void LäggTillLogi()
         {
             if (AntalPersonerTotalt == null)
             {
-                VisaMeddelande?.Invoke(
-                    "Du måste välja totalt antal personer.");
+                VisaMeddelande?.Invoke("Du måste välja totalt antal personer.");
 
                 return;
             }
-
 
             if (ValtLogi == null)
             {
-                VisaMeddelande?.Invoke(
-                    "Du måste välja ett boende.");
+                VisaMeddelande?.Invoke( "Du måste välja ett boende.");
 
                 return;
             }
-
 
             if (AntalPersonerValtLogi == null)
             {
-                VisaMeddelande?.Invoke(
-                    "Du måste välja antal personer för boendet.");
+                VisaMeddelande?.Invoke( "Du måste välja antal personer för boendet.");
 
                 return;
             }
-
 
             if (!ValideraDatum())
                 return;
 
+            int redanPlacerade =LogiRader.Sum(x =>  x.AntalPersoner);
 
-            int redanPlacerade =
-                LogiRader.Sum(x =>
-                    x.AntalPersoner);
-
-
-            if (redanPlacerade +
-                AntalPersonerValtLogi.Value >
-                AntalPersonerTotalt.Value)
+            if (redanPlacerade + AntalPersonerValtLogi.Value > AntalPersonerTotalt.Value)
             {
-                VisaMeddelande?.Invoke(
-                    "Du kan inte placera fler personer än det totala antalet i bokningen.");
+                VisaMeddelande?.Invoke("Du kan inte placera fler personer än det totala antalet i bokningen.");
 
                 return;
             }
-
 
             UppdateraPris();
 
-
             if (!_aktuelltLogiPris.HasValue)
             {
-                VisaMeddelande?.Invoke(
-                    "Kunde inte hitta något pris för det valda boendet.");
+                VisaMeddelande?.Invoke( "Kunde inte hitta något pris för det valda boendet.");
 
                 return;
             }
 
-
-            LogiRad logiRad =
-                new LogiRad
+            LogiRad logiRad = new LogiRad
                 {
-                    StartDatum =
-                        StartDatum!.Value,
-
-                    SlutDatum =
-                        SlutDatum!.Value,
-
-                    LogiBelopp =
-                        _aktuelltLogiPris.Value,
-
-                    AntalPersoner =
-                        AntalPersonerValtLogi.Value,
-
-                    LogiNummer =
-                        ValtLogi.LogiNummer,
-
-                    LogiDisplayText =
-                        ValtLogi.DisplayText,
-
-                    SenastUppdaterad =
-                        DateTime.Now
+                    StartDatum = StartDatum!.Value,
+                    SlutDatum = SlutDatum!.Value,
+                    LogiBelopp = _aktuelltLogiPris.Value,
+                    AntalPersoner = AntalPersonerValtLogi.Value,
+                    LogiNummer = ValtLogi.LogiNummer,
+                    LogiDisplayText = ValtLogi.DisplayText,
+                    SenastUppdaterad = DateTime.Now
                 };
 
 
             LogiRader.Add(logiRad);
 
+            OnPropertyChanged(nameof(BoendePlaceringText));
 
-            OnPropertyChanged(
-                nameof(BoendePlaceringText));
-
-            OnPropertyChanged(
-                nameof(TotalBeloppText));
+            OnPropertyChanged(nameof(TotalBeloppText));
 
 
             ValtLogi = null;
 
             _aktuelltLogiPris = null;
 
-            OnPropertyChanged(
-                nameof(LogiPrisText));
+            OnPropertyChanged( nameof(LogiPrisText));
 
 
             UppdateraTillgängligaLogi();
         }
+#endregion
 
-
-        // =====================================================
-        // SKAPA BOKNING
-        // =====================================================
-
+        #region Skapa bokning
         private void SkapaBokning()
         {
             if (ValdKund == null)
             {
-                VisaMeddelande?.Invoke(
-                    "Du måste välja en kund.");
+                VisaMeddelande?.Invoke("Du måste välja en kund.");
 
                 return;
             }
-
 
             if (!ValideraDatum())
                 return;
 
-
-            Entitetslager.Bokning nyBokning =
-                new Entitetslager.Bokning
+            Entitetslager.Bokning nyBokning = new Entitetslager.Bokning
                 {
-                    KundNummer =
-                        ValdKund.KundNummer,
-
-                    BokningsDatum =
-                        DateTime.Now,
-
-                    Status =
-                        "Aktiv",
-
-                    LogiRader =
-                        LogiRader.ToList()
+                    KundNummer = ValdKund.KundNummer,
+                    BokningsDatum = DateTime.Now,
+                    Status = "Aktiv",
+                    LogiRader = LogiRader.ToList()
                 };
 
 
-            BokningController bokningController =
-                new BokningController();
+            BokningController bokningController = new BokningController();
 
+            bokningController.SkapaBokning( nyBokning);
 
-            bokningController.SkapaBokning(
-                nyBokning);
-
-
-            string kundText =
-                ValdKund switch
+            string kundText = ValdKund switch
                 {
-                    PrivatKund privatKund =>
-                        privatKund.DisplayText,
+                    PrivatKund privatKund => privatKund.DisplayText,
 
-                    FöretagsKund företagsKund =>
-                        företagsKund.DisplayText,
-
-                    _ =>
-                        ValdKund.KundNummer.ToString()
+                    FöretagsKund företagsKund => företagsKund.DisplayText, _ => ValdKund.KundNummer.ToString()
                 };
 
 
-            BokningSparad?.Invoke(
-                kundText,
-                DateTime.Now,
-                LogiRader.ToList());
+            BokningSparad?.Invoke(kundText, DateTime.Now, LogiRader.ToList());
         }
-
 
         private bool ValideraDatum()
         {
-            if (StartDatum == null ||
-                SlutDatum == null)
+            if (StartDatum == null || SlutDatum == null)
             {
-                VisaMeddelande?.Invoke(
-                    "Du måste välja både startdatum och slutdatum.");
+                VisaMeddelande?.Invoke( "Du måste välja både startdatum och slutdatum.");
 
                 return false;
             }
-
 
             if (SlutDatum < StartDatum)
             {
-                VisaMeddelande?.Invoke(
-                    "Slutdatum kan inte vara före startdatum.");
+                VisaMeddelande?.Invoke( "Slutdatum kan inte vara före startdatum.");
 
                 return false;
             }
 
-
             return true;
         }
+#endregion 
 
-
-        // =====================================================
-        // ÅTERSTÄLL
-        // =====================================================
+        #region Återställ Formulär
 
         public void ÅterställFormulär()
         {
             LogiRader.Clear();
 
             ValdKund = null;
-
             StartDatum = null;
             SlutDatum = null;
-
             AntalPersonerTotalt = null;
-
             ValdBoendeTyp = null;
-
             ValtLogi = null;
-
             AntalPersonerValtLogi = null;
 
             TillgängligaLogi.Clear();
@@ -701,109 +487,63 @@ namespace Presentationslager.ViewModel
             _aktuelltLogiPris = null;
 
 
-            OnPropertyChanged(
-                nameof(LogiPrisText));
-
-            OnPropertyChanged(
-                nameof(BoendePlaceringText));
-
-            OnPropertyChanged(
-                nameof(TotalBeloppText));
+            OnPropertyChanged( nameof(LogiPrisText));
+            OnPropertyChanged( nameof(BoendePlaceringText));
+            OnPropertyChanged(nameof(TotalBeloppText));
         }
+#endregion
 
-
-        // =====================================================
-        // HJÄLPMETODER
-        // =====================================================
+        #region Hjälpmetoder
 
         private int HämtaLogiNummer(Logi logi)
         {
-            if (string.IsNullOrWhiteSpace(
-                logi.LogiNummer))
+            if (string.IsNullOrWhiteSpace( logi.LogiNummer))
             {
                 return int.MaxValue;
             }
 
-
-            string siffror =
-                new string(
-                    logi.LogiNummer
+            string siffror = new string( logi.LogiNummer
                         .Where(char.IsDigit)
                         .ToArray());
 
-
-            return int.TryParse(
-                siffror,
-                out int nummer)
-
-                ? nummer
-                : int.MaxValue;
+            return int.TryParse( siffror, out int nummer) ? nummer : int.MaxValue;
         }
 
-
-        private int AvståndTillValdaLogi(
-            Logi logi)
+        private int AvståndTillValdaLogi( Logi logi)
         {
             if (!LogiRader.Any())
                 return 0;
 
-
-            int aktuelltNummer =
-                HämtaLogiNummer(logi);
-
+            int aktuelltNummer = HämtaLogiNummer(logi);
 
             return LogiRader
-                .Where(r =>
-                    !string.IsNullOrWhiteSpace(
-                        r.LogiNummer))
+                .Where(r => !string.IsNullOrWhiteSpace( r.LogiNummer))
 
                 .Select(r =>
                 {
-                    string siffror =
-                        new string(
-                            r.LogiNummer!
+                    string siffror = new string(  r.LogiNummer!
                                 .Where(char.IsDigit)
                                 .ToArray());
 
-
-                    return int.TryParse(
-                        siffror,
-                        out int nummer)
-
-                        ? Math.Abs(
-                            aktuelltNummer -
-                            nummer)
-
-                        : int.MaxValue;
+                    return int.TryParse( siffror, out int nummer) ? Math.Abs( aktuelltNummer - nummer) : int.MaxValue;
                 })
 
                 .DefaultIfEmpty(0)
                 .Min();
         }
+        #endregion
 
-
-        // =====================================================
-        // PROPERTY CHANGED
-        // =====================================================
-
+        #region PropertyChanged
         public event PropertyChangedEventHandler?
             PropertyChanged;
 
-
-        protected void OnPropertyChanged(
-            [CallerMemberName]
-            string? propertyName = null)
+        protected void OnPropertyChanged([CallerMemberName] string? propertyName = null)
         {
-            PropertyChanged?.Invoke(
-                this,
-                new PropertyChangedEventArgs(
-                    propertyName));
+            PropertyChanged?.Invoke( this, new PropertyChangedEventArgs(propertyName));
         }
+        #endregion
 
-
-        // =====================================================
-        // RELAY COMMAND
-        // =====================================================
+        #region RelayCommands
 
         private sealed class RelayCommand : ICommand
         {
@@ -813,41 +553,29 @@ namespace Presentationslager.ViewModel
             private readonly Predicate<object?>?
                 _canExecute;
 
-
-            public RelayCommand(
-                Action<object?> execute,
-                Predicate<object?>? canExecute = null)
+                        public RelayCommand(Action<object?> execute, Predicate<object?>? canExecute = null)
             {
                 _execute = execute;
                 _canExecute = canExecute;
             }
 
-
-            public bool CanExecute(
-                object? parameter)
+            public bool CanExecute(object? parameter)
             {
-                return _canExecute == null ||
-                       _canExecute(parameter);
+                return _canExecute == null || _canExecute(parameter);
             }
 
-
-            public void Execute(
-                object? parameter)
+            public void Execute(object? parameter)
             {
                 _execute(parameter);
             }
 
-
-            public event EventHandler?
-                CanExecuteChanged;
-
+            public event EventHandler? CanExecuteChanged;
 
             public void RaiseCanExecuteChanged()
             {
-                CanExecuteChanged?.Invoke(
-                    this,
-                    EventArgs.Empty);
+                CanExecuteChanged?.Invoke( this, EventArgs.Empty);
             }
         }
+        #endregion
     }
 }
