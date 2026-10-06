@@ -58,23 +58,11 @@ namespace Presentationslager.ViewModel
             set { _valdArtikelTyp = value; OnPropertyChanged(); }
         }
 
-        private ObservableCollection<string> _utrustningsPaketLista;
-        public ObservableCollection<string> UtrustningsPaketLista
-        {
-            get => _utrustningsPaketLista;
-            set { _utrustningsPaketLista = value; OnPropertyChanged(); }
-        }
-
-        private string _valdtUtrustningsPaket;
-        public string ValdtUtrustningsPaket
-        {
-            get => _valdtUtrustningsPaket;
-            set { _valdtUtrustningsPaket = value; OnPropertyChanged(); }
-        }
 
         public ICommand SokCommand { get; }
         public ICommand RensaCommand { get; }
         public ICommand UppdateraStatusCommand { get; }
+        public ICommand TillbakaCommand { get; set; }
 
         public UtrustningViewModel()
         {
@@ -82,12 +70,11 @@ namespace Presentationslager.ViewModel
 
             UtrustningsLista = new ObservableCollection<Entitetslager.Utrustning>();
             ArtikelTyper = new ObservableCollection<string>();
-            UtrustningsPaketLista = new ObservableCollection<string>();
 
             SokCommand = new RelayCommand(UtforSokning);
             RensaCommand = new RelayCommand(RensaFalt);
             UppdateraStatusCommand = new RelayCommand(UppdateraStatus, CanUppdateraStatus);
-
+            TillbakaCommand = new RelayCommand(TillbakaTillMeny);
             LaddaData();
         }
 
@@ -107,19 +94,23 @@ namespace Presentationslager.ViewModel
             ArtikelTyper.Clear();
             if (typer != null)
             {
-                foreach (var typ in typer.Select(t => t.TypNamn).Where(n => n != null))
+                
+                var filtreradeTyper = typer
+                    .Where(t => t != null && !string.IsNullOrWhiteSpace(t.TypNamn))
+                    .Select(t => t.TypNamn)
+                    .Where(namn =>
+                        !namn.StartsWith("Paket", StringComparison.OrdinalIgnoreCase) &&
+                        !namn.EndsWith("paket", StringComparison.OrdinalIgnoreCase) &&
+                        !namn.Contains("LGH.I", StringComparison.OrdinalIgnoreCase) &&
+                        !namn.Contains("Camp", StringComparison.OrdinalIgnoreCase) &&
+                        !namn.Contains("LGH.II", StringComparison.OrdinalIgnoreCase) && 
+                        !namn.Contains("Konferens", StringComparison.OrdinalIgnoreCase) &&
+                        !namn.Contains("Skidlektion", StringComparison.OrdinalIgnoreCase) &&
+                        !namn.Contains("Lektion", StringComparison.OrdinalIgnoreCase));
+
+                foreach (var typ in filtreradeTyper)
                 {
                     ArtikelTyper.Add(typ);
-                }
-            }
-
-            var paket = _utrustningController.HamtaAllaUtrustningsPaket();
-            UtrustningsPaketLista.Clear();
-            if (paket != null)
-            {
-                foreach (var p in paket.Select(p => p.UtrustningPaketNamn).Where(n => n != null))
-                {
-                    UtrustningsPaketLista.Add(p);
                 }
             }
         }
@@ -129,8 +120,7 @@ namespace Presentationslager.ViewModel
             var resultat = _utrustningController.SokUtrustning(
                 SokUtrustningNummer,
                 SokStatus,
-                ValdArtikelTyp,
-                ValdtUtrustningsPaket
+                ValdArtikelTyp
             );
 
             UtrustningsLista.Clear();
@@ -148,7 +138,6 @@ namespace Presentationslager.ViewModel
             SokUtrustningNummer = string.Empty;
             SokStatus = string.Empty;
             ValdArtikelTyp = null;
-            ValdtUtrustningsPaket = null;
 
             LaddaData();
         }
@@ -190,6 +179,18 @@ namespace Presentationslager.ViewModel
         protected void OnPropertyChanged([CallerMemberName] string propertyName = null)
         {
             PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(propertyName));
+        }
+
+        private void TillbakaTillMeny(object obj)
+        {
+            Meny menyFonster = new Meny();
+            menyFonster.Show();
+
+            // Stäng det nuvarande fönstret
+            if (obj is Window nuvarandeFonster)
+            {
+                nuvarandeFonster.Close();
+            }
         }
     }
 }

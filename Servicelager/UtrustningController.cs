@@ -27,7 +27,7 @@ namespace Servicelager
                 .FirstOrDefault();
         }
 
-        public List<Utrustning> SokUtrustning(string utrustningNummer, string status, string artikelTypNamn, string utrustningsPaketNamn)
+        public List<Utrustning> SokUtrustning(string utrustningNummer, string status, string artikelTypNamn)
         {
             // 1. Hämta alla utrustningar till minnet
             var resultat = _unitOfWork.UtrustningRepository.GetAll().ToList();
@@ -56,20 +56,6 @@ namespace Servicelager
 
                 resultat = resultat.Where(u => u.ArtikelTypNummer.HasValue &&
                     matchandeArtikelTypNummer.Contains(u.ArtikelTypNummer.Value)).ToList();
-            }
-
-            // 5. Sökning i UtrustningPaket på UtrustningPaketNamn
-            if (!string.IsNullOrWhiteSpace(utrustningsPaketNamn))
-            {
-                // Hitta de ArtikelTypNummer som hör till paket med matchande UtrustningPaketNamn
-                var matchandePaketArtikelTypNummer = _unitOfWork.UtrustningPaketRepository.GetAll()
-                    .Where(p => p.UtrustningPaketNamn != null && p.UtrustningPaketNamn.Equals(utrustningsPaketNamn, StringComparison.OrdinalIgnoreCase))
-                    .Where(p => p.ArtikelTypNummer.HasValue)
-                    .Select(p => p.ArtikelTypNummer.Value)
-                    .ToList();
-
-                resultat = resultat.Where(u => u.ArtikelTypNummer.HasValue &&
-                    matchandePaketArtikelTypNummer.Contains(u.ArtikelTypNummer.Value)).ToList();
             }
 
             return resultat;

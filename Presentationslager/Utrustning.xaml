@@ -45,11 +45,6 @@
                     <ComboBox ItemsSource="{Binding ArtikelTyper}" SelectedItem="{Binding ValdArtikelTyp}" Width="150" Height="30" VerticalContentAlignment="Center"/>
                 </StackPanel>
 
-                <StackPanel Orientation="Vertical" Margin="0,0,15,10">
-                    <TextBlock Text="Utrustningspaket:" Margin="0,0,0,5"/>
-                    <ComboBox ItemsSource="{Binding UtrustningsPaketLista}" SelectedItem="{Binding ValdtUtrustningsPaket}" Width="150" Height="30" VerticalContentAlignment="Center"/>
-                </StackPanel>
-
                 <StackPanel Orientation="Horizontal" VerticalAlignment="Bottom" Margin="0,0,0,10">
                     <Button Content="Sök" Command="{Binding SokCommand}" Width="90" Height="30" Margin="0,0,10,0"/>
                     <Button Content="Rensa" Command="{Binding RensaCommand}" Width="90" Height="30"/>
@@ -81,7 +76,12 @@
 
         <!-- Åtgärdsknappar längst ner -->
         <StackPanel Grid.Row="3" Orientation="Horizontal" HorizontalAlignment="Right" Margin="0,10,0,0">
-            <Button Content="Uppdatera status" Command="{Binding UppdateraStatusCommand}" Width="150" Height="35"/>
+            <Button Content="Uppdatera status" Command="{Binding UppdateraStatusCommand}" Width="150" Height="35" Margin="0,0,10,0"/>
+            <Button Content="Tillbaka" 
+                    Command="{Binding TillbakaCommand}" 
+                    CommandParameter="{Binding RelativeSource={RelativeSource AncestorType=Window}}" 
+                    Width="150" Height="35"/>
         </StackPanel>
+
     </Grid>
 </Window>
