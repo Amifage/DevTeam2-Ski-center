@@ -1,6 +1,7 @@
 ﻿using Presentationslager.Command;
 using System.Collections.ObjectModel;
 using System.ComponentModel;
+using System.Reflection.Metadata;
 using System.Runtime.CompilerServices;
 using System.Windows;
 using System.Windows.Input;
@@ -27,6 +28,11 @@ namespace Presentationslager.ViewModel
         {
             Kundregister kundregister = new Kundregister();
                 kundregister.Show();
+
+            if (obj is Window nuvarandeFonster)
+            {
+                nuvarandeFonster.Close();
+            }
         }
 
         public void ÖppnaUtrustning(object obj)
