@@ -19,5 +19,23 @@ namespace Servicelager
                 .ToList();
         }
 
+
+        public List<string> HämtaUpptagnaLogi(
+        DateTime startDatum,
+        DateTime slutDatum)
+        {
+            using var unitOfWork = new UnitOfWork(new SkiContext());
+
+            return unitOfWork.LogiRadRepository
+                .GetAll()
+                .Where(r =>
+                    r.LogiNummer != null &&
+                    r.StartDatum < slutDatum &&
+                    r.SlutDatum > startDatum)
+                .Select(r => r.LogiNummer!)
+                .Distinct()
+                .ToList();
+        }
+
     }
 }

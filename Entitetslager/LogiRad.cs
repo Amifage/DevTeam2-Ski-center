@@ -25,5 +25,10 @@ namespace Entitetslager
         public int? BokningsNummer { get; set; }
         [ForeignKey(nameof(BokningsNummer))]
         public virtual Bokning bokning { get; set; } // nav prop
+
+
+        [NotMapped]
+        public string? LogiDisplayText { get; set; } //Chats påhitt, denna gör så vi kan använda display text i Logi i Bokning /Sara
+
     }
 }
