@@ -16,7 +16,7 @@ namespace Presentationslager.ViewModel
         public ObservableCollection<Kund> Kunder { get; set; }
         public ICommand TillbakaCommand { get; set; }
 
-        public ICommand UppdaterakundCommand { get; set; }
+        public ICommand UppdateraKundCommand { get; set; }
 
         public KundregisterViewModel()
         {
@@ -26,7 +26,7 @@ namespace Presentationslager.ViewModel
             SparaKundCommand = new RelayCommand(SparaKund);
             RensaFormularCommand = new RelayCommand(RensaFormular);
             TillbakaCommand = new RelayCommand(TillbakaTillMeny);
-            UppdaterakundCommand = new RelayCommand(UppdateraKund);
+            UppdateraKundCommand = new RelayCommand(UppdateraKund);
 
             NyKredit = 12000;
         }
@@ -128,17 +128,23 @@ namespace Presentationslager.ViewModel
 
             UppdateraKundLista();
             RensaFormular(null);
+            MessageBox.Show("Kunden har sparats i registret!", "Sparning genomförd", MessageBoxButton.OK, MessageBoxImage.Information);
         }
 
         private void RensaFormular(object obj)
         {
+        
             NyEpost = string.Empty;
             NyTelefon = string.Empty;
+            NyAdress = string.Empty;      
+            NyPostnummer = string.Empty; 
+            NyOrt = string.Empty;         
+            NyRabatt = 0;                 
+
             NyttFörnamn = string.Empty;
             NyttEfternamn = string.Empty;
             NyttFöretagsnamn = string.Empty;
 
-            // Notifiera vyn att uppdatera alla inmatningsfält
             OnPropertyChanged(string.Empty);
 
             if (ValdKundTypIndex == 0)
@@ -226,6 +232,8 @@ namespace Presentationslager.ViewModel
             _kundController.UppdateraKund(ValdKund);
             UppdateraKundLista();
             RensaFormular(null);
+
+            MessageBox.Show("Kunden har uppdaterats i registret!", "Uppdatering genomförd", MessageBoxButton.OK, MessageBoxImage.Information);
         }
     }
 }

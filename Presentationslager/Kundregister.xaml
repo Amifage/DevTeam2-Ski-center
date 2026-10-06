@@ -36,7 +36,7 @@
             </DataGrid.Columns>
         </DataGrid>
 
-        
+
         <Border Grid.Column="2" Background="{StaticResource Snövit}" CornerRadius="5" Padding="15">
             <Grid>
 
@@ -49,7 +49,7 @@
                     <StackPanel>
                         <TextBlock Text="Kunduppgifter" FontSize="20" FontWeight="SemiBold" Margin="0,0,0,15" />
 
-                       
+
                         <TextBlock Text="Välj kundtyp:" FontWeight="Bold" Margin="0,0,0,5"/>
                         <ComboBox SelectedIndex="{Binding ValdKundTypIndex}" Margin="0,0,0,15" Padding="5">
                             <ComboBoxItem Content="Privatkund" />
@@ -58,13 +58,13 @@
 
                         <!-- GEMENSAMMA FÄLT -->
                         <TextBlock Text="E-post" Foreground="Gray"/>
-                        <TextBox Text="{Binding NyEpost}" Margin="0,0,0,10" Padding="5"/>
+                        <TextBox Text="{Binding NyEpost, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" Margin="0,0,0,10" Padding="5"/>
 
                         <TextBlock Text="Telefonnummer" Foreground="Gray"/>
-                        <TextBox Text="{Binding NyTelefon}" Margin="0,0,0,10" Padding="5"/>
+                        <TextBox Text="{Binding NyTelefon, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" Margin="0,0,0,10" Padding="5"/>
 
                         <TextBlock Text="Adress" Foreground="Gray"/>
-                        <TextBox Text="{Binding NyAdress}" Margin="0,0,0,10" Padding="5"/>
+                        <TextBox Text="{Binding NyAdress, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" Margin="0,0,0,10" Padding="5"/>
 
                         <Grid Margin="0,0,0,10">
                             <Grid.ColumnDefinitions>
@@ -75,12 +75,12 @@
 
                             <StackPanel Grid.Column="0">
                                 <TextBlock Text="Postnummer" Foreground="Gray"/>
-                                <TextBox Text="{Binding NyPostnummer}" Padding="5"/>
+                                <TextBox Text="{Binding NyPostnummer, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" Padding="5"/>
                             </StackPanel>
 
                             <StackPanel Grid.Column="2">
                                 <TextBlock Text="Ort" Foreground="Gray"/>
-                                <TextBox Text="{Binding NyOrt}" Padding="5"/>
+                                <TextBox Text="{Binding NyOrt, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" Padding="5"/>
                             </StackPanel>
                         </Grid>
 
@@ -93,14 +93,12 @@
 
                             <StackPanel Grid.Column="0">
                                 <TextBlock Text="Rabatt (%)" Foreground="Gray"/>
-                                <TextBox Text="{Binding NyRabatt}" Padding="5"/>
+                                <TextBox Text="{Binding NyRabatt, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" Padding="5"/>
                             </StackPanel>
 
                             <StackPanel Grid.Column="2">
                                 <TextBlock Text="Kredit" Foreground="Gray"/>
-
-                             
-                                <TextBox Text="{Binding NyKredit, StringFormat={}{0:#,0}}" Padding="5">
+                                <TextBox Text="{Binding NyKredit, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged, StringFormat={}{0:#,0}}" Padding="5">
                                     <TextBox.Style>
                                         <Style TargetType="TextBox">
                                             <Setter Property="IsReadOnly" Value="False"/>
@@ -119,7 +117,7 @@
                             </StackPanel>
                         </Grid>
 
-                        
+
                         <StackPanel>
                             <StackPanel.Style>
                                 <Style TargetType="StackPanel">
@@ -133,13 +131,13 @@
                             </StackPanel.Style>
 
                             <TextBlock Text="Förnamn" Foreground="Gray"/>
-                            <TextBox Text="{Binding NyttFörnamn}" Margin="0,0,0,10" Padding="5"/>
+                            <TextBox Text="{Binding NyttFörnamn, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" Margin="0,0,0,10" Padding="5"/>
 
                             <TextBlock Text="Efternamn" Foreground="Gray"/>
-                            <TextBox Text="{Binding NyttEfternamn}" Margin="0,0,0,10" Padding="5"/>
+                            <TextBox Text="{Binding NyttEfternamn, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" Margin="0,0,0,10" Padding="5"/>
                         </StackPanel>
 
-                        
+
                         <StackPanel>
                             <StackPanel.Style>
                                 <Style TargetType="StackPanel">
@@ -153,12 +151,12 @@
                             </StackPanel.Style>
 
                             <TextBlock Text="Företagsnamn" Foreground="Gray"/>
-                            <TextBox Text="{Binding NyttFöretagsnamn}" Margin="0,0,0,10" Padding="5"/>
+                            <TextBox Text="{Binding NyttFöretagsnamn, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" Margin="0,0,0,10" Padding="5"/>
                         </StackPanel>
 
                         <StackPanel Orientation="Horizontal" HorizontalAlignment="Right" Margin="0,20,0,0">
                             <Button Content="Rensa" Command="{Binding RensaFormularCommand}" Width="80" Margin="0,0,10,0" Background="LightGray" Foreground="Black" BorderThickness="0" Padding="5"/>
-                         
+
                             <Button Content="Spara Ny" Command="{Binding SparaKundCommand}" Width="90" Margin="0,0,10,0" Background="{StaticResource SolnedgångOrange}" Foreground="White" BorderThickness="0" Padding="5"/>
 
                             <Button Content="Uppdatera" Command="{Binding UppdateraKundCommand}" Width="90" Background="Green" Foreground="White" BorderThickness="0" Padding="5"/>
