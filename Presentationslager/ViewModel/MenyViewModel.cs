@@ -10,6 +10,7 @@ namespace Presentationslager.ViewModel
     public class MenyViewModel : INotifyPropertyChanged
     {
         public ICommand LoggaUtCommand { get; }
+        public ICommand ÖppnaSkidlektionerCommand { get; }
         public ICommand ÖppnaKundregisterCommand { get;}
         public event PropertyChangedEventHandler? PropertyChanged;
 
@@ -17,6 +18,7 @@ namespace Presentationslager.ViewModel
         {
             LoggaUtCommand = new RelayCommand(LoggaUt);
             ÖppnaKundregisterCommand = new RelayCommand(ÖppnaKundregister);
+            ÖppnaSkidlektionerCommand = new RelayCommand(ÖppnaSkidlektioner);
 
         }
 
@@ -24,6 +26,12 @@ namespace Presentationslager.ViewModel
         {
             Kundregister kundregister = new Kundregister();
                 kundregister.Show();
+        }
+
+        private void ÖppnaSkidlektioner(object obj)
+        {
+            Skidlektion fönster = new Skidlektion();
+            fönster.Show();
         }
 
         private void LoggaUt(object parameter)

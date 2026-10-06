@@ -49,7 +49,7 @@
                 </StackPanel>
             </Button>
 
-            <Button Margin="10" Width="160" Height="100">
+            <Button Margin="10" Width="160" Height="100" Command="{Binding ÖppnaSkidlektionerCommand}">
                 <StackPanel HorizontalAlignment="Center" VerticalAlignment="Center">
                     <TextBlock Text="🎿" FontSize="28" HorizontalAlignment="Center" Margin="0,0,0,5"/>
                     <TextBlock Text="Utrustning" HorizontalAlignment="Center"/>
