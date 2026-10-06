@@ -1,0 +1,147 @@
+﻿<Window x:Class="Presentationslager.Bokningsbekräftelse"
+        xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        Title="Bokningsbekräftelse"
+        Height="650"
+        Width="750"
+        WindowStartupLocation="CenterOwner"
+        ResizeMode="NoResize">
+
+    <Grid Background="{StaticResource IsBlå}"
+          Margin="20">
+
+        <Grid.RowDefinitions>
+            <RowDefinition Height="Auto"/>
+            <RowDefinition Height="*"/>
+            <RowDefinition Height="Auto"/>
+        </Grid.RowDefinitions>
+
+        <!-- Rubrik -->
+        <TextBlock Grid.Row="0"
+                   Text="Bokningsbekräftelse"
+                   Style="{StaticResource HeaderTextStyle}"
+                   Margin="0,0,0,20"/>
+
+        <!-- Innehåll -->
+        <ScrollViewer Grid.Row="1"
+                      VerticalScrollBarVisibility="Auto">
+
+            <Border Background="White"
+                    CornerRadius="8"
+                    Padding="20">
+
+                <StackPanel>
+
+                    <TextBlock Text="Bokningen har sparats!"
+                               FontSize="22"
+                               FontWeight="SemiBold"
+                               Foreground="{StaticResource FjällBlå}"
+                               Margin="0,0,0,20"/>
+
+                    <TextBlock Text="Kund"
+                               FontWeight="Bold"/>
+
+                    <TextBlock x:Name="txtKund"
+                               Margin="0,3,0,15"/>
+
+                    <TextBlock Text="Bokningsdatum"
+                               FontWeight="Bold"/>
+
+                    <TextBlock x:Name="txtBokningsdatum"
+                               Margin="0,3,0,20"/>
+
+                    <Separator Margin="0,0,0,15"/>
+
+                    <TextBlock Text="Boende"
+                               FontSize="18"
+                               FontWeight="SemiBold"
+                               Foreground="{StaticResource FjällBlå}"
+                               Margin="0,0,0,10"/>
+
+                    <ItemsControl x:Name="lstLogiRader">
+
+                        <ItemsControl.ItemTemplate>
+                            <DataTemplate>
+
+                                <Border BorderBrush="LightGray"
+                                        BorderThickness="1"
+                                        CornerRadius="5"
+                                        Padding="10"
+                                        Margin="0,0,0,8">
+
+                                    <Grid>
+
+                                        <Grid.ColumnDefinitions>
+                                            <ColumnDefinition Width="*"/>
+                                            <ColumnDefinition Width="Auto"/>
+                                        </Grid.ColumnDefinitions>
+
+                                        <StackPanel>
+
+                                            <TextBlock Text="{Binding LogiNummer}"
+                                                       FontWeight="Bold"/>
+
+                                            <TextBlock>
+                                                <Run Text="Antal personer: "/>
+                                                <Run Text="{Binding AntalPersoner}"/>
+                                            </TextBlock>
+
+                                            <TextBlock>
+                                                <Run Text="Period: "/>
+                                                <Run Text="{Binding StartDatum, StringFormat={}{0:yyyy-MM-dd}}"/>
+                                                <Run Text=" - "/>
+                                                <Run Text="{Binding SlutDatum, StringFormat={}{0:yyyy-MM-dd}}"/>
+                                            </TextBlock>
+
+                                        </StackPanel>
+
+                                        <TextBlock Grid.Column="1"
+                                                   Text="{Binding LogiBelopp, StringFormat={}{0:N0} kr}"
+                                                   FontWeight="Bold"
+                                                   VerticalAlignment="Center"
+                                                   Margin="20,0,0,0"/>
+
+                                    </Grid>
+
+                                </Border>
+
+                            </DataTemplate>
+                        </ItemsControl.ItemTemplate>
+
+                    </ItemsControl>
+
+                    <Separator Margin="0,10,0,15"/>
+
+                    <StackPanel Orientation="Horizontal"
+                                HorizontalAlignment="Right">
+
+                        <TextBlock Text="Totalt:"
+                                   FontSize="22"
+                                   FontWeight="Bold"
+                                   Margin="0,0,10,0"/>
+
+                        <TextBlock x:Name="txtTotal"
+                                   FontSize="22"
+                                   FontWeight="Bold"
+                                   Foreground="{StaticResource FjällBlå}"/>
+
+                    </StackPanel>
+
+                </StackPanel>
+
+            </Border>
+
+        </ScrollViewer>
+
+        <!-- OK -->
+        <Button Grid.Row="2"
+                Content="OK"
+                Width="140"
+                Height="45"
+                HorizontalAlignment="Right"
+                Margin="0,20,0,0"
+                Click="Ok_Click"/>
+
+    </Grid>
+
+</Window>

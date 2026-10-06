@@ -14,5 +14,8 @@ namespace Entitetslager
         public string Efternamn { get; set; } 
         public decimal Rabatt { get; set; }
         public decimal Kredit { get; set; }
+
+
+        public string DisplayText => $"{KundNummer} | {KundTyp} | {Epost} | {Förnamn} | {Efternamn}";
     }
 }
