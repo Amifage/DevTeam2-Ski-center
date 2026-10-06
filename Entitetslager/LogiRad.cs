@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
+using System.ComponentModel.DataAnnotations.Schema;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
@@ -14,11 +15,15 @@ namespace Entitetslager
         public DateTime SlutDatum { get; set; }
         public decimal LogiBelopp { get; set; }
         public int AntalPersoner { get; set; }
+        public DateTime SenastUppdaterad { get; set; }
 
         public string? LogiNummer {  get; set; }
-        public virtual Logi logi { get; set; } //dont know
+        [ForeignKey(nameof(LogiNummer))]
+        public virtual Logi logi { get; set; }
+
 
         public int? BokningsNummer { get; set; }
+        [ForeignKey(nameof(BokningsNummer))]
         public virtual Bokning bokning { get; set; } // nav prop
     }
 }

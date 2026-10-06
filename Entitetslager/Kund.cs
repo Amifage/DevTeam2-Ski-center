@@ -19,5 +19,6 @@ namespace Entitetslager
         public string Postnummer { get; set; } 
         public string Ort { get; set; } 
         public DateTime SenastUppdaterad { get; set; }
+
     }
 }

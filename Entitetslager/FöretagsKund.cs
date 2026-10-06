@@ -13,5 +13,8 @@ namespace Entitetslager
         public string FöretagsNamn { get; set; } 
         public decimal Rabatt { get; set; }
         public decimal Kredit { get; set; }
+
+
+        public string DisplayText => $"{KundNummer} | {KundTyp} | {FöretagsNamn}";
     }
 }

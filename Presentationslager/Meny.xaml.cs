@@ -25,5 +25,10 @@ namespace Presentationslager
             InitializeComponent();
             DataContext = new MenyViewModel();
         }
+        private void SkapaBokning_Click(object sender, RoutedEventArgs e)
+        {
+            Bokning bokningWindow = new Bokning();
+            bokningWindow.ShowDialog();
+        }
     }
 }
