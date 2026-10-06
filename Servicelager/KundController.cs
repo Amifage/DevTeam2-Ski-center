@@ -30,5 +30,14 @@ public class KundController
             _unitofwork.KundRepository.Update(kund);
             _unitofwork.Save(); 
         }
+
+        public void TaBortKund (Kund kund)
+        {
+            using var _unitofwork = new UnitOfWork(new SkiContext());
+
+            _unitofwork.KundRepository.Remove(kund);
+            _unitofwork.Save();
+        }
+
     }
 }

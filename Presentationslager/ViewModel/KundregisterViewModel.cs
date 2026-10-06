@@ -18,6 +18,8 @@ namespace Presentationslager.ViewModel
 
         public ICommand UppdateraKundCommand { get; set; }
 
+        public ICommand TaBortKundCommand { get; set; }
+
         public KundregisterViewModel()
         {
             _kundController = new KundController();
@@ -27,6 +29,7 @@ namespace Presentationslager.ViewModel
             RensaFormularCommand = new RelayCommand(RensaFormular);
             TillbakaCommand = new RelayCommand(TillbakaTillMeny);
             UppdateraKundCommand = new RelayCommand(UppdateraKund);
+            TaBortKundCommand = new RelayCommand(TaBortKund);
 
             NyKredit = 12000;
         }
@@ -89,6 +92,9 @@ namespace Presentationslager.ViewModel
 
         private void SparaKund(object obj)
         {
+
+            if (!ValideraInmatning()) return;
+
             if (ValdKundTypIndex == 0)
             {
                 var nyPrivatkund = new PrivatKund
@@ -210,6 +216,8 @@ namespace Presentationslager.ViewModel
         {
             if (ValdKund == null) return;
 
+            if (!ValideraInmatning()) return;
+
             ValdKund.Epost = NyEpost;
             ValdKund.Telefonnummer = NyTelefon;
             ValdKund.Adress = NyAdress;
@@ -234,6 +242,80 @@ namespace Presentationslager.ViewModel
             RensaFormular(null);
 
             MessageBox.Show("Kunden har uppdaterats i registret!", "Uppdatering genomförd", MessageBoxButton.OK, MessageBoxImage.Information);
+        }
+
+        private bool ValideraInmatning()
+        {
+            // 1. Kontrollera att gemensamma fält inte är tomma
+            if (string.IsNullOrWhiteSpace(NyEpost) ||
+                string.IsNullOrWhiteSpace(NyTelefon) ||
+                string.IsNullOrWhiteSpace(NyAdress) ||
+                string.IsNullOrWhiteSpace(NyPostnummer) ||
+                string.IsNullOrWhiteSpace(NyOrt))
+            {
+                MessageBox.Show("Alla gemensamma fält (E-post, Telefon, Adress, Postnummer, Ort) måste vara ifyllda.",
+                                "Information saknas", MessageBoxButton.OK, MessageBoxImage.Warning);
+                return false;
+            }
+
+            if (ValdKundTypIndex == 0)
+            {
+                if (string.IsNullOrWhiteSpace(NyttFörnamn) || string.IsNullOrWhiteSpace(NyttEfternamn))
+                {
+                    MessageBox.Show("Förnamn och efternamn måste anges för privatkunder.",
+                                    "Information saknas", MessageBoxButton.OK, MessageBoxImage.Warning);
+                    return false;
+                }
+            }
+            else if (ValdKundTypIndex == 1) 
+            {
+                if (string.IsNullOrWhiteSpace(NyttFöretagsnamn))
+                {
+                    MessageBox.Show("Företagsnamn måste anges för företagskunder.",
+                                    "Information saknas", MessageBoxButton.OK, MessageBoxImage.Warning);
+                    return false;
+                }
+            }
+
+            if (!NyTelefon.All(char.IsDigit))
+            {
+                MessageBox.Show("Telefonnumret får endast innehålla siffror.",
+                                "Felaktigt format", MessageBoxButton.OK, MessageBoxImage.Warning);
+                return false;
+            }
+
+            return true;
+        }
+
+        private void TaBortKund(object obj)
+        {
+            if (ValdKund == null)
+            {
+                MessageBox.Show("Du måste välja en kund i listan först.",
+                                "Ingen kund vald",
+                                MessageBoxButton.OK,
+                                MessageBoxImage.Warning);
+                return;
+            }
+
+            MessageBoxResult svar = MessageBox.Show(
+                $"Är du säker på att du vill ta bort {ValdKund.Epost} permanent?",
+                "Bekräfta borttagning",
+                MessageBoxButton.YesNo,
+                MessageBoxImage.Warning);
+
+       
+            if (svar == MessageBoxResult.Yes)
+            {
+                _kundController.TaBortKund(ValdKund); 
+                UppdateraKundLista();                 
+                RensaFormular(null);                 
+
+                MessageBox.Show("Kunden har tagits bort från registret.",
+                                "Kund borttagen",
+                                MessageBoxButton.OK,
+                                MessageBoxImage.Information);
+            }
         }
     }
 }

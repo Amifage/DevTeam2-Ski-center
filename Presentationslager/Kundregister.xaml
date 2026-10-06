@@ -32,7 +32,7 @@
 
                 <DataGridTextColumn Header="Ort" Binding="{Binding Ort}" Width="100"/>
                 <DataGridTextColumn Header="E-post" Binding="{Binding Epost}" Width="*"/>
-                <DataGridTextColumn Header="Telefon" Binding="{Binding Telefonnummer}" Width="120"/>
+                <DataGridTextColumn Header="Telefon" Binding="{Binding Telefonnummer}" Width="100"/>
             </DataGrid.Columns>
         </DataGrid>
 
@@ -61,7 +61,7 @@
                         <TextBox Text="{Binding NyEpost, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" Margin="0,0,0,10" Padding="5"/>
 
                         <TextBlock Text="Telefonnummer" Foreground="Gray"/>
-                        <TextBox Text="{Binding NyTelefon, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" Margin="0,0,0,10" Padding="5"/>
+                        <TextBox Text="{Binding NyTelefon, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" PreviewTextInput="EndastSiffror_PreviewTextInput" Margin="0,0,0,10" Padding="5"/>
 
                         <TextBlock Text="Adress" Foreground="Gray"/>
                         <TextBox Text="{Binding NyAdress, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" Margin="0,0,0,10" Padding="5"/>
@@ -75,7 +75,7 @@
 
                             <StackPanel Grid.Column="0">
                                 <TextBlock Text="Postnummer" Foreground="Gray"/>
-                                <TextBox Text="{Binding NyPostnummer, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" Padding="5"/>
+                                <TextBox Text="{Binding NyPostnummer, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" PreviewTextInput="EndastSiffror_PreviewTextInput" Padding="5"/>
                             </StackPanel>
 
                             <StackPanel Grid.Column="2">
@@ -155,11 +155,13 @@
                         </StackPanel>
 
                         <StackPanel Orientation="Horizontal" HorizontalAlignment="Right" Margin="0,20,0,0">
-                            <Button Content="Rensa" Command="{Binding RensaFormularCommand}" Width="80" Margin="0,0,10,0" Background="LightGray" Foreground="Black" BorderThickness="0" Padding="5"/>
+                            <Button Content="Ta bort" Command="{Binding TaBortKundCommand}" Width="70" Margin="0,0,10,0" Background="#DC3545" Foreground="White" BorderThickness="0" Padding="5"/>
 
-                            <Button Content="Spara Ny" Command="{Binding SparaKundCommand}" Width="90" Margin="0,0,10,0" Background="{StaticResource SolnedgångOrange}" Foreground="White" BorderThickness="0" Padding="5"/>
+                            <Button Content="Rensa" Command="{Binding RensaFormularCommand}" Width="70" Margin="0,0,10,0" Background="LightGray" Foreground="Black" BorderThickness="0" Padding="5"/>
 
-                            <Button Content="Uppdatera" Command="{Binding UppdateraKundCommand}" Width="90" Background="Green" Foreground="White" BorderThickness="0" Padding="5"/>
+                            <Button Content="Spara Ny" Command="{Binding SparaKundCommand}" Width="70" Margin="0,0,10,0" Background="{StaticResource SolnedgångOrange}" Foreground="White" BorderThickness="0" Padding="5"/>
+
+                            <Button Content="Uppdatera" Command="{Binding UppdateraKundCommand}" Width="70" Background="Green" Foreground="White" BorderThickness="0" Padding="5"/>
                         </StackPanel>
                     </StackPanel>
                 </ScrollViewer>
@@ -171,7 +173,7 @@
                         HorizontalAlignment="Right" 
                         Margin="0,15,0,0" 
                         Width="120" 
-                        Background="Transparent" 
+                        Background="Transparent"
                         Foreground="Gray" 
                         BorderBrush="Gray" 
                         BorderThickness="1" 
