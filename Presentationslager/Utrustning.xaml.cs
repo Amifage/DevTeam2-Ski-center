@@ -2,7 +2,6 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
-using System.Text.RegularExpressions;
 using System.Threading.Tasks;
 using System.Windows;
 using System.Windows.Controls;
@@ -16,20 +15,13 @@ using System.Windows.Shapes;
 namespace Presentationslager
 {
     /// <summary>
-    /// Interaction logic for Kundregister.xaml
+    /// Interaction logic for Utrustning.xaml
     /// </summary>
-    public partial class Kundregister : Window
+    public partial class Utrustning : Window
     {
-        public Kundregister()
+        public Utrustning()
         {
             InitializeComponent();
-            DataContext = new ViewModel.KundregisterViewModel();
-        }
-
-        private void EndastSiffror_PreviewTextInput(object sender, TextCompositionEventArgs e)
-        {
-            Regex regex = new Regex("[^0-9]+");
-            e.Handled = regex.IsMatch(e.Text);
         }
     }
 }

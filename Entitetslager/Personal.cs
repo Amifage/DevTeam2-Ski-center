@@ -14,6 +14,7 @@ namespace Entitetslager
         public string Förnamn { get; set; }
         public string Efternamn { get; set; } 
         public string Epost { get; set; } 
+        public string Lösenord { get; set; }
         public DateTime SenastUppdaterad { get; set; }
     }
 }

@@ -6,7 +6,8 @@
         Width="1000"
         WindowStartupLocation="CenterScreen">
 
-    <Grid Background="{StaticResource IsBlå}" Margin="20">
+    <Grid Background="{StaticResource IsBlå}"
+          Margin="20">
 
         <Grid.RowDefinitions>
             <RowDefinition Height="Auto"/>
@@ -15,68 +16,89 @@
             <RowDefinition Height="Auto"/>
         </Grid.RowDefinitions>
 
-        <!-- Rubrik -->
+
+        <!-- RUBRIK -->
+
         <TextBlock Grid.Row="0"
                    Text="Skapa bokning"
                    Style="{StaticResource HeaderTextStyle}"
                    Margin="0,0,0,20"/>
 
-        <!-- Kund och datum -->
-        <Grid Grid.Row="1" Margin="0,0,0,20">
+
+        <!-- KUND OCH DATUM -->
+
+        <Grid Grid.Row="1"
+              Margin="0,0,0,20">
 
             <Grid.ColumnDefinitions>
+
                 <ColumnDefinition Width="Auto"/>
                 <ColumnDefinition Width="250"/>
+
                 <ColumnDefinition Width="40"/>
+
                 <ColumnDefinition Width="Auto"/>
                 <ColumnDefinition Width="150"/>
+
                 <ColumnDefinition Width="20"/>
+
                 <ColumnDefinition Width="Auto"/>
                 <ColumnDefinition Width="150"/>
+
             </Grid.ColumnDefinitions>
+
 
             <TextBlock Text="Kund:"
                        VerticalAlignment="Center"
                        Margin="5"/>
 
-            <ComboBox x:Name="cmbKund"
-                      Grid.Column="1"
+
+            <ComboBox Grid.Column="1"
                       Height="30"
                       Margin="5"
-                      DisplayMemberPath="DisplayText"
-                      SelectionChanged="cmbKund_SelectionChanged" />    
+                      ItemsSource="{Binding Kunder}"
+                      SelectedItem="{Binding ValdKund, Mode=TwoWay}"
+                      DisplayMemberPath="DisplayText"/>
+
 
             <TextBlock Grid.Column="3"
                        Text="Från:"
                        VerticalAlignment="Center"
                        Margin="5"/>
 
-            <DatePicker x:Name="dpStartDatum"
-                        Grid.Column="4"
+
+            <DatePicker Grid.Column="4"
                         Height="30"
                         Margin="5"
-                        SelectedDateChanged="Datum_Changed" />
+                        SelectedDate="{Binding StartDatum, Mode=TwoWay}"/>
+
 
             <TextBlock Grid.Column="6"
                        Text="Till:"
                        VerticalAlignment="Center"
                        Margin="5"/>
 
-            <DatePicker x:Name="dpSlutDatum"
-                        Grid.Column="7"
+
+            <DatePicker Grid.Column="7"
                         Height="30"
                         Margin="5"
-                        SelectedDateChanged="Datum_Changed" />
+                        SelectedDate="{Binding SlutDatum, Mode=TwoWay}"/>
 
         </Grid>
 
-        <!-- Scrollbar med alla bokningsdelar -->
+
+        <!-- ALLA BOKNINGSDELAR -->
+
         <ScrollViewer Grid.Row="2"
                       VerticalScrollBarVisibility="Auto">
 
             <StackPanel>
 
-                <!-- BOENDE -->
+
+                <!-- ===================================== -->
+                <!-- BOENDE                                -->
+                <!-- ===================================== -->
+
                 <Border Background="White"
                         CornerRadius="5"
                         Padding="15"
@@ -84,121 +106,155 @@
 
                     <StackPanel>
 
+
                         <TextBlock Text="Boende"
                                    FontSize="20"
                                    FontWeight="SemiBold"
                                    Margin="0,0,0,10"/>
 
-                        <!-- Här visas valda boenden senare -->
-                        <StackPanel Margin="0,0,0,10">
 
-                            <ItemsControl x:Name="lstLogiRader"
-                                            Margin="0,0,0,10">
+                        <!-- VALDA BOENDEN -->
 
-                                <ItemsControl.ItemTemplate>
-                                    <DataTemplate>
+                        <ItemsControl ItemsSource="{Binding LogiRader}"
+                                      Margin="0,0,0,10">
 
-                                        <Border BorderBrush="LightGray"
-                                                BorderThickness="1"
-                                                CornerRadius="4"
-                                                Padding="10"
-                                                Margin="0,0,0,5">
+                            <ItemsControl.ItemTemplate>
 
-                                            <Grid>
+                                <DataTemplate>
 
-                                                <Grid.ColumnDefinitions>
-                                                    <ColumnDefinition Width="*"/>
-                                                    <ColumnDefinition Width="Auto"/>
-                                                </Grid.ColumnDefinitions>
+                                    <Border BorderBrush="LightGray"
+                                            BorderThickness="1"
+                                            CornerRadius="4"
+                                            Padding="10"
+                                            Margin="0,0,0,5">
 
-                                                <StackPanel>
+                                        <Grid>
 
-                                                    <TextBlock Text="{Binding LogiDisplayText}"
-                                                                 FontWeight="Bold"/>
+                                            <Grid.ColumnDefinitions>
 
-                                                    <TextBlock>
+                                                <ColumnDefinition Width="*"/>
+
+                                                <ColumnDefinition Width="Auto"/>
+
+                                            </Grid.ColumnDefinitions>
+
+
+                                            <StackPanel>
+
+                                                <TextBlock Text="{Binding LogiDisplayText}"
+                                                           FontWeight="Bold"/>
+
+
+                                                <TextBlock>
+
                                                     <Run Text="Antal personer: "/>
-                                                    <Run Text="{Binding AntalPersoner}"/>       
-                                                    </TextBlock>
 
-                                                    <TextBlock>
+                                                    <Run Text="{Binding AntalPersoner}"/>
+
+                                                </TextBlock>
+
+
+                                                <TextBlock>
+
                                                     <Run Text="Period: "/>
-                                                    <Run Text="{Binding StartDatum, StringFormat={}{0:yyyy-MM-dd}}"/>
+
+                                                    <Run Text="{Binding StartDatum,
+                                                        StringFormat={}{0:yyyy-MM-dd}}"/>
+
                                                     <Run Text=" - "/>
-                                                    <Run Text="{Binding SlutDatum, StringFormat={}{0:yyyy-MM-dd}}"/>
-                                                    </TextBlock>
 
-                                                </StackPanel>
+                                                    <Run Text="{Binding SlutDatum,
+                                                        StringFormat={}{0:yyyy-MM-dd}}"/>
 
-                                                <TextBlock Grid.Column="1"
-                                                       Text="{Binding LogiBelopp, StringFormat={}{0:N0} kr}"
+                                                </TextBlock>
+
+                                            </StackPanel>
+
+
+                                            <TextBlock Grid.Column="1"
+                                                       Text="{Binding LogiBelopp,
+                                                       StringFormat={}{0:N0} kr}"
                                                        FontWeight="Bold"
                                                        VerticalAlignment="Center"
                                                        Margin="20,0,0,0"/>
 
-                                            </Grid>
+                                        </Grid>
 
-                                        </Border>
+                                    </Border>
 
-                                    </DataTemplate>
-                                </ItemsControl.ItemTemplate>
+                                </DataTemplate>
 
-                            </ItemsControl>
+                            </ItemsControl.ItemTemplate>
 
-                        </StackPanel>
+                        </ItemsControl>
+
+
+                        <!-- LÄGG TILL BOENDE -->
 
                         <Expander Header="+ Lägg till boende">
 
                             <StackPanel Margin="10">
 
+
                                 <TextBlock Text="Antal personer:"/>
 
-                                <ComboBox x:Name="cmbAntalPersonerTotalt"
-                                           Height="30"
-                                           Margin="0,5,0,10"
-                                           SelectionChanged="cmbAntalPersonerTotalt_SelectionChanged" />
 
-                                
-                                <TextBlock x:Name="txtBoendePlacering"
-                                           Text="0 av 0 personer placerade"
+                                <ComboBox Height="30"
+                                          Margin="0,5,0,10"
+                                          ItemsSource="{Binding AntalPersonerAlternativ}"
+                                          SelectedItem="{Binding AntalPersonerTotalt,
+                                          Mode=TwoWay}"/>
+
+
+                                <TextBlock Text="{Binding BoendePlaceringText}"
                                            Margin="0,0,0,10"
                                            FontWeight="SemiBold"/>
 
 
                                 <TextBlock Text="Boendetyp:"/>
 
-                                <ComboBox x:Name="cmbBoendeTyp"
-                                          Height="30"
+
+                                <ComboBox Height="30"
                                           Margin="0,5,0,10"
-                                          SelectionChanged="cmbBoendeTyp_SelectionChanged">
-                                                                    <ComboBoxItem Content="Lägenhet"/>
-                                                                    <ComboBoxItem Content="Camping"/>
-                                </ComboBox>
-                                
-                                
+                                          ItemsSource="{Binding BoendeTyper}"
+                                          SelectedItem="{Binding ValdBoendeTyp,
+                                          Mode=TwoWay}"/>
+
+
                                 <TextBlock Text="Boende:"/>
 
-                                <ComboBox x:Name="cmbLogi"
-                                          Height="30"
+
+                                <ComboBox Height="30"
                                           Margin="0,5,0,10"
-                                          DisplayMemberPath="DisplayText"
-                                          SelectionChanged="cmbLogi_SelectionChanged" />
+                                          ItemsSource="{Binding TillgängligaLogi}"
+                                          SelectedItem="{Binding ValtLogi,
+                                          Mode=TwoWay}"
+                                          DisplayMemberPath="DisplayText"/>
+
 
                                 <TextBlock Text="Antal personer i detta boende:"/>
 
-                                <ComboBox x:Name="cmbAntalPersonerValtLogi"
-                                              Height="30"
-                                              Margin="0,5,0,10"/>
-                                
-                                <TextBlock x:Name="txtLogiPris"
-                                           Text="0 kr"
+
+                                <ComboBox Height="30"
+                                          Margin="0,5,0,10"
+                                          ItemsSource="{Binding AntalPersonerValtLogiAlternativ}"
+                                          SelectedItem="{Binding AntalPersonerValtLogi,
+                                          Mode=TwoWay}"/>
+
+
+                                <TextBlock Text="Pris:"
+                                           Margin="0,0,0,5"/>
+
+
+                                <TextBlock Text="{Binding LogiPrisText}"
                                            FontWeight="Bold"
                                            Margin="0,0,0,10"/>
+
 
                                 <Button Content="Lägg till"
                                         Width="120"
                                         HorizontalAlignment="Left"
-                                        Click="LäggTillLogi_Click"/>
+                                        Command="{Binding LäggTillLogiCommand}"/>
 
                             </StackPanel>
 
@@ -209,7 +265,10 @@
                 </Border>
 
 
-                <!-- UTRUSTNING -->
+                <!-- ===================================== -->
+                <!-- UTRUSTNING                            -->
+                <!-- ===================================== -->
+
                 <Border Background="White"
                         CornerRadius="5"
                         Padding="15"
@@ -222,37 +281,69 @@
                                    FontWeight="SemiBold"
                                    Margin="0,0,0,10"/>
 
-                        <StackPanel Margin="0,0,0,10">
 
-                            <TextBlock Text="Ingen utrustning vald ännu."
-                                       FontStyle="Italic"/>
+                        <TextBlock Text="Ingen utrustning vald ännu."
+                                   FontStyle="Italic"
+                                   Margin="0,0,0,10"/>
 
-                        </StackPanel>
+
+                        <!--
+                            Vi lämnar utrustningslogiken här tills
+                            boende-MVVM är testad och stabil.
+                        -->
 
                         <Expander Header="+ Lägg till utrustning">
 
                             <StackPanel Margin="10">
 
-                                <TextBlock Text="Utrustning:"/>
+
+                                <TextBlock Text="Boka som:"/>
+
+
+                                <ComboBox Height="30"
+                                          Margin="0,5,0,10">
+
+                                    <ComboBoxItem Content="Utrustningspaket"/>
+
+                                    <ComboBoxItem Content="Enskild utrustning"/>
+
+                                </ComboBox>
+
+
+                                <TextBlock Text="Utrustningspaket:"/>
+
 
                                 <ComboBox Height="30"
                                           Margin="0,5,0,10"/>
 
-                                <TextBlock Text="Antal:"/>
 
-                                <TextBox Height="30"
-                                         Margin="0,5,0,10"/>
+                                <TextBlock Text="Antal paket:"/>
+
+
+                                <ComboBox Height="30"
+                                          Margin="0,5,0,10"/>
+
+
+                                <TextBlock Text="Enskild utrustning:"/>
+
+
+                                <ComboBox Height="30"
+                                          Margin="0,5,0,10"/>
+
 
                                 <TextBlock Text="Pris:"
                                            Margin="0,0,0,5"/>
+
 
                                 <TextBlock Text="0 kr"
                                            FontWeight="Bold"
                                            Margin="0,0,0,10"/>
 
+
                                 <Button Content="Lägg till"
                                         Width="120"
-                                        HorizontalAlignment="Left"/>
+                                        HorizontalAlignment="Left"
+                                        IsEnabled="False"/>
 
                             </StackPanel>
 
@@ -263,60 +354,75 @@
                 </Border>
 
 
-                <!-- KONFERENS -->
+                <!-- ===================================== -->
+                <!-- KONFERENS                             -->
+                <!-- ===================================== -->
+
                 <Border Background="White"
                         CornerRadius="5"
                         Padding="15"
                         Margin="0,0,0,15">
 
                     <StackPanel>
+
 
                         <TextBlock Text="Konferens"
                                    FontSize="20"
                                    FontWeight="SemiBold"
                                    Margin="0,0,0,10"/>
 
-                        <StackPanel Margin="0,0,0,10">
 
-                            <TextBlock Text="Ingen konferens vald ännu."
-                                       FontStyle="Italic"/>
+                        <TextBlock Text="Ingen konferens vald ännu."
+                                   FontStyle="Italic"
+                                   Margin="0,0,0,10"/>
 
-                        </StackPanel>
 
                         <Expander Header="+ Lägg till konferens">
 
                             <StackPanel Margin="10">
 
+
                                 <TextBlock Text="Konferenslokal:"/>
+
 
                                 <ComboBox Height="30"
                                           Margin="0,5,0,10"/>
 
+
                                 <TextBlock Text="Antal personer:"/>
+
 
                                 <TextBox Height="30"
                                          Margin="0,5,0,10"/>
 
+
                                 <TextBlock Text="Starttid:"/>
+
 
                                 <DatePicker Height="30"
                                             Margin="0,5,0,10"/>
+
 
                                 <TextBlock Text="Sluttid:"/>
 
+
                                 <DatePicker Height="30"
                                             Margin="0,5,0,10"/>
 
+
                                 <TextBlock Text="Pris:"
                                            Margin="0,0,0,5"/>
+
 
                                 <TextBlock Text="0 kr"
                                            FontWeight="Bold"
                                            Margin="0,0,0,10"/>
 
+
                                 <Button Content="Lägg till"
                                         Width="120"
-                                        HorizontalAlignment="Left"/>
+                                        HorizontalAlignment="Left"
+                                        IsEnabled="False"/>
 
                             </StackPanel>
 
@@ -327,7 +433,10 @@
                 </Border>
 
 
-                <!-- SKIDLEKTION -->
+                <!-- ===================================== -->
+                <!-- SKIDLEKTION                           -->
+                <!-- ===================================== -->
+
                 <Border Background="White"
                         CornerRadius="5"
                         Padding="15"
@@ -335,47 +444,57 @@
 
                     <StackPanel>
 
+
                         <TextBlock Text="Skidlektion"
                                    FontSize="20"
                                    FontWeight="SemiBold"
                                    Margin="0,0,0,10"/>
 
-                        <StackPanel Margin="0,0,0,10">
 
-                            <TextBlock Text="Ingen skidlektion vald ännu."
-                                       FontStyle="Italic"/>
+                        <TextBlock Text="Ingen skidlektion vald ännu."
+                                   FontStyle="Italic"
+                                   Margin="0,0,0,10"/>
 
-                        </StackPanel>
 
                         <Expander Header="+ Lägg till skidlektion">
 
                             <StackPanel Margin="10">
 
+
                                 <TextBlock Text="Skidlektion:"/>
+
 
                                 <ComboBox Height="30"
                                           Margin="0,5,0,10"/>
 
+
                                 <TextBlock Text="Antal personer:"/>
+
 
                                 <TextBox Height="30"
                                          Margin="0,5,0,10"/>
 
+
                                 <TextBlock Text="Datum:"/>
+
 
                                 <DatePicker Height="30"
                                             Margin="0,5,0,10"/>
 
+
                                 <TextBlock Text="Pris:"
                                            Margin="0,0,0,5"/>
+
 
                                 <TextBlock Text="0 kr"
                                            FontWeight="Bold"
                                            Margin="0,0,0,10"/>
 
+
                                 <Button Content="Lägg till"
                                         Width="120"
-                                        HorizontalAlignment="Left"/>
+                                        HorizontalAlignment="Left"
+                                        IsEnabled="False"/>
 
                             </StackPanel>
 
@@ -385,45 +504,59 @@
 
                 </Border>
 
+
             </StackPanel>
 
         </ScrollViewer>
 
-        <!-- Total och knappar -->
+
+        <!-- ===================================== -->
+        <!-- TOTAL OCH KNAPPAR                     -->
+        <!-- ===================================== -->
+
         <Grid Grid.Row="3"
               Margin="0,20,0,0">
 
             <Grid.ColumnDefinitions>
+
                 <ColumnDefinition Width="*"/>
+
                 <ColumnDefinition Width="Auto"/>
+
             </Grid.ColumnDefinitions>
+
 
             <StackPanel Orientation="Horizontal"
                         VerticalAlignment="Center">
+
 
                 <TextBlock Text="Totalt:"
                            FontSize="22"
                            FontWeight="Bold"
                            Margin="0,0,10,0"/>
 
-                <TextBlock x:Name="txtTotalBelopp"
-                           Text="0 kr"
+
+                <TextBlock Text="{Binding TotalBeloppText}"
                            FontSize="22"
                            FontWeight="Bold"/>
 
             </StackPanel>
 
+
             <StackPanel Grid.Column="1"
                         Orientation="Horizontal">
 
+
                 <Button Content="Avbryt"
                         Width="120"
-                        Margin="5"/>
+                        Margin="5"
+                        Command="{Binding AvbrytCommand}"/>
+
 
                 <Button Content="Skapa bokning"
                         Width="150"
                         Margin="5"
-                        Click="SkapaBokning_Click"/>
+                        Command="{Binding SkapaBokningCommand}"/>
 
             </StackPanel>
 

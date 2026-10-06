@@ -1,6 +1,7 @@
 ﻿using Presentationslager.Command;
 using System.Collections.ObjectModel;
 using System.ComponentModel;
+using System.Reflection.Metadata;
 using System.Runtime.CompilerServices;
 using System.Windows;
 using System.Windows.Input;
@@ -12,27 +13,39 @@ namespace Presentationslager.ViewModel
         public ICommand LoggaUtCommand { get; }
         public ICommand ÖppnaSkidlektionerCommand { get; }
         public ICommand ÖppnaKundregisterCommand { get;}
+        public ICommand ÖppnaUtrustningCommand { get; }
         public event PropertyChangedEventHandler? PropertyChanged;
+
 
         public MenyViewModel()
         {
             LoggaUtCommand = new RelayCommand(LoggaUt);
             ÖppnaKundregisterCommand = new RelayCommand(ÖppnaKundregister);
+            ÖppnaUtrustningCommand = new RelayCommand(ÖppnaUtrustning);
             ÖppnaSkidlektionerCommand = new RelayCommand(ÖppnaSkidlektioner);
-
         }
 
         public void ÖppnaKundregister (object obj)
         {
             Kundregister kundregister = new Kundregister();
                 kundregister.Show();
+
+            if (obj is Window nuvarandeFonster)
+            {
+                nuvarandeFonster.Close();
+            }
         }
 
-        private void ÖppnaSkidlektioner(object obj)
+        public void ÖppnaUtrustning(object obj)
         {
-            Skidlektion fönster = new Skidlektion();
-            fönster.Show();
+            Utrustning utrustning = new Utrustning();
+            utrustning.Show();
+            if (obj is Window nuvarandeFonster)
+            {
+                nuvarandeFonster.Close();
+            }
         }
+
 
         private void LoggaUt(object parameter)
         {
