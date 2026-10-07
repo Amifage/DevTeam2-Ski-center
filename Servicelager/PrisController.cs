@@ -28,8 +28,11 @@ namespace Servicelager
 
             int antalDagar = (slutDatum.Date - startDatum.Date).Days;
 
-            return priser.FirstOrDefault(p =>
-                p.AntalDagar == null || p.AntalDagar == antalDagar);
+            return priser
+                .OrderBy(p => p.AntalDagar == antalDagar ? 0 : 1)
+                .FirstOrDefault(p =>
+                    p.AntalDagar == antalDagar ||
+                    p.AntalDagar == null);
         }
     }
 }
