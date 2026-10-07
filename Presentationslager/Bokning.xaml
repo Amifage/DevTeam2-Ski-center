@@ -227,9 +227,30 @@
                                 <ComboBox Height="30"
                                           Margin="0,5,0,10"
                                           ItemsSource="{Binding TillgängligaLogi}"
-                                          SelectedItem="{Binding ValtLogi,
-                                          Mode=TwoWay}"
-                                          DisplayMemberPath="DisplayText"/>
+                                          SelectedItem="{Binding ValtLogi, Mode=TwoWay}"
+                                          DisplayMemberPath="TypDisplayText" 
+                                          IsEnabled="{Binding FinnsTillgängligaLogi}" />
+
+                                <TextBlock Text="Inga boenden är tillgängliga för vald period."
+                                           Foreground="DarkRed"
+                                           FontStyle="Italic"
+                                           Margin="0,0,0,10">
+
+                                    <TextBlock.Style>
+                                        <Style TargetType="TextBlock">
+                                            <Setter Property="Visibility" Value="Collapsed"/>
+
+                                            <Style.Triggers>
+                                                <DataTrigger Binding="{Binding VisaIngaTillgängligaLogi}"
+                                                                Value="True">
+                                                    <Setter Property="Visibility" Value="Visible"/>
+                                                </DataTrigger>
+                                            </Style.Triggers>
+                                        </Style>
+                                    </TextBlock.Style>
+
+                                </TextBlock>
+
 
 
                                 <TextBlock Text="Antal personer i detta boende:"/>
@@ -377,10 +398,10 @@
                                     <TextBlock Text="Enskild utrustning:"/>
 
                                     <ComboBox Height="30"
-                              Margin="0,5,0,10"
-                              ItemsSource="{Binding TillgängligaEnskildaUtrustningar}"
-                              SelectedItem="{Binding ValdEnskildUtrustning, Mode=TwoWay}"
-                              DisplayMemberPath="UtrustningNummer"/>
+                                              Margin="0,5,0,10"
+                                              ItemsSource="{Binding TillgängligaUtrustningArtikelTyper}"
+                                              SelectedItem="{Binding ValdUtrustningArtikelTyp, Mode=TwoWay}"
+                                              DisplayMemberPath="TypNamn"/>
 
                                 </StackPanel>
 

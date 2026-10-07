@@ -21,5 +21,8 @@ namespace Entitetslager
 
 
         public string DisplayText => $"{LogiNummer} | {LogiKapacitet} pers | {Storlek} kvm | {Faciliteter} | {AntalRum} rum";
+       
+        [NotMapped]
+        public string? TypDisplayText { get; set; }
     }
 }
