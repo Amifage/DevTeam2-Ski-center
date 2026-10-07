@@ -44,10 +44,11 @@
         <DataGrid Grid.Row="2" ItemsSource="{Binding VisadeLektioner}" AutoGenerateColumns="False" IsReadOnly="True" 
                   GridLinesVisibility="Horizontal" HeadersVisibility="Column" Background="White" RowHeight="35">
             <DataGrid.Columns>
-                <DataGridTextColumn Header="Lektions-ID" Binding="{Binding SkidlektionsID}" Width="100"/>
-                <DataGridTextColumn Header="Typ / Nivå" Binding="{Binding Typ}" Width="150"/>
-                <DataGridTextColumn Header="Datum &amp; Tid" Binding="{Binding StartTid, StringFormat={}{0:yyyy-MM-dd HH:mm}}" Width="160"/>
-                <DataGridTextColumn Header="Max deltagare" Binding="{Binding MaxDeltagare}" Width="110"/>
+                <DataGridTextColumn Header="Lektions-ID" Binding="{Binding SkidlektionNummer}" Width="100"/>
+                <DataGridTextColumn Header="Typ / Nivå" Binding="{Binding artikelTyp.TypNamn}" Width="150"/>
+                <DataGridTextColumn Header="Datum" Binding="{Binding Datum, StringFormat={}{0:yyyy-MM-dd}}" Width="110"/>
+                <DataGridTextColumn Header="Start" Binding="{Binding StartTid}" Width="80"/>
+                <DataGridTextColumn Header="Kapacitet" Binding="{Binding Kapacitet}" Width="90"/>
                 <DataGridTextColumn Header="Anställningsnr" Binding="{Binding Personal.AnställningsNummer}" Width="120"/>
                 <DataGridTextColumn Header="Instruktör" Binding="{Binding Personal.Förnamn}" Width="*"/>
             </DataGrid.Columns>

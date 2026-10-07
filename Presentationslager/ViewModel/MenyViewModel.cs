@@ -1,7 +1,5 @@
 ﻿using Presentationslager.Command;
-using System.Collections.ObjectModel;
 using System.ComponentModel;
-using System.Reflection.Metadata;
 using System.Runtime.CompilerServices;
 using System.Windows;
 using System.Windows.Input;
@@ -12,10 +10,10 @@ namespace Presentationslager.ViewModel
     {
         public ICommand LoggaUtCommand { get; }
         public ICommand ÖppnaSkidlektionerCommand { get; }
-        public ICommand ÖppnaKundregisterCommand { get;}
+        public ICommand ÖppnaKundregisterCommand { get; }
         public ICommand ÖppnaUtrustningCommand { get; }
-        public event PropertyChangedEventHandler? PropertyChanged;
 
+        public event PropertyChangedEventHandler? PropertyChanged;
 
         public MenyViewModel()
         {
@@ -25,40 +23,39 @@ namespace Presentationslager.ViewModel
             ÖppnaSkidlektionerCommand = new RelayCommand(ÖppnaSkidlektioner);
         }
 
-        public void ÖppnaKundregister (object obj)
+        public void ÖppnaKundregister(object? obj)
         {
             Kundregister kundregister = new Kundregister();
-                kundregister.Show();
-
-            if (obj is Window nuvarandeFonster)
-            {
-                nuvarandeFonster.Close();
-            }
+            kundregister.Show();
         }
 
-        public void ÖppnaUtrustning(object obj)
+        public void ÖppnaUtrustning(object? obj)
         {
             Utrustning utrustning = new Utrustning();
             utrustning.Show();
+        }
+
+        public void ÖppnaSkidlektioner(object obj)
+        {
+            Skidlektion skidlektion = new Skidlektion();
+            skidlektion.Show();
+
             if (obj is Window nuvarandeFonster)
             {
                 nuvarandeFonster.Close();
             }
         }
 
-
-        private void LoggaUt(object parameter)
+        private void LoggaUt(object? parameter)
         {
             Startsida startsida = new Startsida();
             startsida.Show();
-
-            if (parameter is Window nuvarandeFonster)
-            {
-                nuvarandeFonster.Close();
-            }
         }
 
+
+        protected void OnPropertyChanged([CallerMemberName] string? propertyName = null)
+        {
+            PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(propertyName));
+        }
     }
-
 }
-
