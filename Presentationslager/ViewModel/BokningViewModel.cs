@@ -119,6 +119,8 @@ namespace Presentationslager.ViewModel
 
         #endregion
 
+
+
         #region Kund
 
         public Kund? ValdKund
@@ -654,6 +656,7 @@ namespace Presentationslager.ViewModel
 
                 _aktuelltUtrustningPris = null;
                 OnPropertyChanged(nameof(UtrustningPrisText));
+                OnPropertyChanged(nameof(KanLäggaTillUtrustning));
             }
         }
 
@@ -726,10 +729,12 @@ namespace Presentationslager.ViewModel
         #region Utrustning - visning
 
         public string UtrustningPrisText =>
-     _aktuelltUtrustningPris.HasValue
-         ? $"{_aktuelltUtrustningPris.Value:N0} kr"
-         : "Pris saknas för vald period";
+             _aktuelltUtrustningPris.HasValue
+                 ? $"{_aktuelltUtrustningPris.Value:N0} kr"
+                 : "Pris saknas för vald period";
 
+        public bool KanLäggaTillUtrustning =>
+            _aktuelltUtrustningPris.HasValue;
         #endregion
 
         #region Utrustning - tillgänglighet
@@ -748,6 +753,21 @@ namespace Presentationslager.ViewModel
             UtrustningController utrustningController = new UtrustningController();
 
             var ledigaUtrustningar = utrustningController.HamtaLedigaUtrustningar(UtrustningStartDatum.Value, UtrustningSlutDatum.Value);
+
+            var redanValdaNummer = UtrustningRader
+                .Where(r => !string.IsNullOrWhiteSpace(r.UtrustningNummer))
+                .Select(r => r.UtrustningNummer!)
+                .Concat(
+                    UtrustningRader
+                        .SelectMany(r => r.UtrustningPaketRader)
+                        .Where(r => !string.IsNullOrWhiteSpace(r.UtrustningNummer))
+                        .Select(r => r.UtrustningNummer!)
+                )
+                .ToHashSet();
+
+            ledigaUtrustningar = ledigaUtrustningar
+                .Where(u => !redanValdaNummer.Contains(u.UtrustningNummer))
+                .ToList();
 
             var artikelTyper = utrustningController.HamtaAllaArtikelTyper();
 
@@ -803,27 +823,38 @@ namespace Presentationslager.ViewModel
             return maxAntal == int.MaxValue ? 0 : maxAntal;
         }
 
-        private void UppdateraAntalPaketAlternativ()
+        private void UppdateraAntalPaketAlternativ() //Skapar max antal möjliga paket utifrån ledig utrustning så man vet hur många paket som är bokningsbara
         {
             AntalUtrustningsPaketAlternativ.Clear();
             AntalUtrustningsPaket = null;
 
-            if (ValtUtrustningPaket == null || StartDatum == null || SlutDatum == null)
+            if (ValtUtrustningPaket == null || UtrustningStartDatum == null || UtrustningSlutDatum == null)
                 return;
 
             UtrustningController utrustningController = new UtrustningController();
 
-            var ledigaUtrustningar =
-                utrustningController.HamtaLedigaUtrustningar(StartDatum.Value, SlutDatum.Value);
+            var ledigaUtrustningar = utrustningController.HamtaLedigaUtrustningar(UtrustningStartDatum.Value, UtrustningSlutDatum.Value);
+
+            var redanValdaNummer = UtrustningRader
+                .Where(r => !string.IsNullOrWhiteSpace(r.UtrustningNummer))
+                .Select(r => r.UtrustningNummer!)
+                .Concat(
+                    UtrustningRader
+                        .SelectMany(r => r.UtrustningPaketRader)
+                        .Where(r => !string.IsNullOrWhiteSpace(r.UtrustningNummer))
+                        .Select(r => r.UtrustningNummer!)
+                )
+                .ToHashSet();
+
+            ledigaUtrustningar = ledigaUtrustningar
+                .Where(u => !redanValdaNummer.Contains(u.UtrustningNummer))
+                .ToList();
 
             int maxAntal =
                 BeräknaMaxAntalPaket(
                     ValtUtrustningPaket,
                     ledigaUtrustningar,
                     utrustningController);
-
-            if (AntalPersonerTotalt.HasValue)
-                maxAntal = Math.Min(maxAntal, AntalPersonerTotalt.Value);
 
             for (int i = 1; i <= maxAntal; i++)
                 AntalUtrustningsPaketAlternativ.Add(i);
@@ -837,11 +868,13 @@ namespace Presentationslager.ViewModel
         {
             _aktuelltUtrustningPris = null;
             OnPropertyChanged(nameof(UtrustningPrisText));
+            OnPropertyChanged(nameof(KanLäggaTillUtrustning));
 
             if (UtrustningStartDatum == null || UtrustningSlutDatum == null || UtrustningSlutDatum <= UtrustningStartDatum)
             {
                 _aktuelltUtrustningPris = null;
                 OnPropertyChanged(nameof(UtrustningPrisText));
+                OnPropertyChanged(nameof(KanLäggaTillUtrustning));
                 return;
             }
 
@@ -858,29 +891,31 @@ namespace Presentationslager.ViewModel
 
             PrisController prisController = new PrisController();
 
-            Pris? pris = prisController.HämtaAktuelltPris(
+            decimal? pris = prisController.BeräknaPrisFörPeriod(
                 artikelTypNummer.Value,
                 UtrustningStartDatum.Value,
                 UtrustningSlutDatum.Value);
 
-            if (pris == null)
+            if (!pris.HasValue)
             {
                 _aktuelltUtrustningPris = null;
                 OnPropertyChanged(nameof(UtrustningPrisText));
+                OnPropertyChanged(nameof(KanLäggaTillUtrustning));
                 return;
             }
 
             if (ValdUtrustningTyp == "Utrustningspaket")
             {
                 int antalPaket = AntalUtrustningsPaket ?? 1;
-                _aktuelltUtrustningPris = pris.PrisBelopp * antalPaket;
+                _aktuelltUtrustningPris = pris.Value * antalPaket;
             }
             else
             {
-                _aktuelltUtrustningPris = pris.PrisBelopp;
+                _aktuelltUtrustningPris = pris.Value;
             }
 
             OnPropertyChanged(nameof(UtrustningPrisText));
+            OnPropertyChanged(nameof(KanLäggaTillUtrustning));
         }
 
         #endregion
@@ -889,7 +924,7 @@ namespace Presentationslager.ViewModel
 
         private void LäggTillUtrustning()
         {
-            if (!ValideraDatum())
+            if (!ValideraUtrustningsDatum())
                 return;
 
             if (string.IsNullOrWhiteSpace(ValdUtrustningTyp))
@@ -910,6 +945,9 @@ namespace Presentationslager.ViewModel
 
         private void LäggTillEnskildUtrustning()
         {
+            if (!ValideraUtrustningsDatum())
+                return;
+
             if (ValdUtrustningArtikelTyp == null)
             {
                 VisaMeddelande?.Invoke("Du måste välja vilken typ av utrustning du vill boka.");
@@ -919,9 +957,10 @@ namespace Presentationslager.ViewModel
             UtrustningController utrustningController = new UtrustningController();
 
             var ledigaUtrustningar =
-                utrustningController.HamtaLedigaUtrustningar(
-                    StartDatum!.Value,
-                    SlutDatum!.Value);
+             utrustningController.HamtaLedigaUtrustningar(
+                 UtrustningStartDatum!.Value,
+                 UtrustningSlutDatum!.Value);
+
 
             UtrustningEntitet? valdFysiskUtrustning = ledigaUtrustningar
                 .Where(u =>
@@ -940,11 +979,10 @@ namespace Presentationslager.ViewModel
 
             PrisController prisController = new PrisController();
 
-            Pris? pris =
-                prisController.HämtaAktuelltPris(
-                    ValdUtrustningArtikelTyp.ArtikelTypNummer,
-                    StartDatum.Value,
-                    SlutDatum.Value);
+            decimal? pris = prisController.BeräknaPrisFörPeriod(
+                ValdUtrustningArtikelTyp.ArtikelTypNummer,
+                UtrustningStartDatum.Value,
+                UtrustningSlutDatum.Value);
 
             if (pris == null)
             {
@@ -958,7 +996,7 @@ namespace Presentationslager.ViewModel
             {
                 StartDatum = UtrustningStartDatum.Value,
                 SlutDatum = UtrustningSlutDatum.Value,
-                UtrustningBelopp = pris.PrisBelopp,
+                UtrustningBelopp = pris.Value,
                 UtrustningNummer = valdFysiskUtrustning.UtrustningNummer,
                 UtrustningPaketNummer = null,
                 UtrustningDisplayText = ValdUtrustningArtikelTyp.TypNamn,
@@ -969,16 +1007,21 @@ namespace Presentationslager.ViewModel
 
             OnPropertyChanged(nameof(TotalBeloppText));
 
+            UppdateraTillgängligUtrustning();
+
             ValdUtrustningArtikelTyp = null;
             _aktuelltUtrustningPris = null;
 
             OnPropertyChanged(nameof(UtrustningPrisText));
-
-            UppdateraTillgängligUtrustning();
+            OnPropertyChanged(nameof(KanLäggaTillUtrustning));
         }
 
         private void LäggTillUtrustningsPaket()
         {
+            if (!ValideraUtrustningsDatum())
+                return;
+
+
             if (ValtUtrustningPaket == null)
             {
                 VisaMeddelande?.Invoke("Du måste välja ett utrustningspaket.");
@@ -998,19 +1041,17 @@ namespace Presentationslager.ViewModel
             }
 
             UtrustningController utrustningController = new UtrustningController();
+
             PrisController prisController = new PrisController();
 
-            Pris? pris =
-                prisController.HämtaAktuelltPris(
-                    ValtUtrustningPaket.ArtikelTypNummer.Value,
-                    StartDatum!.Value,
-                    SlutDatum!.Value);
+            decimal? pris = prisController.BeräknaPrisFörPeriod(
+                ValtUtrustningPaket.ArtikelTypNummer.Value,
+                UtrustningStartDatum.Value,
+                UtrustningSlutDatum.Value);
 
-            if (pris == null)
+            if (!pris.HasValue)
             {
-                VisaMeddelande?.Invoke(
-                    "Kunde inte hitta något pris för utrustningspaketet.");
-
+                VisaMeddelande?.Invoke("Kunde inte hitta något pris för utrustningspaketet.");
                 return;
             }
 
@@ -1020,8 +1061,23 @@ namespace Presentationslager.ViewModel
 
             var ledigaUtrustningar =
                 utrustningController.HamtaLedigaUtrustningar(
-                    StartDatum.Value,
-                    SlutDatum.Value);
+                    UtrustningStartDatum!.Value,
+                    UtrustningSlutDatum!.Value);
+
+            var redanValdaNummer = UtrustningRader
+                .Where(r => !string.IsNullOrWhiteSpace(r.UtrustningNummer))
+                .Select(r => r.UtrustningNummer!)
+                .Concat(
+                    UtrustningRader
+                        .SelectMany(r => r.UtrustningPaketRader)
+                        .Where(r => !string.IsNullOrWhiteSpace(r.UtrustningNummer))
+                        .Select(r => r.UtrustningNummer!)
+                )
+                .ToHashSet();
+
+            ledigaUtrustningar = ledigaUtrustningar
+                .Where(u => !redanValdaNummer.Contains(u.UtrustningNummer))
+                .ToList();
 
             HashSet<string> användaNummer = new HashSet<string>();
 
@@ -1029,11 +1085,13 @@ namespace Presentationslager.ViewModel
                  paketIndex < AntalUtrustningsPaket.Value;
                  paketIndex++)
             {
+                int antalPaket = AntalUtrustningsPaket ?? 1;
+
                 UtrustningRad utrustningRad = new UtrustningRad
                 {
                     StartDatum = UtrustningStartDatum.Value,
                     SlutDatum = UtrustningSlutDatum.Value,
-                    UtrustningBelopp = pris.PrisBelopp,
+                    UtrustningBelopp = pris.Value * antalPaket,
                     UtrustningPaketNummer = ValtUtrustningPaket.UtrustningPaketNummer,
                     UtrustningNummer = null,
                     UtrustningDisplayText = ValtUtrustningPaket.UtrustningPaketNamn,
@@ -1080,13 +1138,15 @@ namespace Presentationslager.ViewModel
 
             OnPropertyChanged(nameof(TotalBeloppText));
 
+            UppdateraAntalPaketAlternativ();
+            UppdateraTillgängligUtrustning();
+
             ValtUtrustningPaket = null;
             AntalUtrustningsPaket = null;
             _aktuelltUtrustningPris = null;
 
             OnPropertyChanged(nameof(UtrustningPrisText));
-
-            UppdateraTillgängligUtrustning();
+            OnPropertyChanged(nameof(KanLäggaTillUtrustning));
         }
 
         #endregion
@@ -1095,16 +1155,7 @@ namespace Presentationslager.ViewModel
 
         #region Totalbelopp
 
-        public string TotalBeloppText
-        {
-            get
-            {
-                decimal logiTotal = LogiRader.Sum(x => x.LogiBelopp);
-                decimal utrustningTotal = UtrustningRader.Sum(x => x.UtrustningBelopp);
-
-                return $"{logiTotal + utrustningTotal:N0} kr";
-            }
-        }
+        public string TotalBeloppText => $"{LogiRader.Sum(x => x.LogiBelopp) + UtrustningRader.Sum(x => x.UtrustningBelopp):N0} kr";
 
         #endregion
 
@@ -1118,7 +1169,7 @@ namespace Presentationslager.ViewModel
                 return;
             }
 
-            if (!ValideraDatum())
+            if (LogiRader.Any() && !ValideraDatum())
                 return;
 
             Entitetslager.Bokning nyBokning = new Entitetslager.Bokning
@@ -1172,6 +1223,27 @@ namespace Presentationslager.ViewModel
             return true;
         }
 
+        private bool ValideraUtrustningsDatum()
+        {
+            if (UtrustningStartDatum == null || UtrustningSlutDatum == null)
+            {
+                VisaMeddelande?.Invoke(
+                    "Du måste välja både startdatum och slutdatum för utrustningen.");
+
+                return false;
+            }
+
+            if (UtrustningSlutDatum <= UtrustningStartDatum)
+            {
+                VisaMeddelande?.Invoke(
+                    "Utrustningens slutdatum måste vara efter startdatum.");
+
+                return false;
+            }
+
+            return true;
+        }
+
         #endregion
 
         #region Återställ formulär
@@ -1213,6 +1285,7 @@ namespace Presentationslager.ViewModel
 
             OnPropertyChanged(nameof(LogiPrisText));
             OnPropertyChanged(nameof(UtrustningPrisText));
+            OnPropertyChanged(nameof(KanLäggaTillUtrustning));
             OnPropertyChanged(nameof(BoendePlaceringText));
             OnPropertyChanged(nameof(TotalBeloppText));
         }

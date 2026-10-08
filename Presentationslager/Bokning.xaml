@@ -424,7 +424,8 @@
                                 <Button Content="Lägg till"
                         Width="120"
                         HorizontalAlignment="Left"
-                        Command="{Binding LäggTillUtrustningCommand}"/>
+                        Command="{Binding LäggTillUtrustningCommand}"
+                        IsEnabled="{Binding KanLäggaTillUtrustning}"/>
 
                             </StackPanel>
 

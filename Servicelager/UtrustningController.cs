@@ -100,7 +100,7 @@ namespace Servicelager
         }
 
 
-        //För bokning
+        //För bokning /Sara
         public List<UtrustningPaketInnehåll> HamtaPaketInnehall(int utrustningPaketNummer)
         {
             return _unitOfWork.UtrustningPaketInnehållRepository

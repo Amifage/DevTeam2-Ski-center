@@ -16,24 +16,20 @@ namespace Presentationslager.ViewModel
         public ObservableCollection<LogiRad> LogiRader { get; }
         public ObservableCollection<UtrustningRad> UtrustningRader { get; }
 
-        public string TotalBeloppText
-        {
-            get
-            {
-                decimal total = LogiRader.Sum(x => x.LogiBelopp);
-
-                return $"{total:N0} kr";
-            }
-        }
+        public string TotalBeloppText =>
+            $"{LogiRader.Sum(x => x.LogiBelopp) +
+            UtrustningRader.Sum(x => x.UtrustningBelopp):N0} kr";
 
         public BokningsbekräftelseViewModel(
-    string kundText,
-    DateTime bokningsdatum,
-    IEnumerable<LogiRad> logiRader,
-    IEnumerable<UtrustningRad> utrustningRader)
+            string kundText,
+            DateTime bokningsdatum,
+            IEnumerable<LogiRad> logiRader,
+            IEnumerable<UtrustningRad> utrustningRader)
         {
             KundText = kundText;
             BokningsdatumText = bokningsdatum.ToString("yyyy-MM-dd");
+
+
             LogiRader = new ObservableCollection<LogiRad>(logiRader);
             UtrustningRader = new ObservableCollection<UtrustningRad>(utrustningRader);
         }
