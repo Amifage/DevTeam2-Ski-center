@@ -657,6 +657,8 @@ namespace Presentationslager.ViewModel
                 _aktuelltUtrustningPris = null;
                 OnPropertyChanged(nameof(UtrustningPrisText));
                 OnPropertyChanged(nameof(KanLäggaTillUtrustning));
+
+                UppdateraTillgängligUtrustning();
             }
         }
 
