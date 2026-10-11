@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
+using System.ComponentModel.DataAnnotations.Schema;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
@@ -18,9 +19,14 @@ namespace Entitetslager
 
 
         public string? KonferensNummer { get; set; }
-        public virtual Konferens konferens { get; set; } //nav prop
+
+        [ForeignKey(nameof(KonferensNummer))]
+        public virtual Konferens? konferens { get; set; }
+
 
         public int? BokningsNummer { get; set; }
-        public virtual Bokning bokning { get; set; }//nav prop
+
+        [ForeignKey(nameof(BokningsNummer))]
+        public virtual Bokning? bokning { get; set; }
     }
 }

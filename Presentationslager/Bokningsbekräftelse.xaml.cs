@@ -8,17 +8,23 @@ namespace Presentationslager
 {
     public partial class Bokningsbekräftelse : Window
     {
-        public Bokningsbekräftelse(string kundText, DateTime bokningsdatum, List<LogiRad> logiRader, List<UtrustningRad> utrustningRader)
+        public Bokningsbekräftelse(
+             string kundText,
+             DateTime bokningsdatum,
+             List<LogiRad> logiRader,
+             List<UtrustningRad> utrustningRader,
+             List<KonferensRad> konferensRader)
         {
             InitializeComponent();
 
             DataContext = new BokningsbekräftelseViewModel(
-        kundText,
-        bokningsdatum,
-        logiRader,
-        utrustningRader);
+                kundText,
+                bokningsdatum,
+                logiRader,
+                utrustningRader,
+                konferensRader);
         }
-         
+
         private void Ok_Click(object sender, RoutedEventArgs e)
         {
             DialogResult = true;

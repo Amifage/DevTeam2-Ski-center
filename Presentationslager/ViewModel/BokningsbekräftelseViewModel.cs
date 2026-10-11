@@ -15,16 +15,25 @@ namespace Presentationslager.ViewModel
 
         public ObservableCollection<LogiRad> LogiRader { get; }
         public ObservableCollection<UtrustningRad> UtrustningRader { get; }
+        public ObservableCollection<KonferensRad> KonferensRader { get; }
+
+
+        public bool HarLogi => LogiRader.Any();
+        public bool HarUtrustning => UtrustningRader.Any();
+        public bool HarKonferens => KonferensRader.Any();
+
 
         public string TotalBeloppText =>
-            $"{LogiRader.Sum(x => x.LogiBelopp) +
-            UtrustningRader.Sum(x => x.UtrustningBelopp):N0} kr";
+                        $"{LogiRader.Sum(x => x.LogiBelopp) +
+                           UtrustningRader.Sum(x => x.UtrustningBelopp) +
+                           KonferensRader.Sum(x => x.KonferensBelopp):N0} kr";
 
         public BokningsbekräftelseViewModel(
             string kundText,
             DateTime bokningsdatum,
             IEnumerable<LogiRad> logiRader,
-            IEnumerable<UtrustningRad> utrustningRader)
+            IEnumerable<UtrustningRad> utrustningRader,
+            IEnumerable<KonferensRad> konferensRader)
         {
             KundText = kundText;
             BokningsdatumText = bokningsdatum.ToString("yyyy-MM-dd");
@@ -32,6 +41,7 @@ namespace Presentationslager.ViewModel
 
             LogiRader = new ObservableCollection<LogiRad>(logiRader);
             UtrustningRader = new ObservableCollection<UtrustningRad>(utrustningRader);
+            KonferensRader = new ObservableCollection<KonferensRad>(konferensRader);
         }
 
         public event PropertyChangedEventHandler? PropertyChanged;

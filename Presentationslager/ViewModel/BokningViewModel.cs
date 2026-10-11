@@ -42,7 +42,7 @@ namespace Presentationslager.ViewModel
         #region Events
 
         public event Action<string>? VisaMeddelande;
-        public event Action<string, DateTime, List<LogiRad>, List<UtrustningRad>>? BokningSparad;
+        public event Action<string, DateTime, List<LogiRad>, List<UtrustningRad>, List<KonferensRad>>? BokningSparad;
         public event Action? StängFönster;
 
         #endregion
@@ -67,6 +67,11 @@ namespace Presentationslager.ViewModel
         public ObservableCollection<int> AntalUtrustningsPaketAlternativ { get; }
         public ObservableCollection<UtrustningRad> UtrustningRader { get; }
 
+
+        public ObservableCollection<Konferens> TillgängligaKonferenser { get; }
+        public ObservableCollection<int> AntalKonferensDeltagareAlternativ { get; }
+        public ObservableCollection<KonferensRad> KonferensRader { get; }
+
         #endregion
 
         #region Commands
@@ -75,6 +80,7 @@ namespace Presentationslager.ViewModel
         public ICommand LäggTillUtrustningCommand { get; }
         public ICommand SkapaBokningCommand { get; }
         public ICommand AvbrytCommand { get; }
+        public ICommand LäggTillKonferensCommand { get; }
 
         #endregion
 
@@ -87,6 +93,7 @@ namespace Presentationslager.ViewModel
             Kunder = new ObservableCollection<Kund>(kundController.HämtaAllaKunder());
             AntalPersonerAlternativ = new ObservableCollection<int>(Enumerable.Range(1, 50));
 
+            #region Logi
             BoendeTyper = new ObservableCollection<string>
             {
                 "Lägenhet",
@@ -99,6 +106,10 @@ namespace Presentationslager.ViewModel
             LogiRader = new ObservableCollection<LogiRad>();
             TillgängligaLogiTypTexter = new ObservableCollection<string>();
 
+            LäggTillLogiCommand = new RelayCommand(_ => LäggTillLogi());
+            #endregion
+
+            #region Utrustning
             UtrustningTyper = new ObservableCollection<string>
             {
                 "Utrustningspaket",
@@ -111,14 +122,24 @@ namespace Presentationslager.ViewModel
             AntalUtrustningsPaketAlternativ = new ObservableCollection<int>();
             UtrustningRader = new ObservableCollection<UtrustningRad>();
 
-            LäggTillLogiCommand = new RelayCommand(_ => LäggTillLogi());
             LäggTillUtrustningCommand = new RelayCommand(_ => LäggTillUtrustning());
+            #endregion
+
+            #region Konferens
+
+            TillgängligaKonferenser = new ObservableCollection<Konferens>();
+            AntalKonferensDeltagareAlternativ = new ObservableCollection<int>();
+            KonferensRader = new ObservableCollection<KonferensRad>();
+
+            LäggTillKonferensCommand = new RelayCommand(_ => LäggTillKonferens());
+
+            #endregion
+
             SkapaBokningCommand = new RelayCommand(_ => SkapaBokning());
             AvbrytCommand = new RelayCommand(_ => StängFönster?.Invoke());
         }
 
         #endregion
-
 
 
         #region Kund
@@ -151,13 +172,19 @@ namespace Presentationslager.ViewModel
                 _startDatum = value;
                 OnPropertyChanged();
 
-                if (UtrustningStartDatum == null)
-                    UtrustningStartDatum = value;
-
                 UppdateraTillgängligaLogi();
                 UppdateraLogiPris();
+
+
+                if (UtrustningStartDatum == null)
+                    UtrustningStartDatum = value;
                 UppdateraTillgängligUtrustning();
                 UppdateraUtrustningPris();
+
+
+                if (KonferensStartTid == null)
+                    KonferensStartTid = value;
+                
             }
         }
 
@@ -172,13 +199,18 @@ namespace Presentationslager.ViewModel
                 _slutDatum = value;
                 OnPropertyChanged();
 
-                if (UtrustningSlutDatum == null)
-                    UtrustningSlutDatum = value;
 
                 UppdateraTillgängligaLogi();
                 UppdateraLogiPris();
+
+
+                if (UtrustningSlutDatum == null)
+                    UtrustningSlutDatum = value;
                 UppdateraTillgängligUtrustning();
                 UppdateraUtrustningPris();
+
+                if (KonferensSlutTid == null)
+                    KonferensSlutTid = value;
             }
         }
 
@@ -1155,9 +1187,269 @@ namespace Presentationslager.ViewModel
 
 
 
+        #region Konferens - val
+
+        private DateTime? _konferensStartTid;
+        private DateTime? _konferensSlutTid;
+        private Konferens? _valdKonferens;
+        private int? _antalKonferensDeltagare;
+        private decimal? _aktuelltKonferensPris;
+
+        public DateTime? KonferensStartTid
+        {
+            get => _konferensStartTid;
+            set
+            {
+                if (_konferensStartTid == value)
+                    return;
+
+                _konferensStartTid = value;
+                OnPropertyChanged();
+
+                UppdateraTillgängligaKonferenser();
+                UppdateraKonferensPris();
+            }
+        }
+
+        public DateTime? KonferensSlutTid
+        {
+            get => _konferensSlutTid;
+            set
+            {
+                if (_konferensSlutTid == value)
+                    return;
+
+                _konferensSlutTid = value;
+                OnPropertyChanged();
+
+                UppdateraTillgängligaKonferenser();
+                UppdateraKonferensPris();
+            }
+        }
+
+        public Konferens? ValdKonferens
+        {
+            get => _valdKonferens;
+            set
+            {
+                if (_valdKonferens == value)
+                    return;
+
+                _valdKonferens = value;
+                OnPropertyChanged();
+
+                UppdateraAntalKonferensDeltagare();
+                UppdateraKonferensPris();
+            }
+        }
+
+        public int? AntalKonferensDeltagare
+        {
+            get => _antalKonferensDeltagare;
+            set
+            {
+                if (_antalKonferensDeltagare == value)
+                    return;
+
+                _antalKonferensDeltagare = value;
+                OnPropertyChanged();
+
+                OnPropertyChanged(nameof(KanLäggaTillKonferens));
+            }
+        }
+
+        #endregion
+
+        #region Konferens - visning
+
+        public string KonferensPrisText =>
+            _aktuelltKonferensPris.HasValue
+                ? $"{_aktuelltKonferensPris.Value:N0} kr"
+                : "Pris saknas";
+
+        public bool KanLäggaTillKonferens =>
+            ValdKonferens != null &&
+            AntalKonferensDeltagare.HasValue &&
+            _aktuelltKonferensPris.HasValue;
+
+        #endregion
+
+        #region Konferens - tillgänglighet
+
+        private void UppdateraTillgängligaKonferenser()
+        {
+            TillgängligaKonferenser.Clear();
+
+            ValdKonferens = null;
+
+            if (KonferensStartTid == null ||
+                KonferensSlutTid == null ||
+                KonferensSlutTid <= KonferensStartTid)
+            {
+                return;
+            }
+
+            KonferensController konferensController = new KonferensController();
+
+            var ledigaKonferenser = konferensController.HamtaLedigaKonferenser(
+                KonferensStartTid.Value,
+                KonferensSlutTid.Value);
+
+            var redanValdaKonferensNummer = KonferensRader
+                .Where(r => !string.IsNullOrWhiteSpace(r.KonferensNummer))
+                .Select(r => r.KonferensNummer!)
+                .ToHashSet();
+
+            ledigaKonferenser = ledigaKonferenser
+                .Where(k => !redanValdaKonferensNummer.Contains(k.KonferensNummer))
+                .OrderBy(k => k.KonferensKapacitet)
+                .ToList();
+
+            foreach (Konferens konferens in ledigaKonferenser)
+                TillgängligaKonferenser.Add(konferens);
+        }
+
+        private void UppdateraAntalKonferensDeltagare()
+        {
+            AntalKonferensDeltagareAlternativ.Clear();
+            AntalKonferensDeltagare = null;
+
+            if (ValdKonferens == null)
+                return;
+
+            for (int i = 1; i <= ValdKonferens.KonferensKapacitet; i++)
+                AntalKonferensDeltagareAlternativ.Add(i);
+        }
+
+        #endregion
+
+        #region Konferens - pris
+
+        private void UppdateraKonferensPris()
+        {
+            _aktuelltKonferensPris = null;
+
+            OnPropertyChanged(nameof(KonferensPrisText));
+            OnPropertyChanged(nameof(KanLäggaTillKonferens));
+
+            if (ValdKonferens?.ArtikelTypNummer == null ||
+                KonferensStartTid == null ||
+                KonferensSlutTid == null ||
+                KonferensSlutTid <= KonferensStartTid)
+            {
+                return;
+            }
+
+            PrisController prisController = new PrisController();
+
+            Pris? pris = prisController.HämtaAktuelltPris(
+                ValdKonferens.ArtikelTypNummer.Value,
+                KonferensStartTid.Value,
+                KonferensSlutTid.Value);
+
+            if (pris == null)
+                return;
+
+            _aktuelltKonferensPris = pris.PrisBelopp;
+
+            OnPropertyChanged(nameof(KonferensPrisText));
+            OnPropertyChanged(nameof(KanLäggaTillKonferens));
+        }
+
+        #endregion
+
+        #region Konferens - lägg till
+
+        private void LäggTillKonferens()
+        {
+            if (!ValideraKonferensDatum())
+                return;
+
+            if (ValdKonferens == null)
+            {
+                VisaMeddelande?.Invoke("Du måste välja ett konferensrum.");
+                return;
+            }
+
+            if (!AntalKonferensDeltagare.HasValue ||
+                AntalKonferensDeltagare.Value <= 0)
+            {
+                VisaMeddelande?.Invoke("Du måste ange antal deltagare.");
+                return;
+            }
+
+            if (AntalKonferensDeltagare.Value > ValdKonferens.KonferensKapacitet)
+            {
+                VisaMeddelande?.Invoke(
+                    $"Konferensrummet rymmer maximalt {ValdKonferens.KonferensKapacitet} personer.");
+
+                return;
+            }
+
+            if (!_aktuelltKonferensPris.HasValue)
+            {
+                VisaMeddelande?.Invoke(
+                    "Kunde inte hitta något pris för det valda konferensrummet.");
+
+                return;
+            }
+
+            KonferensRad konferensRad = new KonferensRad
+            {
+                StartTid = KonferensStartTid!.Value,
+                SlutTid = KonferensSlutTid!.Value,
+                AntalPersoner = AntalKonferensDeltagare.Value,
+                KonferensBelopp = _aktuelltKonferensPris.Value,
+                KonferensNummer = ValdKonferens.KonferensNummer,
+                SenastUppdaterad = DateTime.Now
+            };
+
+            KonferensRader.Add(konferensRad);
+
+            OnPropertyChanged(nameof(TotalBeloppText));
+
+            UppdateraTillgängligaKonferenser();
+
+            ValdKonferens = null;
+            AntalKonferensDeltagare = null;
+
+            _aktuelltKonferensPris = null;
+
+            OnPropertyChanged(nameof(KonferensPrisText));
+            OnPropertyChanged(nameof(KanLäggaTillKonferens));
+        }
+
+        private bool ValideraKonferensDatum()
+        {
+            if (KonferensStartTid == null || KonferensSlutTid == null)
+            {
+                VisaMeddelande?.Invoke(
+                    "Du måste välja både startdatum och slutdatum för konferensen.");
+
+                return false;
+            }
+
+            if (KonferensSlutTid <= KonferensStartTid)
+            {
+                VisaMeddelande?.Invoke(
+                    "Konferensens slutdatum måste vara efter startdatum.");
+
+                return false;
+            }
+
+            return true;
+        }
+
+        #endregion
+
+
+
         #region Totalbelopp
 
-        public string TotalBeloppText => $"{LogiRader.Sum(x => x.LogiBelopp) + UtrustningRader.Sum(x => x.UtrustningBelopp):N0} kr";
+        public string TotalBeloppText =>
+                        $"{LogiRader.Sum(x => x.LogiBelopp) +
+                            UtrustningRader.Sum(x => x.UtrustningBelopp) +
+                            KonferensRader.Sum(x => x.KonferensBelopp):N0} kr";
 
         #endregion
 
@@ -1179,8 +1471,10 @@ namespace Presentationslager.ViewModel
                 KundNummer = ValdKund.KundNummer,
                 BokningsDatum = DateTime.Now,
                 Status = "Aktiv",
+
                 LogiRader = LogiRader.ToList(),
-                UtrustningRader = UtrustningRader.ToList()
+                UtrustningRader = UtrustningRader.ToList(),
+                KonferensRader = KonferensRader.ToList()
             };
 
             BokningController bokningController = new BokningController();
@@ -1197,7 +1491,8 @@ namespace Presentationslager.ViewModel
                 kundText,
                 DateTime.Now,
                 LogiRader.ToList(),
-                UtrustningRader.ToList());
+                UtrustningRader.ToList(),
+                KonferensRader.ToList());
         }
 
         #endregion
@@ -1254,41 +1549,50 @@ namespace Presentationslager.ViewModel
         {
             LogiRader.Clear();
             UtrustningRader.Clear();
+            KonferensRader.Clear();
 
             ValdKund = null;
-
             StartDatum = null;
             SlutDatum = null;
-
             AntalPersonerTotalt = null;
 
             ValdBoendeTyp = null;
             ValdLogiArtikelTyp = null;
             ValtLogi = null;
             AntalPersonerValtLogi = null;
+            TillgängligaLogi.Clear();
+            TillgängligaLogiArtikelTyper.Clear();
+            AntalPersonerValtLogiAlternativ.Clear();
 
             ValdUtrustningTyp = null;
             ValtUtrustningPaket = null;
             ValdEnskildUtrustning = null;
             ValdUtrustningArtikelTyp = null;
             AntalUtrustningsPaket = null;
-
-            TillgängligaLogi.Clear();
-            TillgängligaLogiArtikelTyper.Clear();
-            AntalPersonerValtLogiAlternativ.Clear();
-
+            UtrustningStartDatum = null;
+            UtrustningSlutDatum = null;
             TillgängligaUtrustningsPaket.Clear();
             TillgängligaEnskildaUtrustningar.Clear();
             TillgängligaUtrustningArtikelTyper.Clear();
             AntalUtrustningsPaketAlternativ.Clear();
 
+            ValdKonferens = null;
+            AntalKonferensDeltagare = null;
+            KonferensStartTid = null;
+            KonferensSlutTid = null;
+            TillgängligaKonferenser.Clear();
+            AntalKonferensDeltagareAlternativ.Clear();
+
             _aktuelltLogiPris = null;
             _aktuelltUtrustningPris = null;
+            _aktuelltKonferensPris = null;
 
             OnPropertyChanged(nameof(LogiPrisText));
             OnPropertyChanged(nameof(UtrustningPrisText));
             OnPropertyChanged(nameof(KanLäggaTillUtrustning));
             OnPropertyChanged(nameof(BoendePlaceringText));
+            OnPropertyChanged(nameof(KonferensPrisText));
+            OnPropertyChanged(nameof(KanLäggaTillKonferens));
             OnPropertyChanged(nameof(TotalBeloppText));
         }
 

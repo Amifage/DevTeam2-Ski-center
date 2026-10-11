@@ -441,70 +441,124 @@
                 <!-- ===================================== -->
 
                 <Border Background="White"
-                        CornerRadius="5"
-                        Padding="15"
-                        Margin="0,0,0,15">
+        CornerRadius="5"
+        Padding="15"
+        Margin="0,0,0,15">
 
                     <StackPanel>
 
-
                         <TextBlock Text="Konferens"
-                                   FontSize="20"
-                                   FontWeight="SemiBold"
-                                   Margin="0,0,0,10"/>
+                   FontSize="20"
+                   FontWeight="SemiBold"
+                   Margin="0,0,0,10"/>
+
+                        <!-- VALDA KONFERENSER -->
+
+                        <ItemsControl ItemsSource="{Binding KonferensRader}"
+                      Margin="0,0,0,10">
+
+                            <ItemsControl.ItemTemplate>
+                                <DataTemplate>
+
+                                    <Border BorderBrush="LightGray"
+                            BorderThickness="1"
+                            CornerRadius="4"
+                            Padding="10"
+                            Margin="0,0,0,5">
+
+                                        <Grid>
+
+                                            <Grid.ColumnDefinitions>
+                                                <ColumnDefinition Width="*"/>
+                                                <ColumnDefinition Width="Auto"/>
+                                            </Grid.ColumnDefinitions>
+
+                                            <StackPanel>
+
+                                                <TextBlock Text="{Binding KonferensNummer}"
+                                           FontWeight="Bold"/>
+
+                                                <TextBlock>
+                                    <Run Text="Antal deltagare: "/>
+                                    <Run Text="{Binding AntalPersoner}"/>
+                                                </TextBlock>
+
+                                                <TextBlock>
+                                    <Run Text="Period: "/>
+                                    <Run Text="{Binding StartTid,
+                                        StringFormat={}{0:yyyy-MM-dd}}"/>
+                                    <Run Text=" - "/>
+                                    <Run Text="{Binding SlutTid,
+                                        StringFormat={}{0:yyyy-MM-dd}}"/>
+                                                </TextBlock>
+
+                                            </StackPanel>
+
+                                            <TextBlock Grid.Column="1"
+                                       Text="{Binding KonferensBelopp,
+                                       StringFormat={}{0:N0} kr}"
+                                       FontWeight="Bold"
+                                       VerticalAlignment="Center"
+                                       Margin="20,0,0,0"/>
+
+                                        </Grid>
+
+                                    </Border>
+
+                                </DataTemplate>
+                            </ItemsControl.ItemTemplate>
+
+                        </ItemsControl>
 
 
-                        <TextBlock Text="Ingen konferens vald ännu."
-                                   FontStyle="Italic"
-                                   Margin="0,0,0,10"/>
-
+                        <!-- LÄGG TILL KONFERENS -->
 
                         <Expander Header="+ Lägg till konferens">
 
                             <StackPanel Margin="10">
 
+                                <TextBlock Text="Konferens från:"/>
 
-                                <TextBlock Text="Konferenslokal:"/>
+                                <DatePicker SelectedDate="{Binding KonferensStartTid, Mode=TwoWay}"
+                            Margin="0,5,0,10"/>
 
+
+                                <TextBlock Text="Konferens till:"/>
+
+                                <DatePicker SelectedDate="{Binding KonferensSlutTid, Mode=TwoWay}"
+                            Margin="0,5,0,10"/>
+
+
+                                <TextBlock Text="Konferensrum:"/>
 
                                 <ComboBox Height="30"
-                                          Margin="0,5,0,10"/>
+                          Margin="0,5,0,10"
+                          ItemsSource="{Binding TillgängligaKonferenser}"
+                          SelectedItem="{Binding ValdKonferens, Mode=TwoWay}"
+                          DisplayMemberPath="DisplayText"/>
 
 
-                                <TextBlock Text="Antal personer:"/>
+                                <TextBlock Text="Antal deltagare:"/>
 
-
-                                <TextBox Height="30"
-                                         Margin="0,5,0,10"/>
-
-
-                                <TextBlock Text="Starttid:"/>
-
-
-                                <DatePicker Height="30"
-                                            Margin="0,5,0,10"/>
-
-
-                                <TextBlock Text="Sluttid:"/>
-
-
-                                <DatePicker Height="30"
-                                            Margin="0,5,0,10"/>
+                                <ComboBox Height="30"
+                          Margin="0,5,0,10"
+                          ItemsSource="{Binding AntalKonferensDeltagareAlternativ}"
+                          SelectedItem="{Binding AntalKonferensDeltagare, Mode=TwoWay}"/>
 
 
                                 <TextBlock Text="Pris:"
-                                           Margin="0,0,0,5"/>
+                           Margin="0,0,0,5"/>
 
-
-                                <TextBlock Text="0 kr"
-                                           FontWeight="Bold"
-                                           Margin="0,0,0,10"/>
+                                <TextBlock Text="{Binding KonferensPrisText}"
+                           FontWeight="Bold"
+                           Margin="0,0,0,10"/>
 
 
                                 <Button Content="Lägg till"
-                                        Width="120"
-                                        HorizontalAlignment="Left"
-                                        IsEnabled="False"/>
+                        Width="120"
+                        HorizontalAlignment="Left"
+                        Command="{Binding LäggTillKonferensCommand}"
+                        IsEnabled="{Binding KanLäggaTillKonferens}"/>
 
                             </StackPanel>
 

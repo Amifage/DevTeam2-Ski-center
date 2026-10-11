@@ -45,14 +45,16 @@ namespace Presentationslager
                  string kundText,
                  DateTime bokningsdatum,
                  List<LogiRad> logiRader,
-                 List<UtrustningRad> utrustningRader)
+                 List<UtrustningRad> utrustningRader,
+                 List<KonferensRad> konferensRader)
         {
             Bokningsbekräftelse bekräftelseFönster =
                 new Bokningsbekräftelse(
                     kundText,
                     bokningsdatum,
                     logiRader,
-                    utrustningRader);
+                    utrustningRader,
+                    konferensRader);
 
             bekräftelseFönster.Owner = this;
 
