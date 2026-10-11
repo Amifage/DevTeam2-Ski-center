@@ -310,10 +310,9 @@
                                             </Grid.ColumnDefinitions>
 
                                             <StackPanel>
-                                                <TextBlock FontWeight="Bold">
-                                <Run Text="Skidlektion "/>
-                                <Run Text="{Binding SkidlektionNummer}"/>
-                                                </TextBlock>
+                                                <TextBlock Text="{Binding SkidlektionDisplayText}"
+                                                           FontWeight="Bold"/>
+                                        
 
                                                 <TextBlock>
                                 <Run Text="Antal personer: "/>

@@ -609,9 +609,9 @@
 
                                             <StackPanel>
 
-                                                <TextBlock FontWeight="Bold">
-                                    <Run Text="Skidlektion "/>
-                                    <Run Text="{Binding SkidlektionNummer}"/>
+                                                <TextBlock 
+                                                    Text="{Binding SkidlektionDisplayText}"
+                                                    FontWeight="Bold">
                                                 </TextBlock>
 
                                                 <TextBlock>
@@ -695,9 +695,9 @@
                                 <TextBlock Text="Antal personer:"/>
 
                                 <ComboBox Height="30"
-                                          Margin="0,5,0,10"
-                                          ItemsSource="{Binding AntalSkidlektionPersonerAlternativ}"
-                                          SelectedItem="{Binding AntalSkidlektionPersoner, Mode=TwoWay}"
+                                      Margin="0,5,0,10"
+                                      ItemsSource="{Binding AntalSkidlektionPersonerAlternativ}"
+                                      SelectedItem="{Binding AntalSkidlektionPersoner, Mode=TwoWay}"
                                           IsEnabled="{Binding KanVäljaAntalSkidlektionPersoner}"/>
 
 

@@ -1696,7 +1696,11 @@ namespace Presentationslager.ViewModel
                 AntalPersoner = AntalSkidlektionPersoner.Value,
                 SkidlektionBelopp = _aktuelltSkidlektionPris.Value,
                 SkidlektionNummer = ValdSkidlektion.SkidlektionNummer,
-                SenastUppdaterad = DateTime.Now
+                SenastUppdaterad = DateTime.Now,
+
+                SkidlektionDisplayText =
+                $"{ValdSkidlektion.artikelTyp?.TypNamn ?? "Skidlektion"} | " +
+                $"{ValdSkidlektion.StartTid:hh\\:mm} - {ValdSkidlektion.SlutTid:hh\\:mm}",
             };
 
             SkidlektionRader.Add(skidlektionRad);

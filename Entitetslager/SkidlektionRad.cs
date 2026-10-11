@@ -27,5 +27,8 @@ namespace Entitetslager
         [ForeignKey(nameof(BokningsNummer))]
         public virtual Bokning? bokning { get; set; }
 
+        [NotMapped]
+        public string? SkidlektionDisplayText { get; set; }
+
     }
 }
