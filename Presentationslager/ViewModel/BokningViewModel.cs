@@ -87,11 +87,21 @@ namespace Presentationslager.ViewModel
         #region Commands
 
         public ICommand LäggTillLogiCommand { get; }
+        public ICommand TaBortLogiRadCommand { get; }
+
+
         public ICommand LäggTillUtrustningCommand { get; }
+        public ICommand TaBortUtrustningRadCommand { get; }
+
+        public ICommand LäggTillKonferensCommand { get; }
+        public ICommand TaBortKonferensRadCommand { get; }
+
+
+        public ICommand LäggTillSkidlektionCommand { get; }
+        public ICommand TaBortSkidlektionRadCommand { get; }
+
         public ICommand SkapaBokningCommand { get; }
         public ICommand AvbrytCommand { get; }
-        public ICommand LäggTillKonferensCommand { get; }
-        public ICommand LäggTillSkidlektionCommand { get; }
 
         #endregion
 
@@ -118,6 +128,7 @@ namespace Presentationslager.ViewModel
             TillgängligaLogiTypTexter = new ObservableCollection<string>();
 
             LäggTillLogiCommand = new RelayCommand(_ => LäggTillLogi());
+            TaBortLogiRadCommand = new RelayCommand(parameter => TaBortLogiRad(parameter));
             #endregion
 
             #region Utrustning
@@ -134,6 +145,7 @@ namespace Presentationslager.ViewModel
             UtrustningRader = new ObservableCollection<UtrustningRad>();
 
             LäggTillUtrustningCommand = new RelayCommand(_ => LäggTillUtrustning());
+            TaBortUtrustningRadCommand = new RelayCommand(parameter => TaBortUtrustningRad(parameter));
             #endregion
 
             #region Konferens
@@ -143,6 +155,7 @@ namespace Presentationslager.ViewModel
             KonferensRader = new ObservableCollection<KonferensRad>();
 
             LäggTillKonferensCommand = new RelayCommand(_ => LäggTillKonferens());
+            TaBortKonferensRadCommand = new RelayCommand(parameter => TaBortKonferensRad(parameter));
 
             #endregion
 
@@ -153,6 +166,7 @@ namespace Presentationslager.ViewModel
             SkidlektionRader = new ObservableCollection<SkidlektionRad>();
 
             LäggTillSkidlektionCommand = new RelayCommand(_ => LäggTillSkidlektion());
+            TaBortSkidlektionRadCommand = new RelayCommand(parameter => TaBortSkidlektionRad(parameter));
 
             #endregion
 
@@ -519,7 +533,7 @@ namespace Presentationslager.ViewModel
 
         #endregion
 
-        #region Logi - lägg till
+        #region Logi - lägg till/ta bort
         private void LäggTillLogi()
         {
             if (AntalPersonerTotalt == null)
@@ -605,6 +619,18 @@ namespace Presentationslager.ViewModel
             _aktuelltLogiPris = null;
 
             OnPropertyChanged(nameof(LogiPrisText));
+
+            UppdateraTillgängligaLogi();
+        }
+
+        private void TaBortLogiRad(object? parameter)
+        {
+            if (parameter is not LogiRad logiRad)
+                return;
+
+            LogiRader.Remove(logiRad);
+
+            OnPropertyChanged(nameof(TotalBeloppText));
 
             UppdateraTillgängligaLogi();
         }
@@ -975,7 +1001,7 @@ namespace Presentationslager.ViewModel
 
         #endregion
 
-        #region Utrustning - lägg till
+        #region Utrustning - lägg till/ta bort
 
         private void LäggTillUtrustning()
         {
@@ -1204,6 +1230,18 @@ namespace Presentationslager.ViewModel
             OnPropertyChanged(nameof(KanLäggaTillUtrustning));
         }
 
+        private void TaBortUtrustningRad(object? parameter)
+        {
+            if (parameter is not UtrustningRad utrustningRad)
+                return;
+
+            UtrustningRader.Remove(utrustningRad);
+
+            OnPropertyChanged(nameof(TotalBeloppText));
+
+            UppdateraTillgängligUtrustning();
+        }
+
         #endregion
 
 
@@ -1379,7 +1417,7 @@ namespace Presentationslager.ViewModel
 
         #endregion
 
-        #region Konferens - lägg till
+        #region Konferens - lägg till/ta bort
 
         private void LäggTillKonferens()
         {
@@ -1461,6 +1499,17 @@ namespace Presentationslager.ViewModel
             return true;
         }
 
+        private void TaBortKonferensRad(object? parameter)
+        {
+            if (parameter is not KonferensRad konferensRad)
+                return;
+
+            KonferensRader.Remove(konferensRad);
+
+            OnPropertyChanged(nameof(TotalBeloppText));
+
+            UppdateraTillgängligaKonferenser();
+        }
         #endregion
 
 
@@ -1638,7 +1687,7 @@ namespace Presentationslager.ViewModel
 
         #endregion
 
-        #region Skidlektion - lägg till
+        #region Skidlektion - lägg till/ta bort
 
         private void LäggTillSkidlektion()
         {
@@ -1717,7 +1766,17 @@ namespace Presentationslager.ViewModel
             OnPropertyChanged(nameof(SkidlektionPrisText));
             OnPropertyChanged(nameof(KanLäggaTillSkidlektion));
         }
+        private void TaBortSkidlektionRad(object? parameter)
+        {
+            if (parameter is not SkidlektionRad skidlektionRad)
+                return;
 
+            SkidlektionRader.Remove(skidlektionRad);
+
+            OnPropertyChanged(nameof(TotalBeloppText));
+
+            UppdateraTillgängligaSkidlektioner();
+        }
         #endregion
 
 

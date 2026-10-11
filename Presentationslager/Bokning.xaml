@@ -131,11 +131,9 @@
                                         <Grid>
 
                                             <Grid.ColumnDefinitions>
-
                                                 <ColumnDefinition Width="*"/>
-
                                                 <ColumnDefinition Width="Auto"/>
-
+                                                <ColumnDefinition Width="Auto"/>
                                             </Grid.ColumnDefinitions>
 
 
@@ -177,6 +175,15 @@
                                                        FontWeight="Bold"
                                                        VerticalAlignment="Center"
                                                        Margin="20,0,0,0"/>
+
+                                            <Button Grid.Column="2"
+                                                    Content="Ta bort"
+                                                    Margin="10,0,0,0"
+                                                    Padding="10,4"
+                                                    VerticalAlignment="Center"
+                                                    Command="{Binding DataContext.TaBortLogiRadCommand,
+                                                    RelativeSource={RelativeSource AncestorType=Window}}"
+                                                    CommandParameter="{Binding}"/>
 
                                         </Grid>
 
@@ -242,7 +249,7 @@
 
                                             <Style.Triggers>
                                                 <DataTrigger Binding="{Binding VisaIngaTillgängligaLogi}"
-                                                                Value="True">
+                                                             Value="True">
                                                     <Setter Property="Visibility" Value="Visible"/>
                                                 </DataTrigger>
                                             </Style.Triggers>
@@ -290,11 +297,10 @@
                 <!-- UTRUSTNING                            -->
                 <!-- ===================================== -->
 
-                <!-- UTRUSTNING -->
                 <Border Background="White"
-        CornerRadius="5"
-        Padding="15"
-        Margin="0,0,0,15">
+                        CornerRadius="5"
+                        Padding="15"
+                        Margin="0,0,0,15">
 
                     <Border.Resources>
                         <BooleanToVisibilityConverter x:Key="BooleanToVisibilityConverter"/>
@@ -303,49 +309,59 @@
                     <StackPanel>
 
                         <TextBlock Text="Utrustning"
-                   FontSize="20"
-                   FontWeight="SemiBold"
-                   Margin="0,0,0,10"/>
+                                   FontSize="20"
+                                   FontWeight="SemiBold"
+                                   Margin="0,0,0,10"/>
 
                         <!-- Vald utrustning -->
                         <ItemsControl ItemsSource="{Binding UtrustningRader}"
-                      Margin="0,0,0,10">
+                                      Margin="0,0,0,10">
 
                             <ItemsControl.ItemTemplate>
                                 <DataTemplate>
 
                                     <Border BorderBrush="LightGray"
-                            BorderThickness="1"
-                            CornerRadius="4"
-                            Padding="10"
-                            Margin="0,0,0,5">
+                                            BorderThickness="1"
+                                            CornerRadius="4"
+                                            Padding="10"
+                                            Margin="0,0,0,5">
 
                                         <Grid>
 
                                             <Grid.ColumnDefinitions>
                                                 <ColumnDefinition Width="*"/>
                                                 <ColumnDefinition Width="Auto"/>
+                                                <ColumnDefinition Width="Auto"/>
                                             </Grid.ColumnDefinitions>
 
                                             <StackPanel>
 
                                                 <TextBlock Text="{Binding UtrustningDisplayText}"
-                                           FontWeight="Bold"/>
+                                                           FontWeight="Bold"/>
 
                                                 <TextBlock>
-                                    <Run Text="Period: "/>
-                                    <Run Text="{Binding StartDatum, StringFormat={}{0:yyyy-MM-dd}}"/>
-                                    <Run Text=" - "/>
-                                    <Run Text="{Binding SlutDatum, StringFormat={}{0:yyyy-MM-dd}}"/>
+                                                    <Run Text="Period: "/>
+                                                    <Run Text="{Binding StartDatum, StringFormat={}{0:yyyy-MM-dd}}"/>
+                                                    <Run Text=" - "/>
+                                                    <Run Text="{Binding SlutDatum, StringFormat={}{0:yyyy-MM-dd}}"/>
                                                 </TextBlock>
 
                                             </StackPanel>
 
                                             <TextBlock Grid.Column="1"
-                                       Text="{Binding UtrustningBelopp, StringFormat={}{0:N0} kr}"
-                                       FontWeight="Bold"
-                                       VerticalAlignment="Center"
-                                       Margin="20,0,0,0"/>
+                                                       Text="{Binding UtrustningBelopp, StringFormat={}{0:N0} kr}"
+                                                       FontWeight="Bold"
+                                                       VerticalAlignment="Center"
+                                                       Margin="20,0,0,0"/>
+
+                                            <Button Grid.Column="2"
+                                                    Content="Ta bort"
+                                                    Margin="10,0,0,0"
+                                                    Padding="10,4"
+                                                    VerticalAlignment="Center"
+                                                    Command="{Binding DataContext.TaBortUtrustningRadCommand,
+                                                    RelativeSource={RelativeSource AncestorType=Window}}"
+                                                    CommandParameter="{Binding}"/>
 
                                         </Grid>
 
@@ -372,36 +388,36 @@
                                 <TextBlock Text="Boka som:"/>
 
                                 <ComboBox Height="30"
-                          Margin="0,5,0,10"
-                          ItemsSource="{Binding UtrustningTyper}"
-                          SelectedItem="{Binding ValdUtrustningTyp, Mode=TwoWay}"/>
+                                          Margin="0,5,0,10"
+                                          ItemsSource="{Binding UtrustningTyper}"
+                                          SelectedItem="{Binding ValdUtrustningTyp, Mode=TwoWay}"/>
 
 
                                 <!-- Utrustningspaket -->
                                 <StackPanel Visibility="{Binding VisarUtrustningsPaket,
-                    Converter={StaticResource BooleanToVisibilityConverter}}">
+                                    Converter={StaticResource BooleanToVisibilityConverter}}">
 
                                     <TextBlock Text="Utrustningspaket:"/>
 
                                     <ComboBox Height="30"
-                              Margin="0,5,0,10"
-                              ItemsSource="{Binding TillgängligaUtrustningsPaket}"
-                              SelectedItem="{Binding ValtUtrustningPaket, Mode=TwoWay}"
-                              DisplayMemberPath="UtrustningPaketNamn"/>
+                                              Margin="0,5,0,10"
+                                              ItemsSource="{Binding TillgängligaUtrustningsPaket}"
+                                              SelectedItem="{Binding ValtUtrustningPaket, Mode=TwoWay}"
+                                              DisplayMemberPath="UtrustningPaketNamn"/>
 
                                     <TextBlock Text="Antal paket:"/>
 
                                     <ComboBox Height="30"
-                              Margin="0,5,0,10"
-                              ItemsSource="{Binding AntalUtrustningsPaketAlternativ}"
-                              SelectedItem="{Binding AntalUtrustningsPaket, Mode=TwoWay}"/>
+                                              Margin="0,5,0,10"
+                                              ItemsSource="{Binding AntalUtrustningsPaketAlternativ}"
+                                              SelectedItem="{Binding AntalUtrustningsPaket, Mode=TwoWay}"/>
 
                                 </StackPanel>
 
 
                                 <!-- Enskild utrustning -->
                                 <StackPanel Visibility="{Binding VisarEnskildUtrustning,
-                    Converter={StaticResource BooleanToVisibilityConverter}}">
+                                    Converter={StaticResource BooleanToVisibilityConverter}}">
 
                                     <TextBlock Text="Enskild utrustning:"/>
 
@@ -415,17 +431,17 @@
 
 
                                 <TextBlock Text="Pris:"
-                           Margin="0,0,0,5"/>
+                                           Margin="0,0,0,5"/>
 
                                 <TextBlock Text="{Binding UtrustningPrisText}"
-                           FontWeight="Bold"
-                           Margin="0,0,0,10"/>
+                                           FontWeight="Bold"
+                                           Margin="0,0,0,10"/>
 
                                 <Button Content="Lägg till"
-                        Width="120"
-                        HorizontalAlignment="Left"
-                        Command="{Binding LäggTillUtrustningCommand}"
-                        IsEnabled="{Binding KanLäggaTillUtrustning}"/>
+                                        Width="120"
+                                        HorizontalAlignment="Left"
+                                        Command="{Binding LäggTillUtrustningCommand}"
+                                        IsEnabled="{Binding KanLäggaTillUtrustning}"/>
 
                             </StackPanel>
 
@@ -441,65 +457,75 @@
                 <!-- ===================================== -->
 
                 <Border Background="White"
-        CornerRadius="5"
-        Padding="15"
-        Margin="0,0,0,15">
+                        CornerRadius="5"
+                        Padding="15"
+                        Margin="0,0,0,15">
 
                     <StackPanel>
 
                         <TextBlock Text="Konferens"
-                   FontSize="20"
-                   FontWeight="SemiBold"
-                   Margin="0,0,0,10"/>
+                                   FontSize="20"
+                                   FontWeight="SemiBold"
+                                   Margin="0,0,0,10"/>
 
                         <!-- VALDA KONFERENSER -->
 
                         <ItemsControl ItemsSource="{Binding KonferensRader}"
-                      Margin="0,0,0,10">
+                                      Margin="0,0,0,10">
 
                             <ItemsControl.ItemTemplate>
                                 <DataTemplate>
 
                                     <Border BorderBrush="LightGray"
-                            BorderThickness="1"
-                            CornerRadius="4"
-                            Padding="10"
-                            Margin="0,0,0,5">
+                                            BorderThickness="1"
+                                            CornerRadius="4"
+                                            Padding="10"
+                                            Margin="0,0,0,5">
 
                                         <Grid>
 
                                             <Grid.ColumnDefinitions>
                                                 <ColumnDefinition Width="*"/>
                                                 <ColumnDefinition Width="Auto"/>
+                                                <ColumnDefinition Width="Auto"/>
                                             </Grid.ColumnDefinitions>
 
                                             <StackPanel>
 
                                                 <TextBlock Text="{Binding KonferensNummer}"
-                                           FontWeight="Bold"/>
+                                                           FontWeight="Bold"/>
 
                                                 <TextBlock>
-                                    <Run Text="Antal deltagare: "/>
-                                    <Run Text="{Binding AntalPersoner}"/>
+                                                    <Run Text="Antal deltagare: "/>
+                                                    <Run Text="{Binding AntalPersoner}"/>
                                                 </TextBlock>
 
                                                 <TextBlock>
-                                    <Run Text="Period: "/>
-                                    <Run Text="{Binding StartTid,
-                                        StringFormat={}{0:yyyy-MM-dd}}"/>
-                                    <Run Text=" - "/>
-                                    <Run Text="{Binding SlutTid,
-                                        StringFormat={}{0:yyyy-MM-dd}}"/>
+                                                    <Run Text="Period: "/>
+                                                    <Run Text="{Binding StartTid,
+                                                        StringFormat={}{0:yyyy-MM-dd}}"/>
+                                                    <Run Text=" - "/>
+                                                    <Run Text="{Binding SlutTid,
+                                                        StringFormat={}{0:yyyy-MM-dd}}"/>
                                                 </TextBlock>
 
                                             </StackPanel>
 
                                             <TextBlock Grid.Column="1"
-                                       Text="{Binding KonferensBelopp,
-                                       StringFormat={}{0:N0} kr}"
-                                       FontWeight="Bold"
-                                       VerticalAlignment="Center"
-                                       Margin="20,0,0,0"/>
+                                                       Text="{Binding KonferensBelopp,
+                                                       StringFormat={}{0:N0} kr}"
+                                                       FontWeight="Bold"
+                                                       VerticalAlignment="Center"
+                                                       Margin="20,0,0,0"/>
+
+                                            <Button Grid.Column="2"
+                                                    Content="Ta bort"
+                                                    Margin="10,0,0,0"
+                                                    Padding="10,4"
+                                                    VerticalAlignment="Center"
+                                                    Command="{Binding DataContext.TaBortKonferensRadCommand,
+                                                    RelativeSource={RelativeSource AncestorType=Window}}"
+                                                    CommandParameter="{Binding}"/>
 
                                         </Grid>
 
@@ -520,45 +546,45 @@
                                 <TextBlock Text="Konferens från:"/>
 
                                 <DatePicker SelectedDate="{Binding KonferensStartTid, Mode=TwoWay}"
-                            Margin="0,5,0,10"/>
+                                            Margin="0,5,0,10"/>
 
 
                                 <TextBlock Text="Konferens till:"/>
 
                                 <DatePicker SelectedDate="{Binding KonferensSlutTid, Mode=TwoWay}"
-                            Margin="0,5,0,10"/>
+                                            Margin="0,5,0,10"/>
 
 
                                 <TextBlock Text="Konferensrum:"/>
 
                                 <ComboBox Height="30"
-                          Margin="0,5,0,10"
-                          ItemsSource="{Binding TillgängligaKonferenser}"
-                          SelectedItem="{Binding ValdKonferens, Mode=TwoWay}"
-                          DisplayMemberPath="DisplayText"/>
+                                          Margin="0,5,0,10"
+                                          ItemsSource="{Binding TillgängligaKonferenser}"
+                                          SelectedItem="{Binding ValdKonferens, Mode=TwoWay}"
+                                          DisplayMemberPath="DisplayText"/>
 
 
                                 <TextBlock Text="Antal deltagare:"/>
 
                                 <ComboBox Height="30"
-                          Margin="0,5,0,10"
-                          ItemsSource="{Binding AntalKonferensDeltagareAlternativ}"
-                          SelectedItem="{Binding AntalKonferensDeltagare, Mode=TwoWay}"/>
+                                          Margin="0,5,0,10"
+                                          ItemsSource="{Binding AntalKonferensDeltagareAlternativ}"
+                                          SelectedItem="{Binding AntalKonferensDeltagare, Mode=TwoWay}"/>
 
 
                                 <TextBlock Text="Pris:"
-                           Margin="0,0,0,5"/>
+                                           Margin="0,0,0,5"/>
 
                                 <TextBlock Text="{Binding KonferensPrisText}"
-                           FontWeight="Bold"
-                           Margin="0,0,0,10"/>
+                                           FontWeight="Bold"
+                                           Margin="0,0,0,10"/>
 
 
                                 <Button Content="Lägg till"
-                        Width="120"
-                        HorizontalAlignment="Left"
-                        Command="{Binding LäggTillKonferensCommand}"
-                        IsEnabled="{Binding KanLäggaTillKonferens}"/>
+                                        Width="120"
+                                        HorizontalAlignment="Left"
+                                        Command="{Binding LäggTillKonferensCommand}"
+                                        IsEnabled="{Binding KanLäggaTillKonferens}"/>
 
                             </StackPanel>
 
@@ -574,36 +600,37 @@
                 <!-- ===================================== -->
 
                 <Border Background="White"
-        CornerRadius="5"
-        Padding="15"
-        Margin="0,0,0,15">
+                        CornerRadius="5"
+                        Padding="15"
+                        Margin="0,0,0,15">
 
                     <StackPanel>
-                        
+
                         <TextBlock Text="Skidlektion"
-                   FontSize="20"
-                   FontWeight="SemiBold"
-                   Margin="0,0,0,10"/>
+                                   FontSize="20"
+                                   FontWeight="SemiBold"
+                                   Margin="0,0,0,10"/>
 
 
                         <!-- VALDA SKIDLEKTIONER -->
 
                         <ItemsControl ItemsSource="{Binding SkidlektionRader}"
-                      Margin="0,0,0,10">
+                                      Margin="0,0,0,10">
 
                             <ItemsControl.ItemTemplate>
                                 <DataTemplate>
 
                                     <Border BorderBrush="LightGray"
-                            BorderThickness="1"
-                            CornerRadius="4"
-                            Padding="10"
-                            Margin="0,0,0,5">
+                                            BorderThickness="1"
+                                            CornerRadius="4"
+                                            Padding="10"
+                                            Margin="0,0,0,5">
 
                                         <Grid>
 
                                             <Grid.ColumnDefinitions>
                                                 <ColumnDefinition Width="*"/>
+                                                <ColumnDefinition Width="Auto"/>
                                                 <ColumnDefinition Width="Auto"/>
                                             </Grid.ColumnDefinitions>
 
@@ -611,28 +638,36 @@
 
                                                 <TextBlock 
                                                     Text="{Binding SkidlektionDisplayText}"
-                                                    FontWeight="Bold">
+                                                    FontWeight="Bold"/>
+
+                                                <TextBlock>
+                                                    <Run Text="Antal personer: "/>
+                                                    <Run Text="{Binding AntalPersoner}"/>
                                                 </TextBlock>
 
                                                 <TextBlock>
-                                    <Run Text="Antal personer: "/>
-                                    <Run Text="{Binding AntalPersoner}"/>
-                                                </TextBlock>
-
-                                                <TextBlock>
-                                    <Run Text="Datum: "/>
-                                    <Run Text="{Binding Datum,
-                                               StringFormat={}{0:yyyy-MM-dd}}"/>
+                                                    <Run Text="Datum: "/>
+                                                    <Run Text="{Binding Datum,
+                                                               StringFormat={}{0:yyyy-MM-dd}}"/>
                                                 </TextBlock>
 
                                             </StackPanel>
 
                                             <TextBlock Grid.Column="1"
-                                       Text="{Binding SkidlektionBelopp,
-                                              StringFormat={}{0:N0} kr}"
-                                       FontWeight="Bold"
-                                       VerticalAlignment="Center"
-                                       Margin="20,0,0,0"/>
+                                                       Text="{Binding SkidlektionBelopp,
+                                                              StringFormat={}{0:N0} kr}"
+                                                       FontWeight="Bold"
+                                                       VerticalAlignment="Center"
+                                                       Margin="20,0,0,0"/>
+
+                                            <Button Grid.Column="2"
+                                                    Content="Ta bort"
+                                                    Margin="10,0,0,0"
+                                                    Padding="10,4"
+                                                    VerticalAlignment="Center"
+                                                    Command="{Binding DataContext.TaBortSkidlektionRadCommand,
+                                                    RelativeSource={RelativeSource AncestorType=Window}}"
+                                                    CommandParameter="{Binding}"/>
 
                                         </Grid>
 
@@ -653,7 +688,7 @@
                                 <TextBlock Text="Datum för skidlektion:"/>
 
                                 <DatePicker SelectedDate="{Binding SkidlektionDatum, Mode=TwoWay}"
-                    Margin="0,5,0,10"/>
+                                            Margin="0,5,0,10"/>
 
 
                                 <TextBlock Text="Skidlektion:"/>
@@ -673,9 +708,9 @@
                                 </ComboBox>
 
                                 <TextBlock Text="Inga skidlektioner är tillgängliga för valt datum."
-           Foreground="DarkRed"
-           FontStyle="Italic"
-           Margin="0,0,0,10">
+                                           Foreground="DarkRed"
+                                           FontStyle="Italic"
+                                           Margin="0,0,0,10">
 
                                     <TextBlock.Style>
                                         <Style TargetType="TextBlock">
@@ -683,21 +718,21 @@
 
                                             <Style.Triggers>
                                                 <DataTrigger Binding="{Binding VisaIngaTillgängligaSkidlektioner}"
-                             Value="True">
+                                                             Value="True">
                                                     <Setter Property="Visibility" Value="Visible"/>
                                                 </DataTrigger>
                                             </Style.Triggers>
                                         </Style>
                                     </TextBlock.Style>
                                 </TextBlock>
-                                
+
 
                                 <TextBlock Text="Antal personer:"/>
 
                                 <ComboBox Height="30"
-                                      Margin="0,5,0,10"
-                                      ItemsSource="{Binding AntalSkidlektionPersonerAlternativ}"
-                                      SelectedItem="{Binding AntalSkidlektionPersoner, Mode=TwoWay}"
+                                          Margin="0,5,0,10"
+                                          ItemsSource="{Binding AntalSkidlektionPersonerAlternativ}"
+                                          SelectedItem="{Binding AntalSkidlektionPersoner, Mode=TwoWay}"
                                           IsEnabled="{Binding KanVäljaAntalSkidlektionPersoner}"/>
 
 
