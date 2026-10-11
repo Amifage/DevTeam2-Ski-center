@@ -8,6 +8,7 @@ using System.Linq;
 using System.Runtime.CompilerServices;
 using System.Windows.Input;
 using UtrustningEntitet = Entitetslager.Utrustning;
+using SkidlektionEntitet = Entitetslager.Skidlektion;
 
 namespace Presentationslager.ViewModel
 {
@@ -42,7 +43,7 @@ namespace Presentationslager.ViewModel
         #region Events
 
         public event Action<string>? VisaMeddelande;
-        public event Action<string, DateTime, List<LogiRad>, List<UtrustningRad>, List<KonferensRad>>? BokningSparad;
+        public event Action<string, DateTime, List<LogiRad>, List<UtrustningRad>, List<KonferensRad>, List<SkidlektionRad>>? BokningSparad;
         public event Action? StängFönster;
 
         #endregion
@@ -50,7 +51,6 @@ namespace Presentationslager.ViewModel
         #region Collections
 
         public ObservableCollection<Kund> Kunder { get; }
-
         public ObservableCollection<int> AntalPersonerAlternativ { get; }
 
         public ObservableCollection<string> BoendeTyper { get; }
@@ -60,6 +60,8 @@ namespace Presentationslager.ViewModel
         public ObservableCollection<LogiRad> LogiRader { get; }
         public ObservableCollection<string> TillgängligaLogiTypTexter { get; }
 
+
+
         public ObservableCollection<string> UtrustningTyper { get; }
         public ObservableCollection<UtrustningPaket> TillgängligaUtrustningsPaket { get; }
         public ObservableCollection<UtrustningEntitet> TillgängligaEnskildaUtrustningar { get; }
@@ -68,9 +70,17 @@ namespace Presentationslager.ViewModel
         public ObservableCollection<UtrustningRad> UtrustningRader { get; }
 
 
+
+
         public ObservableCollection<Konferens> TillgängligaKonferenser { get; }
         public ObservableCollection<int> AntalKonferensDeltagareAlternativ { get; }
         public ObservableCollection<KonferensRad> KonferensRader { get; }
+
+
+
+        public ObservableCollection<SkidlektionEntitet> TillgängligaSkidlektioner { get; }
+        public ObservableCollection<int> AntalSkidlektionPersonerAlternativ { get; }
+        public ObservableCollection<SkidlektionRad> SkidlektionRader { get; }
 
         #endregion
 
@@ -81,6 +91,7 @@ namespace Presentationslager.ViewModel
         public ICommand SkapaBokningCommand { get; }
         public ICommand AvbrytCommand { get; }
         public ICommand LäggTillKonferensCommand { get; }
+        public ICommand LäggTillSkidlektionCommand { get; }
 
         #endregion
 
@@ -132,6 +143,16 @@ namespace Presentationslager.ViewModel
             KonferensRader = new ObservableCollection<KonferensRad>();
 
             LäggTillKonferensCommand = new RelayCommand(_ => LäggTillKonferens());
+
+            #endregion
+
+            #region Skilektion
+
+            TillgängligaSkidlektioner = new ObservableCollection<SkidlektionEntitet>();
+            AntalSkidlektionPersonerAlternativ = new ObservableCollection<int>();
+            SkidlektionRader = new ObservableCollection<SkidlektionRad>();
+
+            LäggTillSkidlektionCommand = new RelayCommand(_ => LäggTillSkidlektion());
 
             #endregion
 
@@ -1444,12 +1465,266 @@ namespace Presentationslager.ViewModel
 
 
 
+        #region Skidlektion - val
+
+        private SkidlektionEntitet? _valdSkidlektion;
+        private int? _antalSkidlektionPersoner;
+        private decimal? _aktuelltSkidlektionPris;
+
+        public SkidlektionEntitet? ValdSkidlektion
+        {
+            get => _valdSkidlektion;
+            set
+            {
+                if (_valdSkidlektion == value)
+                    return;
+
+                _valdSkidlektion = value;
+                OnPropertyChanged();
+
+                UppdateraAntalSkidlektionPersoner();
+                UppdateraSkidlektionPris();
+            }
+        }
+
+        public int? AntalSkidlektionPersoner
+        {
+            get => _antalSkidlektionPersoner;
+            set
+            {
+                if (_antalSkidlektionPersoner == value)
+                    return;
+
+                _antalSkidlektionPersoner = value;
+                OnPropertyChanged();
+
+                UppdateraSkidlektionPris();
+                OnPropertyChanged(nameof(KanLäggaTillSkidlektion));
+            }
+        }
+
+        private DateTime? _skidlektionDatum;
+
+        public DateTime? SkidlektionDatum
+        {
+            get => _skidlektionDatum;
+            set
+            {
+                if (_skidlektionDatum == value)
+                    return;
+
+                _skidlektionDatum = value;
+                OnPropertyChanged();
+
+                UppdateraTillgängligaSkidlektioner();
+            }
+        }
+
+        #endregion
+
+        #region Skidlektion - visning
+
+        public string SkidlektionPrisText =>
+            _aktuelltSkidlektionPris.HasValue
+                ? $"{_aktuelltSkidlektionPris.Value:N0} kr"
+                : "Pris saknas";
+
+        public bool KanLäggaTillSkidlektion =>
+            ValdSkidlektion != null &&
+            AntalSkidlektionPersoner.HasValue &&
+            AntalSkidlektionPersoner.Value > 0 &&
+            _aktuelltSkidlektionPris.HasValue;
+
+        public bool VisaIngaTillgängligaSkidlektioner =>
+            SkidlektionDatum.HasValue &&
+            !TillgängligaSkidlektioner.Any();
+
+        public bool FinnsTillgängligaSkidlektioner =>
+            TillgängligaSkidlektioner.Any();
+
+        public bool KanVäljaAntalSkidlektionPersoner =>
+            ValdSkidlektion != null &&
+            AntalSkidlektionPersonerAlternativ.Any();
+
+        #endregion
+
+        #region Skidlektion - tillgänglighet
+
+        private void UppdateraTillgängligaSkidlektioner()
+        {
+            TillgängligaSkidlektioner.Clear();
+
+            OnPropertyChanged(nameof(FinnsTillgängligaSkidlektioner));
+            OnPropertyChanged(nameof(VisaIngaTillgängligaSkidlektioner));
+
+            ValdSkidlektion = null;
+
+            if (SkidlektionDatum == null)
+                return;
+
+            SkidlektionController skidlektionController =
+                new SkidlektionController();
+
+            var skidlektioner =
+                skidlektionController.HämtaTillgängligaSkidlektioner(
+                    SkidlektionDatum.Value);
+
+            foreach (SkidlektionEntitet skidlektion in skidlektioner)
+            {
+                int redanValdaPersoner = SkidlektionRader
+                    .Where(r => r.SkidlektionNummer == skidlektion.SkidlektionNummer)
+                    .Sum(r => r.AntalPersoner);
+
+                skidlektion.LedigaPlatser -= redanValdaPersoner;
+
+                if (skidlektion.LedigaPlatser > 0)
+                    TillgängligaSkidlektioner.Add(skidlektion);
+            }
+
+            OnPropertyChanged(nameof(VisaIngaTillgängligaSkidlektioner));
+            OnPropertyChanged(nameof(FinnsTillgängligaSkidlektioner));
+        }
+
+        private void UppdateraAntalSkidlektionPersoner()
+        {
+            AntalSkidlektionPersonerAlternativ.Clear();
+
+            OnPropertyChanged(nameof(KanVäljaAntalSkidlektionPersoner));
+
+            AntalSkidlektionPersoner = null;
+
+            if (ValdSkidlektion == null)
+                return;
+
+            int ledigaPlatser = ValdSkidlektion.LedigaPlatser;
+
+            for (int i = 1; i <= ledigaPlatser; i++)
+                AntalSkidlektionPersonerAlternativ.Add(i);
+                OnPropertyChanged(nameof(KanVäljaAntalSkidlektionPersoner));
+        }
+
+        #endregion
+
+        #region Skidlektion - pris
+
+        private void UppdateraSkidlektionPris()
+        {
+            _aktuelltSkidlektionPris = null;
+
+            OnPropertyChanged(nameof(SkidlektionPrisText));
+            OnPropertyChanged(nameof(KanLäggaTillSkidlektion));
+
+            if (ValdSkidlektion?.ArtikelTypNummer == null ||
+                !AntalSkidlektionPersoner.HasValue)
+            {
+                return;
+            }
+
+            PrisController prisController = new PrisController();
+
+            Pris? pris = prisController.HämtaPrisFörSkidlektion(
+                        ValdSkidlektion.ArtikelTypNummer.Value,
+                        ValdSkidlektion.Datum);
+
+            if (pris == null)
+                return;
+
+            _aktuelltSkidlektionPris =
+                pris.PrisBelopp * AntalSkidlektionPersoner.Value;
+
+            OnPropertyChanged(nameof(SkidlektionPrisText));
+            OnPropertyChanged(nameof(KanLäggaTillSkidlektion));
+        }
+
+        #endregion
+
+        #region Skidlektion - lägg till
+
+        private void LäggTillSkidlektion()
+        {
+            if (ValdSkidlektion == null)
+            {
+                VisaMeddelande?.Invoke(
+                    "Du måste välja en skidlektion.");
+
+                return;
+            }
+
+            if (!AntalSkidlektionPersoner.HasValue ||
+                AntalSkidlektionPersoner.Value <= 0)
+            {
+                VisaMeddelande?.Invoke(
+                    "Du måste välja antal personer.");
+
+                return;
+            }
+
+            SkidlektionController skidlektionController =
+                new SkidlektionController();
+
+            int ledigaPlatser =
+                skidlektionController.HämtaAntalLedigaPlatser(
+                    ValdSkidlektion.SkidlektionNummer);
+
+            int redanValdaPersoner = SkidlektionRader
+                .Where(r =>
+                    r.SkidlektionNummer ==
+                    ValdSkidlektion.SkidlektionNummer)
+                .Sum(r => r.AntalPersoner);
+
+            ledigaPlatser -= redanValdaPersoner;
+
+            if (AntalSkidlektionPersoner.Value > ledigaPlatser)
+            {
+                VisaMeddelande?.Invoke(
+                    $"Det finns bara {ledigaPlatser} lediga platser på skidlektionen.");
+
+                return;
+            }
+
+            if (!_aktuelltSkidlektionPris.HasValue)
+            {
+                VisaMeddelande?.Invoke(
+                    "Kunde inte hitta något pris för den valda skidlektionen.");
+
+                return;
+            }
+
+            SkidlektionRad skidlektionRad = new SkidlektionRad
+            {
+                Datum = ValdSkidlektion.Datum,
+                AntalPersoner = AntalSkidlektionPersoner.Value,
+                SkidlektionBelopp = _aktuelltSkidlektionPris.Value,
+                SkidlektionNummer = ValdSkidlektion.SkidlektionNummer,
+                SenastUppdaterad = DateTime.Now
+            };
+
+            SkidlektionRader.Add(skidlektionRad);
+
+            OnPropertyChanged(nameof(TotalBeloppText));
+
+            UppdateraTillgängligaSkidlektioner();
+
+            ValdSkidlektion = null;
+            AntalSkidlektionPersoner = null;
+
+            _aktuelltSkidlektionPris = null;
+
+            OnPropertyChanged(nameof(SkidlektionPrisText));
+            OnPropertyChanged(nameof(KanLäggaTillSkidlektion));
+        }
+
+        #endregion
+
+
+
         #region Totalbelopp
 
         public string TotalBeloppText =>
-                        $"{LogiRader.Sum(x => x.LogiBelopp) +
-                            UtrustningRader.Sum(x => x.UtrustningBelopp) +
-                            KonferensRader.Sum(x => x.KonferensBelopp):N0} kr";
+                    $"{LogiRader.Sum(x => x.LogiBelopp) +
+                       UtrustningRader.Sum(x => x.UtrustningBelopp) +
+                       KonferensRader.Sum(x => x.KonferensBelopp) +
+                       SkidlektionRader.Sum(x => x.SkidlektionBelopp):N0} kr";
 
         #endregion
 
@@ -1474,7 +1749,8 @@ namespace Presentationslager.ViewModel
 
                 LogiRader = LogiRader.ToList(),
                 UtrustningRader = UtrustningRader.ToList(),
-                KonferensRader = KonferensRader.ToList()
+                KonferensRader = KonferensRader.ToList(),
+                SkidlektionRader = SkidlektionRader.ToList()
             };
 
             BokningController bokningController = new BokningController();
@@ -1492,7 +1768,8 @@ namespace Presentationslager.ViewModel
                 DateTime.Now,
                 LogiRader.ToList(),
                 UtrustningRader.ToList(),
-                KonferensRader.ToList());
+                KonferensRader.ToList(),
+                SkidlektionRader.ToList());
         }
 
         #endregion
@@ -1550,6 +1827,7 @@ namespace Presentationslager.ViewModel
             LogiRader.Clear();
             UtrustningRader.Clear();
             KonferensRader.Clear();
+            SkidlektionRader.Clear();
 
             ValdKund = null;
             StartDatum = null;
@@ -1583,9 +1861,16 @@ namespace Presentationslager.ViewModel
             TillgängligaKonferenser.Clear();
             AntalKonferensDeltagareAlternativ.Clear();
 
+            ValdSkidlektion = null;
+            AntalSkidlektionPersoner = null;
+            SkidlektionDatum = null;
+            TillgängligaSkidlektioner.Clear();
+            AntalSkidlektionPersonerAlternativ.Clear();
+
             _aktuelltLogiPris = null;
             _aktuelltUtrustningPris = null;
             _aktuelltKonferensPris = null;
+            _aktuelltSkidlektionPris = null;
 
             OnPropertyChanged(nameof(LogiPrisText));
             OnPropertyChanged(nameof(UtrustningPrisText));
@@ -1593,12 +1878,15 @@ namespace Presentationslager.ViewModel
             OnPropertyChanged(nameof(BoendePlaceringText));
             OnPropertyChanged(nameof(KonferensPrisText));
             OnPropertyChanged(nameof(KanLäggaTillKonferens));
+            OnPropertyChanged(nameof(SkidlektionPrisText));
+            OnPropertyChanged(nameof(KanLäggaTillSkidlektion));
+            OnPropertyChanged(nameof(TotalBeloppText));
             OnPropertyChanged(nameof(TotalBeloppText));
         }
 
         #endregion
 
-
+        
 
         #region PropertyChanged
 

@@ -13,7 +13,8 @@ namespace Presentationslager
              DateTime bokningsdatum,
              List<LogiRad> logiRader,
              List<UtrustningRad> utrustningRader,
-             List<KonferensRad> konferensRader)
+             List<KonferensRad> konferensRader,
+             List<SkidlektionRad> skidlektionRader)
         {
             InitializeComponent();
 
@@ -22,7 +23,8 @@ namespace Presentationslager
                 bokningsdatum,
                 logiRader,
                 utrustningRader,
-                konferensRader);
+                konferensRader,
+                skidlektionRader);
         }
 
         private void Ok_Click(object sender, RoutedEventArgs e)

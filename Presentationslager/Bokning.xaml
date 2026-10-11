@@ -574,55 +574,137 @@
                 <!-- ===================================== -->
 
                 <Border Background="White"
-                        CornerRadius="5"
-                        Padding="15"
-                        Margin="0,0,0,15">
+        CornerRadius="5"
+        Padding="15"
+        Margin="0,0,0,15">
 
                     <StackPanel>
-
-
+                        
                         <TextBlock Text="Skidlektion"
-                                   FontSize="20"
-                                   FontWeight="SemiBold"
-                                   Margin="0,0,0,10"/>
+                   FontSize="20"
+                   FontWeight="SemiBold"
+                   Margin="0,0,0,10"/>
 
 
-                        <TextBlock Text="Ingen skidlektion vald ännu."
-                                   FontStyle="Italic"
-                                   Margin="0,0,0,10"/>
+                        <!-- VALDA SKIDLEKTIONER -->
 
+                        <ItemsControl ItemsSource="{Binding SkidlektionRader}"
+                      Margin="0,0,0,10">
+
+                            <ItemsControl.ItemTemplate>
+                                <DataTemplate>
+
+                                    <Border BorderBrush="LightGray"
+                            BorderThickness="1"
+                            CornerRadius="4"
+                            Padding="10"
+                            Margin="0,0,0,5">
+
+                                        <Grid>
+
+                                            <Grid.ColumnDefinitions>
+                                                <ColumnDefinition Width="*"/>
+                                                <ColumnDefinition Width="Auto"/>
+                                            </Grid.ColumnDefinitions>
+
+                                            <StackPanel>
+
+                                                <TextBlock FontWeight="Bold">
+                                    <Run Text="Skidlektion "/>
+                                    <Run Text="{Binding SkidlektionNummer}"/>
+                                                </TextBlock>
+
+                                                <TextBlock>
+                                    <Run Text="Antal personer: "/>
+                                    <Run Text="{Binding AntalPersoner}"/>
+                                                </TextBlock>
+
+                                                <TextBlock>
+                                    <Run Text="Datum: "/>
+                                    <Run Text="{Binding Datum,
+                                               StringFormat={}{0:yyyy-MM-dd}}"/>
+                                                </TextBlock>
+
+                                            </StackPanel>
+
+                                            <TextBlock Grid.Column="1"
+                                       Text="{Binding SkidlektionBelopp,
+                                              StringFormat={}{0:N0} kr}"
+                                       FontWeight="Bold"
+                                       VerticalAlignment="Center"
+                                       Margin="20,0,0,0"/>
+
+                                        </Grid>
+
+                                    </Border>
+
+                                </DataTemplate>
+                            </ItemsControl.ItemTemplate>
+
+                        </ItemsControl>
+
+
+                        <!-- LÄGG TILL SKIDLEKTION -->
 
                         <Expander Header="+ Lägg till skidlektion">
 
                             <StackPanel Margin="10">
 
+                                <TextBlock Text="Datum för skidlektion:"/>
+
+                                <DatePicker SelectedDate="{Binding SkidlektionDatum, Mode=TwoWay}"
+                    Margin="0,5,0,10"/>
+
 
                                 <TextBlock Text="Skidlektion:"/>
 
-
                                 <ComboBox Height="30"
-                                          Margin="0,5,0,10"/>
+                                          Margin="0,5,0,10"
+                                          ItemsSource="{Binding TillgängligaSkidlektioner}"
+                                          SelectedItem="{Binding ValdSkidlektion, Mode=TwoWay}"
+                                          IsEnabled="{Binding FinnsTillgängligaSkidlektioner}">
 
+                                    <ComboBox.ItemTemplate>
+                                        <DataTemplate>
+                                            <TextBlock Text="{Binding DisplayText}"/>
+                                        </DataTemplate>
+                                    </ComboBox.ItemTemplate>
+
+                                </ComboBox>
+
+                                <TextBlock Text="Inga skidlektioner är tillgängliga för valt datum."
+           Foreground="DarkRed"
+           FontStyle="Italic"
+           Margin="0,0,0,10">
+
+                                    <TextBlock.Style>
+                                        <Style TargetType="TextBlock">
+                                            <Setter Property="Visibility" Value="Collapsed"/>
+
+                                            <Style.Triggers>
+                                                <DataTrigger Binding="{Binding VisaIngaTillgängligaSkidlektioner}"
+                             Value="True">
+                                                    <Setter Property="Visibility" Value="Visible"/>
+                                                </DataTrigger>
+                                            </Style.Triggers>
+                                        </Style>
+                                    </TextBlock.Style>
+                                </TextBlock>
+                                
 
                                 <TextBlock Text="Antal personer:"/>
 
-
-                                <TextBox Height="30"
-                                         Margin="0,5,0,10"/>
-
-
-                                <TextBlock Text="Datum:"/>
-
-
-                                <DatePicker Height="30"
-                                            Margin="0,5,0,10"/>
+                                <ComboBox Height="30"
+                                          Margin="0,5,0,10"
+                                          ItemsSource="{Binding AntalSkidlektionPersonerAlternativ}"
+                                          SelectedItem="{Binding AntalSkidlektionPersoner, Mode=TwoWay}"
+                                          IsEnabled="{Binding KanVäljaAntalSkidlektionPersoner}"/>
 
 
                                 <TextBlock Text="Pris:"
                                            Margin="0,0,0,5"/>
 
-
-                                <TextBlock Text="0 kr"
+                                <TextBlock Text="{Binding SkidlektionPrisText}"
                                            FontWeight="Bold"
                                            Margin="0,0,0,10"/>
 
@@ -630,7 +712,8 @@
                                 <Button Content="Lägg till"
                                         Width="120"
                                         HorizontalAlignment="Left"
-                                        IsEnabled="False"/>
+                                        Command="{Binding LäggTillSkidlektionCommand}"
+                                        IsEnabled="{Binding KanLäggaTillSkidlektion}"/>
 
                             </StackPanel>
 

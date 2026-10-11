@@ -16,24 +16,28 @@ namespace Presentationslager.ViewModel
         public ObservableCollection<LogiRad> LogiRader { get; }
         public ObservableCollection<UtrustningRad> UtrustningRader { get; }
         public ObservableCollection<KonferensRad> KonferensRader { get; }
+        public ObservableCollection<SkidlektionRad> SkidlektionRader { get; }
 
 
         public bool HarLogi => LogiRader.Any();
         public bool HarUtrustning => UtrustningRader.Any();
         public bool HarKonferens => KonferensRader.Any();
+        public bool HarSkidlektion => SkidlektionRader.Any();
 
 
         public string TotalBeloppText =>
                         $"{LogiRader.Sum(x => x.LogiBelopp) +
                            UtrustningRader.Sum(x => x.UtrustningBelopp) +
-                           KonferensRader.Sum(x => x.KonferensBelopp):N0} kr";
+                           KonferensRader.Sum(x => x.KonferensBelopp) +
+                           SkidlektionRader.Sum(x => x.SkidlektionBelopp):N0} kr";
 
         public BokningsbekräftelseViewModel(
             string kundText,
             DateTime bokningsdatum,
             IEnumerable<LogiRad> logiRader,
             IEnumerable<UtrustningRad> utrustningRader,
-            IEnumerable<KonferensRad> konferensRader)
+            IEnumerable<KonferensRad> konferensRader,
+            IEnumerable<SkidlektionRad> skidlektionRader)
         {
             KundText = kundText;
             BokningsdatumText = bokningsdatum.ToString("yyyy-MM-dd");
@@ -42,6 +46,7 @@ namespace Presentationslager.ViewModel
             LogiRader = new ObservableCollection<LogiRad>(logiRader);
             UtrustningRader = new ObservableCollection<UtrustningRad>(utrustningRader);
             KonferensRader = new ObservableCollection<KonferensRad>(konferensRader);
+            SkidlektionRader = new ObservableCollection<SkidlektionRad>(skidlektionRader);
         }
 
         public event PropertyChangedEventHandler? PropertyChanged;

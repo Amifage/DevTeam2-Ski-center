@@ -76,5 +76,31 @@ namespace Servicelager
             return billigastePris[antalDagar];
         }
 
+        //Pris för skidlektioner/Sara
+        public Pris? HämtaPrisFörSkidlektion(
+            int artikelTypNummer,
+            DateTime datum)
+        {
+            int veckodag = datum.DayOfWeek switch
+            {
+                DayOfWeek.Monday => 1,
+                DayOfWeek.Tuesday => 2,
+                DayOfWeek.Wednesday => 3,
+                DayOfWeek.Thursday => 4,
+                DayOfWeek.Friday => 5,
+                DayOfWeek.Saturday => 6,
+                DayOfWeek.Sunday => 7,
+                _ => 0
+            };
+
+            using var unitOfWork = new UnitOfWork(new SkiContext());
+
+            return unitOfWork.PrisRepository
+                .GetAll()
+                .FirstOrDefault(p =>
+                    p.ArtikelTypNummer == artikelTypNummer &&
+                    p.Veckodag == veckodag);
+        }
+
     }
 }

@@ -32,5 +32,16 @@ namespace Entitetslager
 
         [ForeignKey("ArtikelTypNummer")]
         public virtual ArtikelTyp artikelTyp { get; set; }
+
+
+        [NotMapped]
+        public int LedigaPlatser { get; set; }
+
+        [NotMapped]
+        public string DisplayText =>
+                        $"{artikelTyp?.TypNamn ?? "Skidlektion"} | " +
+                        $"{Datum:yyyy-MM-dd} | " +
+                        $"{StartTid:hh\\:mm} - {SlutTid:hh\\:mm} | " +
+                        $"{LedigaPlatser} platser kvar";
     }
 }
