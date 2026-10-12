@@ -68,16 +68,18 @@ namespace Presentationslager
             SkillnadBelopp > 0;
 
         public string SkillnadText =>
-            SkillnadBelopp < 0
-                ? $"{SkillnadBelopp:N0} kr"
-                : $"+{SkillnadBelopp:N0} kr";
+             SkillnadBelopp < 0
+                 ? $"{SkillnadBelopp:N0} kr"
+                 : SkillnadBelopp > 0
+                     ? $"+{SkillnadBelopp:N0} kr"
+                     : "";
 
         public string FörändringRubrik =>
             SkillnadBelopp < 0
                 ? "Kreditering:"
                 : SkillnadBelopp > 0
                     ? "Ökning:"
-                    : "Förändring:";
+                    : "Ingen prisförändring";
 
 
         public ÄndringsbekräftelseViewModel(
