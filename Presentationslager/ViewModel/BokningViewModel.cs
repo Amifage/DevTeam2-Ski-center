@@ -6,9 +6,11 @@ using System.Collections.ObjectModel;
 using System.ComponentModel;
 using System.Linq;
 using System.Runtime.CompilerServices;
+using System.Windows;
 using System.Windows.Input;
-using UtrustningEntitet = Entitetslager.Utrustning;
+using BokningEntitet = Entitetslager.Bokning;
 using SkidlektionEntitet = Entitetslager.Skidlektion;
+using UtrustningEntitet = Entitetslager.Utrustning;
 
 namespace Presentationslager.ViewModel
 {
@@ -37,13 +39,16 @@ namespace Presentationslager.ViewModel
         private decimal? _aktuelltUtrustningPris;
         private DateTime? _utrustningStartDatum;
         private DateTime? _utrustningSlutDatum;
+        private int? _antalEnskildUtrustning;
+
+        private bool _ärRedigeringsläge;
 
         #endregion
 
         #region Events
 
         public event Action<string>? VisaMeddelande;
-        public event Action<string, DateTime, List<LogiRad>, List<UtrustningRad>, List<KonferensRad>, List<SkidlektionRad>>? BokningSparad;
+        public event Action<int, string, DateTime, List<LogiRad>, List<UtrustningRad>, List<KonferensRad>, List<SkidlektionRad>>? BokningSparad;
         public event Action? StängFönster;
 
         #endregion
@@ -68,6 +73,7 @@ namespace Presentationslager.ViewModel
         public ObservableCollection<ArtikelTyp> TillgängligaUtrustningArtikelTyper { get; }
         public ObservableCollection<int> AntalUtrustningsPaketAlternativ { get; }
         public ObservableCollection<UtrustningRad> UtrustningRader { get; }
+        public ObservableCollection<int> AntalEnskildUtrustningAlternativ { get; }
 
 
 
@@ -102,6 +108,12 @@ namespace Presentationslager.ViewModel
 
         public ICommand SkapaBokningCommand { get; }
         public ICommand AvbrytCommand { get; }
+
+
+        public ICommand VäxlaRedigeringslägeCommand { get; }
+        public ICommand TaBortBokningCommand { get; }
+        public ICommand SökBokningCommand { get; }
+        public ICommand SparaÄndringarCommand { get; }
 
         #endregion
 
@@ -143,6 +155,7 @@ namespace Presentationslager.ViewModel
             TillgängligaUtrustningArtikelTyper = new ObservableCollection<ArtikelTyp>();
             AntalUtrustningsPaketAlternativ = new ObservableCollection<int>();
             UtrustningRader = new ObservableCollection<UtrustningRad>();
+            AntalEnskildUtrustningAlternativ = new ObservableCollection<int>();
 
             LäggTillUtrustningCommand = new RelayCommand(_ => LäggTillUtrustning());
             TaBortUtrustningRadCommand = new RelayCommand(parameter => TaBortUtrustningRad(parameter));
@@ -170,11 +183,22 @@ namespace Presentationslager.ViewModel
 
             #endregion
 
+            #region Ändra/Ta bort bokning
+            VäxlaRedigeringslägeCommand = new RelayCommand(_ => ÄrRedigeringsläge = !ÄrRedigeringsläge);
+            BokningarFörRedigering = new ObservableCollection<BokningEntitet>();
+            VäxlaRedigeringslägeCommand = new RelayCommand(_ => VäxlaRedigeringsläge());
+            SökBokningCommand = new RelayCommand(_ => SökBokningar());
+            SparaÄndringarCommand = new RelayCommand(_ => SparaÄndringar());
+            TaBortBokningCommand = new RelayCommand(_ => TaBortBokning());
+
+            #endregion
+
             SkapaBokningCommand = new RelayCommand(_ => SkapaBokning());
             AvbrytCommand = new RelayCommand(_ => StängFönster?.Invoke());
         }
 
         #endregion
+
 
 
         #region Kund
@@ -209,6 +233,8 @@ namespace Presentationslager.ViewModel
 
                 UppdateraTillgängligaLogi();
                 UppdateraLogiPris();
+                OnPropertyChanged(nameof(KanVäljaAntalPersonerTotalt));
+                OnPropertyChanged(nameof(KanVäljaBoendeTyp));
 
 
                 if (UtrustningStartDatum == null)
@@ -237,6 +263,8 @@ namespace Presentationslager.ViewModel
 
                 UppdateraTillgängligaLogi();
                 UppdateraLogiPris();
+                OnPropertyChanged(nameof(KanVäljaAntalPersonerTotalt));
+                OnPropertyChanged(nameof(KanVäljaBoendeTyp));
 
 
                 if (UtrustningSlutDatum == null)
@@ -338,8 +366,24 @@ namespace Presentationslager.ViewModel
                     ? null
                     : TillgängligaLogiArtikelTyper.FirstOrDefault(
                         a => a.ArtikelTypNummer == _valtLogi.ArtikelTypNummer);
+
+                OnPropertyChanged(nameof(KanVäljaAntalPersonerValtLogi));
             }
         }
+
+        public bool KanVäljaAntalPersonerTotalt =>
+                    StartDatum.HasValue &&
+                    SlutDatum.HasValue &&
+                    SlutDatum.Value > StartDatum.Value;
+
+        public bool KanVäljaAntalPersonerValtLogi =>
+                    ValtLogi != null &&
+                    AntalPersonerValtLogiAlternativ.Any();
+
+        public bool KanVäljaBoendeTyp =>
+                    StartDatum.HasValue &&
+                    SlutDatum.HasValue &&
+                    SlutDatum.Value > StartDatum.Value;
 
         #endregion
 
@@ -478,6 +522,8 @@ namespace Presentationslager.ViewModel
         private void UppdateraAntalPersonerFörValtLogi()
         {
             AntalPersonerValtLogiAlternativ.Clear();
+            OnPropertyChanged(nameof(KanVäljaAntalPersonerValtLogi));
+
             AntalPersonerValtLogi = null;
 
             if (ValdLogiArtikelTyp == null || AntalPersonerTotalt == null)
@@ -504,6 +550,8 @@ namespace Presentationslager.ViewModel
 
             for (int i = 1; i <= maxAntal; i++)
                 AntalPersonerValtLogiAlternativ.Add(i);
+
+            OnPropertyChanged(nameof(KanVäljaAntalPersonerValtLogi));
         }
 
         #endregion
@@ -695,6 +743,9 @@ namespace Presentationslager.ViewModel
 
                 UppdateraTillgängligUtrustning();
                 UppdateraUtrustningPris();
+
+                OnPropertyChanged(nameof(KanVäljaUtrustningsPaket));
+                OnPropertyChanged(nameof(KanVäljaUtrustningTyp));
             }
         }
 
@@ -711,6 +762,9 @@ namespace Presentationslager.ViewModel
 
                 UppdateraTillgängligUtrustning();
                 UppdateraUtrustningPris();
+
+                OnPropertyChanged(nameof(KanVäljaUtrustningsPaket));
+                OnPropertyChanged(nameof(KanVäljaUtrustningTyp));
             }
         }
 
@@ -757,6 +811,8 @@ namespace Presentationslager.ViewModel
 
                 UppdateraAntalPaketAlternativ();
                 UppdateraUtrustningPris();
+
+                OnPropertyChanged(nameof(KanVäljaAntalUtrustningsPaket));
             }
         }
 
@@ -786,6 +842,7 @@ namespace Presentationslager.ViewModel
                 _valdUtrustningArtikelTyp = value;
                 OnPropertyChanged();
 
+                UppdateraAntalEnskildUtrustningAlternativ();
                 UppdateraUtrustningPris();
             }
         }
@@ -805,6 +862,36 @@ namespace Presentationslager.ViewModel
             }
         }
 
+        public int? AntalEnskildUtrustning
+        {
+            get => _antalEnskildUtrustning;
+            set
+            {
+                if (_antalEnskildUtrustning == value)
+                    return;
+
+                _antalEnskildUtrustning = value;
+                OnPropertyChanged();
+
+                UppdateraUtrustningPris();
+            }
+        }
+
+        public bool KanVäljaUtrustningsPaket =>
+                    UtrustningStartDatum.HasValue &&
+                    UtrustningSlutDatum.HasValue &&
+                    UtrustningSlutDatum.Value > UtrustningStartDatum.Value &&
+                    TillgängligaUtrustningsPaket.Any();
+
+        public bool KanVäljaUtrustningTyp =>
+                    UtrustningStartDatum.HasValue &&
+                    UtrustningSlutDatum.HasValue &&
+                    UtrustningSlutDatum.Value > UtrustningStartDatum.Value;
+
+        public bool KanVäljaAntalUtrustningsPaket =>
+                    ValtUtrustningPaket != null &&
+                    AntalUtrustningsPaketAlternativ.Any();
+
         #endregion
 
         #region Utrustning - visning
@@ -815,7 +902,20 @@ namespace Presentationslager.ViewModel
                  : "Pris saknas för vald period";
 
         public bool KanLäggaTillUtrustning =>
-            _aktuelltUtrustningPris.HasValue;
+                    _aktuelltUtrustningPris.HasValue &&
+                    (
+                        (ValdUtrustningTyp == "Utrustningspaket" &&
+                         ValtUtrustningPaket != null &&
+                         AntalUtrustningsPaket.HasValue &&
+                         AntalUtrustningsPaket.Value > 0)
+
+                        ||
+
+                        (ValdUtrustningTyp == "Enskild utrustning" &&
+                         ValdUtrustningArtikelTyp != null &&
+                         AntalEnskildUtrustning.HasValue &&
+                         AntalEnskildUtrustning.Value > 0)
+                    );
         #endregion
 
         #region Utrustning - tillgänglighet
@@ -825,6 +925,8 @@ namespace Presentationslager.ViewModel
             TillgängligaUtrustningsPaket.Clear();
             TillgängligaEnskildaUtrustningar.Clear();
             TillgängligaUtrustningArtikelTyper.Clear();
+
+            OnPropertyChanged(nameof(KanVäljaUtrustningsPaket));
 
             if (UtrustningStartDatum == null || UtrustningSlutDatum == null || UtrustningSlutDatum <= UtrustningStartDatum)
             {
@@ -875,6 +977,8 @@ namespace Presentationslager.ViewModel
                 if (maxAntal > 0)
                     TillgängligaUtrustningsPaket.Add(paket);
             }
+
+            OnPropertyChanged(nameof(KanVäljaUtrustningsPaket));
         }
 
         private int BeräknaMaxAntalPaket(UtrustningPaket paket, List<UtrustningEntitet> ledigaUtrustningar, UtrustningController utrustningController)
@@ -907,6 +1011,9 @@ namespace Presentationslager.ViewModel
         private void UppdateraAntalPaketAlternativ() //Skapar max antal möjliga paket utifrån ledig utrustning så man vet hur många paket som är bokningsbara
         {
             AntalUtrustningsPaketAlternativ.Clear();
+
+            OnPropertyChanged(nameof(KanVäljaAntalUtrustningsPaket));
+
             AntalUtrustningsPaket = null;
 
             if (ValtUtrustningPaket == null || UtrustningStartDatum == null || UtrustningSlutDatum == null)
@@ -939,8 +1046,44 @@ namespace Presentationslager.ViewModel
 
             for (int i = 1; i <= maxAntal; i++)
                 AntalUtrustningsPaketAlternativ.Add(i);
+
+            OnPropertyChanged(nameof(KanVäljaAntalUtrustningsPaket));
         }
 
+        private void UppdateraAntalEnskildUtrustningAlternativ()
+        {
+            AntalEnskildUtrustningAlternativ.Clear();
+            AntalEnskildUtrustning = null;
+
+            if (ValdUtrustningArtikelTyp == null ||
+                UtrustningStartDatum == null ||
+                UtrustningSlutDatum == null)
+            {
+                return;
+            }
+
+            UtrustningController utrustningController =
+                new UtrustningController();
+
+            var ledigaUtrustningar =
+                utrustningController.HamtaLedigaUtrustningar(
+                    UtrustningStartDatum.Value,
+                    UtrustningSlutDatum.Value);
+
+            int antalLediga = ledigaUtrustningar
+                .Where(u =>
+                    u.ArtikelTypNummer ==
+                    ValdUtrustningArtikelTyp.ArtikelTypNummer)
+                .Where(u =>
+                    !UtrustningRader.Any(r =>
+                        r.UtrustningNummer == u.UtrustningNummer))
+                .Count();
+
+            for (int i = 1; i <= antalLediga; i++)
+            {
+                AntalEnskildUtrustningAlternativ.Add(i);
+            }
+        }
         #endregion
 
         #region Utrustning - pris
@@ -990,9 +1133,13 @@ namespace Presentationslager.ViewModel
                 int antalPaket = AntalUtrustningsPaket ?? 1;
                 _aktuelltUtrustningPris = pris.Value * antalPaket;
             }
-            else
+            else if (ValdUtrustningTyp == "Enskild utrustning")
             {
-                _aktuelltUtrustningPris = pris.Value;
+                if (!AntalEnskildUtrustning.HasValue)
+                    return;
+
+                _aktuelltUtrustningPris =
+                    pris.Value * AntalEnskildUtrustning.Value;
             }
 
             OnPropertyChanged(nameof(UtrustningPrisText));
@@ -1031,39 +1178,66 @@ namespace Presentationslager.ViewModel
 
             if (ValdUtrustningArtikelTyp == null)
             {
-                VisaMeddelande?.Invoke("Du måste välja vilken typ av utrustning du vill boka.");
+                VisaMeddelande?.Invoke(
+                    "Du måste välja vilken typ av utrustning du vill boka.");
+
                 return;
             }
 
-            UtrustningController utrustningController = new UtrustningController();
-
-            var ledigaUtrustningar =
-             utrustningController.HamtaLedigaUtrustningar(
-                 UtrustningStartDatum!.Value,
-                 UtrustningSlutDatum!.Value);
-
-
-            UtrustningEntitet? valdFysiskUtrustning = ledigaUtrustningar
-                .Where(u =>
-                    u.ArtikelTypNummer ==
-                    ValdUtrustningArtikelTyp.ArtikelTypNummer)
-                .OrderBy(u => Guid.NewGuid())
-                .FirstOrDefault();
-
-            if (valdFysiskUtrustning == null)
+            if (!AntalEnskildUtrustning.HasValue ||
+                AntalEnskildUtrustning.Value <= 0)
             {
                 VisaMeddelande?.Invoke(
-                    "Det finns ingen ledig utrustning av den valda typen.");
+                    "Du måste välja antal.");
 
                 return;
             }
 
-            PrisController prisController = new PrisController();
 
-            decimal? pris = prisController.BeräknaPrisFörPeriod(
-                ValdUtrustningArtikelTyp.ArtikelTypNummer,
-                UtrustningStartDatum.Value,
-                UtrustningSlutDatum.Value);
+            UtrustningController utrustningController =
+                new UtrustningController();
+
+            var ledigaUtrustningar =
+                utrustningController.HamtaLedigaUtrustningar(
+                    UtrustningStartDatum!.Value,
+                    UtrustningSlutDatum!.Value);
+
+
+            // Hämta lediga fysiska exemplar av vald typ
+            // och ta bort sådana som redan lagts till i den pågående bokningen.
+            List<UtrustningEntitet> valdaFysiskaUtrustningar =
+                ledigaUtrustningar
+                    .Where(u =>
+                        u.ArtikelTypNummer ==
+                        ValdUtrustningArtikelTyp.ArtikelTypNummer)
+                    .Where(u =>
+                        !UtrustningRader.Any(r =>
+                            r.UtrustningNummer ==
+                            u.UtrustningNummer))
+                    .Take(AntalEnskildUtrustning.Value)
+                    .ToList();
+
+
+            // Kontrollera att tillräckligt många exemplar finns
+            if (valdaFysiskaUtrustningar.Count <
+                AntalEnskildUtrustning.Value)
+            {
+                VisaMeddelande?.Invoke(
+                    $"Det finns bara {valdaFysiskaUtrustningar.Count} lediga exemplar av den valda utrustningen.");
+
+                return;
+            }
+
+
+            PrisController prisController =
+                new PrisController();
+
+            decimal? pris =
+                prisController.BeräknaPrisFörPeriod(
+                    ValdUtrustningArtikelTyp.ArtikelTypNummer,
+                    UtrustningStartDatum.Value,
+                    UtrustningSlutDatum.Value);
+
 
             if (pris == null)
             {
@@ -1073,25 +1247,55 @@ namespace Presentationslager.ViewModel
                 return;
             }
 
-            UtrustningRad utrustningRad = new UtrustningRad
-            {
-                StartDatum = UtrustningStartDatum.Value,
-                SlutDatum = UtrustningSlutDatum.Value,
-                UtrustningBelopp = pris.Value,
-                UtrustningNummer = valdFysiskUtrustning.UtrustningNummer,
-                UtrustningPaketNummer = null,
-                UtrustningDisplayText = ValdUtrustningArtikelTyp.TypNamn,
-                SenastUppdaterad = DateTime.Now
-            };
 
-            UtrustningRader.Add(utrustningRad);
+            // Skapa en separat UtrustningRad för varje fysiskt exemplar
+            foreach (UtrustningEntitet fysiskUtrustning
+                     in valdaFysiskaUtrustningar)
+            {
+                UtrustningRad utrustningRad =
+                    new UtrustningRad
+                    {
+                        StartDatum =
+                            UtrustningStartDatum.Value,
+
+                        SlutDatum =
+                            UtrustningSlutDatum.Value,
+
+                        // Pris per fysisk utrustning
+                        UtrustningBelopp =
+                            pris.Value,
+
+                        UtrustningNummer =
+                            fysiskUtrustning.UtrustningNummer,
+
+                        UtrustningPaketNummer =
+                            null,
+
+                        UtrustningDisplayText =
+                            ValdUtrustningArtikelTyp.TypNamn,
+
+                        SenastUppdaterad =
+                            DateTime.Now
+                    };
+
+                UtrustningRader.Add(utrustningRad);
+            }
+
 
             OnPropertyChanged(nameof(TotalBeloppText));
 
+
+            // Uppdatera tillgängligheten efter att utrustningen lagts till
             UppdateraTillgängligUtrustning();
 
+
+            // Återställ valen
             ValdUtrustningArtikelTyp = null;
+            AntalEnskildUtrustning = null;
             _aktuelltUtrustningPris = null;
+
+            AntalEnskildUtrustningAlternativ.Clear();
+
 
             OnPropertyChanged(nameof(UtrustningPrisText));
             OnPropertyChanged(nameof(KanLäggaTillUtrustning));
@@ -1317,6 +1521,15 @@ namespace Presentationslager.ViewModel
             }
         }
 
+        public bool KanVäljaAntalKonferensDeltagare =>
+                    ValdKonferens != null &&
+                    AntalKonferensDeltagareAlternativ.Any();
+
+        public bool KanVäljaKonferens =>
+                    KonferensStartTid.HasValue &&
+                    KonferensSlutTid.HasValue &&
+                    TillgängligaKonferenser.Any();
+
         #endregion
 
         #region Konferens - visning
@@ -1338,6 +1551,8 @@ namespace Presentationslager.ViewModel
         private void UppdateraTillgängligaKonferenser()
         {
             TillgängligaKonferenser.Clear();
+
+            OnPropertyChanged(nameof(KanVäljaKonferens));
 
             ValdKonferens = null;
 
@@ -1366,11 +1581,16 @@ namespace Presentationslager.ViewModel
 
             foreach (Konferens konferens in ledigaKonferenser)
                 TillgängligaKonferenser.Add(konferens);
+
+            OnPropertyChanged(nameof(KanVäljaKonferens));
         }
 
         private void UppdateraAntalKonferensDeltagare()
         {
             AntalKonferensDeltagareAlternativ.Clear();
+
+            OnPropertyChanged(nameof(KanVäljaAntalKonferensDeltagare));
+
             AntalKonferensDeltagare = null;
 
             if (ValdKonferens == null)
@@ -1378,6 +1598,8 @@ namespace Presentationslager.ViewModel
 
             for (int i = 1; i <= ValdKonferens.KonferensKapacitet; i++)
                 AntalKonferensDeltagareAlternativ.Add(i);
+
+            OnPropertyChanged(nameof(KanVäljaAntalKonferensDeltagare));
         }
 
         #endregion
@@ -1781,6 +2003,335 @@ namespace Presentationslager.ViewModel
 
 
 
+        #region Ändra / ta bort bokning
+
+        private string? _bokningSökText;
+        private BokningEntitet? _valdBokningFörRedigering;
+
+
+        public bool ÄrRedigeringsläge
+        {
+            get => _ärRedigeringsläge;
+            set
+            {
+                if (_ärRedigeringsläge == value)
+                    return;
+
+                _ärRedigeringsläge = value;
+                OnPropertyChanged();
+            }
+        }
+
+
+        public string? BokningSökText
+        {
+            get => _bokningSökText;
+            set
+            {
+                if (_bokningSökText == value)
+                    return;
+
+                _bokningSökText = value;
+                OnPropertyChanged();
+            }
+        }
+
+
+        public BokningEntitet? ValdBokningFörRedigering
+        {
+            get => _valdBokningFörRedigering;
+            set
+            {
+                if (_valdBokningFörRedigering == value)
+                    return;
+
+                _valdBokningFörRedigering = value;
+                OnPropertyChanged();
+
+                if (_valdBokningFörRedigering != null)
+                {
+                    LaddaBokningFörRedigering(
+                        _valdBokningFörRedigering);
+                }
+            }
+        }
+
+
+        public ObservableCollection<BokningEntitet>
+            BokningarFörRedigering
+        { get; }
+
+
+        private void VäxlaRedigeringsläge()
+        {
+            ÄrRedigeringsläge = !ÄrRedigeringsläge;
+
+            if (ÄrRedigeringsläge)
+            {
+                BokningSökText = null;
+                SökBokningar();
+            }
+            else
+            {
+                AvslutaRedigeringsläge();
+            }
+        }
+
+
+        private void AvslutaRedigeringsläge()
+        {
+            BokningSökText = null;
+            ValdBokningFörRedigering = null;
+
+            BokningarFörRedigering.Clear();
+
+            ÅterställFormulär();
+        }
+
+
+        private void SökBokningar()
+        {
+            BokningarFörRedigering.Clear();
+
+            BokningController bokningController =
+                new BokningController();
+
+            List<BokningEntitet> bokningar =
+                bokningController.SökBokningar(BokningSökText);
+
+            foreach (BokningEntitet bokning in bokningar)
+            {
+                BokningarFörRedigering.Add(bokning);
+            }
+        }
+
+
+        private void LaddaBokningFörRedigering(BokningEntitet bokning)
+        {
+            BokningController bokningController =
+                new BokningController();
+
+            BokningEntitet? fullständigBokning =
+                bokningController.HämtaBokningMedRader(
+                    bokning.BokningsNummer);
+
+            if (fullständigBokning == null)
+            {
+                VisaMeddelande?.Invoke(
+                    "Kunde inte hitta den valda bokningen.");
+
+                return;
+            }
+
+
+            // Kund
+
+            ValdKund = Kunder
+                .FirstOrDefault(k =>
+                    k.KundNummer == fullständigBokning.KundNummer);
+
+
+            // Töm nuvarande rader
+
+            LogiRader.Clear();
+            UtrustningRader.Clear();
+            KonferensRader.Clear();
+            SkidlektionRader.Clear();
+
+
+            // Ladda boende
+
+            if (fullständigBokning.LogiRader != null)
+            {
+                foreach (LogiRad rad in fullständigBokning.LogiRader)
+                {
+                    LogiRader.Add(rad);
+                }
+            }
+
+
+            // Ladda utrustning
+
+            if (fullständigBokning.UtrustningRader != null)
+            {
+                foreach (UtrustningRad rad in fullständigBokning.UtrustningRader)
+                {
+                    UtrustningRader.Add(rad);
+                }
+            }
+
+
+            // Ladda konferens
+
+            if (fullständigBokning.KonferensRader != null)
+            {
+                foreach (KonferensRad rad in fullständigBokning.KonferensRader)
+                {
+                    KonferensRader.Add(rad);
+                }
+            }
+
+
+            // Ladda skidlektion
+
+            if (fullständigBokning.SkidlektionRader != null)
+            {
+                foreach (SkidlektionRad rad in fullständigBokning.SkidlektionRader)
+                {
+                    SkidlektionRader.Add(rad);
+                }
+            }
+
+
+            OnPropertyChanged(nameof(TotalBeloppText));
+        }
+
+        private void SparaÄndringar()
+        {
+            if (ValdBokningFörRedigering == null)
+            {
+                VisaMeddelande?.Invoke(
+                    "Du måste välja en bokning att ändra.");
+
+                return;
+            }
+
+            if (ValdKund == null)
+            {
+                VisaMeddelande?.Invoke(
+                    "Bokningen måste ha en kund.");
+
+                return;
+            }
+
+            try
+            {
+                BokningController bokningController =
+                    new BokningController();
+
+                bokningController.SparaÄndringar(
+                    ValdBokningFörRedigering.BokningsNummer,
+                    ValdKund.KundNummer,
+                    LogiRader.ToList(),
+                    UtrustningRader.ToList(),
+                    KonferensRader.ToList(),
+                    SkidlektionRader.ToList());
+
+
+                VisaMeddelande?.Invoke(
+                    $"Bokning {ValdBokningFörRedigering.BokningsNummer} har uppdaterats.");
+
+
+                int bokningsNummer =
+                    ValdBokningFörRedigering.BokningsNummer;
+
+
+                // Uppdatera listan till höger
+                SökBokningar();
+
+
+                // Ladda om bokningen så att vi får de nya
+                // radnumren från databasen
+                BokningEntitet? bokningAttLadda =
+                    BokningarFörRedigering
+                        .FirstOrDefault(b =>
+                            b.BokningsNummer == bokningsNummer);
+
+                if (bokningAttLadda != null)
+                {
+                    ValdBokningFörRedigering =
+                        bokningAttLadda;
+                }
+            }
+            catch (Exception ex)
+            {
+                string felmeddelande = ex.Message;
+
+                if (ex.InnerException != null)
+                {
+                    felmeddelande +=
+                        $"\n\nInner exception:\n{ex.InnerException.Message}";
+                }
+
+                if (ex.InnerException?.InnerException != null)
+                {
+                    felmeddelande +=
+                        $"\n\nInner inner exception:\n{ex.InnerException.InnerException.Message}";
+                }
+
+                VisaMeddelande?.Invoke(
+                    $"Kunde inte spara ändringarna.\n\n{felmeddelande}");
+            }
+        }
+
+        private void TaBortBokning()
+        {
+            if (ValdBokningFörRedigering == null)
+            {
+                VisaMeddelande?.Invoke(
+                    "Du måste välja en bokning att ta bort.");
+
+                return;
+            }
+
+            int bokningsNummer =
+                ValdBokningFörRedigering.BokningsNummer;
+
+            MessageBoxResult svar = MessageBox.Show(
+                $"Är du säker på att du vill ta bort bokning {bokningsNummer}?",
+                "Bekräfta borttagning",
+                MessageBoxButton.YesNo,
+                MessageBoxImage.Warning);
+
+            if (svar != MessageBoxResult.Yes)
+                return;
+
+            try
+            {
+                BokningController bokningController =
+                    new BokningController();
+
+                bokningController.TaBortBokning(
+                    bokningsNummer);
+
+                VisaMeddelande?.Invoke(
+                    $"Bokning {bokningsNummer} har tagits bort.");
+
+                ValdBokningFörRedigering = null;
+
+                LogiRader.Clear();
+                UtrustningRader.Clear();
+                KonferensRader.Clear();
+                SkidlektionRader.Clear();
+
+                ValdKund = null;
+                StartDatum = null;
+                SlutDatum = null;
+
+                OnPropertyChanged(nameof(TotalBeloppText));
+
+                SökBokningar();
+            }
+            catch (Exception ex)
+            {
+                string felmeddelande = ex.Message;
+
+                if (ex.InnerException != null)
+                {
+                    felmeddelande +=
+                        $"\n\nInner exception:\n{ex.InnerException.Message}";
+                }
+
+                VisaMeddelande?.Invoke(
+                    $"Kunde inte ta bort bokningen.\n\n{felmeddelande}");
+            }
+        }
+
+
+        #endregion
+
+
+
         #region Totalbelopp
 
         public string TotalBeloppText =>
@@ -1827,6 +2378,7 @@ namespace Presentationslager.ViewModel
             };
 
             BokningSparad?.Invoke(
+                nyBokning.BokningsNummer, 
                 kundText,
                 DateTime.Now,
                 LogiRader.ToList(),

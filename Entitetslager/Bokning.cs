@@ -24,5 +24,12 @@ namespace Entitetslager
         [ForeignKey(nameof(KundNummer))]
         public virtual Kund kund { get; set; }
 
+
+        [NotMapped]
+        public string BokningDisplayText =>
+                    $"Bokning {BokningsNummer} | " +
+                    $"Kund {KundNummer} | " +
+                    $"{kund?.VisningsNamn ?? "Okänd kund"}";
+
     }
 }

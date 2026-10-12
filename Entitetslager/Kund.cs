@@ -20,7 +20,6 @@ namespace Entitetslager
         public string Ort { get; set; } 
         public DateTime SenastUppdaterad { get; set; }
 
-
         public string VisningsNamn
         {
             get

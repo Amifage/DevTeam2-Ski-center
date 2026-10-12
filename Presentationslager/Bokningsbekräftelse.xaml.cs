@@ -9,18 +9,20 @@ namespace Presentationslager
     public partial class Bokningsbekräftelse : Window
     {
         public Bokningsbekräftelse(
-             string kundText,
-             DateTime bokningsdatum,
-             List<LogiRad> logiRader,
-             List<UtrustningRad> utrustningRader,
-             List<KonferensRad> konferensRader,
-             List<SkidlektionRad> skidlektionRader)
+                 int bokningsNummer,
+                 string kundText,
+                 DateTime bokningsDatum,
+                 List<LogiRad> logiRader,
+                 List<UtrustningRad> utrustningRader,
+                 List<KonferensRad> konferensRader,
+                 List<SkidlektionRad> skidlektionRader)
         {
             InitializeComponent();
 
             DataContext = new BokningsbekräftelseViewModel(
+                bokningsNummer,
                 kundText,
-                bokningsdatum,
+                bokningsDatum,
                 logiRader,
                 utrustningRader,
                 konferensRader,

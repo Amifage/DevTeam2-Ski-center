@@ -42,6 +42,7 @@ namespace Presentationslager
 
 
         private void VisaBokningsbekräftelse(
+                 int bokningsNummer, 
                  string kundText,
                  DateTime bokningsdatum,
                  List<LogiRad> logiRader,
@@ -51,6 +52,7 @@ namespace Presentationslager
         {
             Bokningsbekräftelse bekräftelseFönster =
                 new Bokningsbekräftelse(
+                    bokningsNummer, 
                     kundText,
                     bokningsdatum,
                     logiRader,

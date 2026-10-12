@@ -13,6 +13,8 @@ namespace Presentationslager.ViewModel
 
         public string BokningsdatumText { get; }
 
+        public int BokningsNummer { get; }
+
         public ObservableCollection<LogiRad> LogiRader { get; }
         public ObservableCollection<UtrustningRad> UtrustningRader { get; }
         public ObservableCollection<KonferensRad> KonferensRader { get; }
@@ -32,16 +34,17 @@ namespace Presentationslager.ViewModel
                            SkidlektionRader.Sum(x => x.SkidlektionBelopp):N0} kr";
 
         public BokningsbekräftelseViewModel(
-            string kundText,
-            DateTime bokningsdatum,
-            IEnumerable<LogiRad> logiRader,
-            IEnumerable<UtrustningRad> utrustningRader,
-            IEnumerable<KonferensRad> konferensRader,
-            IEnumerable<SkidlektionRad> skidlektionRader)
+                 int bokningsNummer,
+                 string kundText,
+                 DateTime bokningsDatum,
+                 IEnumerable<LogiRad> logiRader,
+                 IEnumerable<UtrustningRad> utrustningRader,
+                 IEnumerable<KonferensRad> konferensRader,
+                 IEnumerable<SkidlektionRad> skidlektionRader)
         {
+            BokningsNummer = bokningsNummer;
             KundText = kundText;
-            BokningsdatumText = bokningsdatum.ToString("yyyy-MM-dd");
-
+            BokningsdatumText = bokningsDatum.ToString("yyyy-MM-dd");
 
             LogiRader = new ObservableCollection<LogiRad>(logiRader);
             UtrustningRader = new ObservableCollection<UtrustningRad>(utrustningRader);
