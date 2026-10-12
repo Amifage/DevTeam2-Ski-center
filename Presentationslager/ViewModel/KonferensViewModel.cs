@@ -135,9 +135,9 @@ namespace Presentationslager.ViewModel
 
             var vald = ValdKonferensrum;
 
-            string nyStatus = (vald.Status != null && vald.Status.Equals("Tillgänlig", StringComparison.OrdinalIgnoreCase))
+            string nyStatus = (vald.Status != null && vald.Status.Equals("Tillgänglig", StringComparison.OrdinalIgnoreCase))
                 ? "Ur bruk"
-                : "Tillgänlig";
+                : "Tillgänglig";
 
             bool lyckades = _konferensController.UppdateraKonferensStatus(vald.KonferensNummer, nyStatus);
 
