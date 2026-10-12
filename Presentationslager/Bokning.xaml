@@ -42,7 +42,7 @@
                     <ColumnDefinition Width="Auto"/>
                 </Grid.ColumnDefinitions>
 
-                <TextBlock Text="Skapa bokning"
+                <TextBlock Text="{Binding BokningsRubrik}"
                            Style="{StaticResource HeaderTextStyle}"/>
 
                 <Button Grid.Column="1"
@@ -934,10 +934,10 @@
 
                     <!-- TA BORT HELA BOKNINGEN -->
 
-                    <Button Content="Ta bort bokning"
+                    <Button Content="Avboka bokning"
                             Width="150"
                             Margin="5"
-                            Command="{Binding TaBortBokningCommand}">
+                            Command="{Binding AvbokaBokningCommand}">
 
                         <Button.Style>
 

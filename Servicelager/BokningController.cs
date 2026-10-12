@@ -20,9 +20,8 @@ namespace Servicelager
         {
             using var unitOfWork = new UnitOfWork(new SkiContext());
 
-            List<Bokning> bokningar =
-                unitOfWork.BokningRepository
-                    .GetAll()
+            List<Bokning> bokningar = unitOfWork.BokningRepository.GetAll()
+                    .Where(b => b.Status != "Avbokad")
                     .OrderByDescending(b => b.BokningsNummer)
                     .ToList();
 
@@ -996,87 +995,12 @@ namespace Servicelager
                 .FirstOrDefault(b => b.BokningsNummer == bokningsNummer);
 
             if (bokning == null)
-                throw new InvalidOperationException("Bokningen kunde inte hittas.");
+                throw new InvalidOperationException(
+                    "Bokningen kunde inte hittas.");
 
+            bokning.Status = "Avbokad";
 
-            // UTRUSTNING
-
-            List<UtrustningRad> utrustningRader =
-                unitOfWork.UtrustningRadRepository
-                    .GetAll()
-                    .Where(r => r.BokningsNummer == bokningsNummer)
-                    .ToList();
-
-            List<UtrustningPaketRad> paketRader =
-                unitOfWork.UtrustningPaketRadRepository
-                    .GetAll()
-                    .ToList();
-
-            foreach (UtrustningRad utrustningRad in utrustningRader)
-            {
-                List<UtrustningPaketRad> paketRaderAttTaBort =
-                    paketRader
-                        .Where(r =>
-                            r.UtrustningRadNummer ==
-                            utrustningRad.UtrustningRadNummer)
-                        .ToList();
-
-                foreach (UtrustningPaketRad paketRad in paketRaderAttTaBort)
-                {
-                    unitOfWork.UtrustningPaketRadRepository
-                        .Remove(paketRad);
-                }
-
-                unitOfWork.UtrustningRadRepository
-                    .Remove(utrustningRad);
-            }
-
-
-            // BOENDE
-
-            List<LogiRad> logiRader =
-                unitOfWork.LogiRadRepository
-                    .GetAll()
-                    .Where(r => r.BokningsNummer == bokningsNummer)
-                    .ToList();
-
-            foreach (LogiRad rad in logiRader)
-            {
-                unitOfWork.LogiRadRepository.Remove(rad);
-            }
-
-
-            // KONFERENS
-
-            List<KonferensRad> konferensRader =
-                unitOfWork.KonferensRadRepository
-                    .GetAll()
-                    .Where(r => r.BokningsNummer == bokningsNummer)
-                    .ToList();
-
-            foreach (KonferensRad rad in konferensRader)
-            {
-                unitOfWork.KonferensRadRepository.Remove(rad);
-            }
-
-
-            // SKIDLEKTION
-
-            List<SkidlektionRad> skidlektionRader =
-                unitOfWork.SkidlektionRadRepository
-                    .GetAll()
-                    .Where(r => r.BokningsNummer == bokningsNummer)
-                    .ToList();
-
-            foreach (SkidlektionRad rad in skidlektionRader)
-            {
-                unitOfWork.SkidlektionRadRepository.Remove(rad);
-            }
-
-
-            // BOKNING
-
-            unitOfWork.BokningRepository.Remove(bokning);
+            unitOfWork.BokningRepository.Update(bokning);
 
             unitOfWork.Save();
         }

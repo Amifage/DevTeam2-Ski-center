@@ -26,18 +26,31 @@ namespace Servicelager
         {
             using var unitOfWork = new UnitOfWork(new SkiContext());
 
-            var upptagnaKonferensNummer = unitOfWork.KonferensRadRepository
-                .GetAll()
-                .Where(r =>
-                    r.StartTid < slutTid &&
-                    r.SlutTid > startTid &&
-                    r.KonferensNummer != null)
-                .Select(r => r.KonferensNummer!)
-                .ToHashSet();
+            var avbokadeBokningsNummer =
+                unitOfWork.BokningRepository
+                    .GetAll()
+                    .Where(b => b.Status == "Avbokad")
+                    .Select(b => b.BokningsNummer)
+                    .ToHashSet();
+
+            var upptagnaKonferensNummer =
+                unitOfWork.KonferensRadRepository
+                    .GetAll()
+                    .Where(r =>
+                        r.StartTid < slutTid &&
+                        r.SlutTid > startTid &&
+                        r.KonferensNummer != null &&
+                        (!r.BokningsNummer.HasValue ||
+                         !avbokadeBokningsNummer.Contains(
+                             r.BokningsNummer.Value)))
+                    .Select(r => r.KonferensNummer!)
+                    .ToHashSet();
 
             return unitOfWork.KonferensRepository
                 .GetAll()
-                .Where(k => !upptagnaKonferensNummer.Contains(k.KonferensNummer))
+                .Where(k =>
+                    !upptagnaKonferensNummer.Contains(
+                        k.KonferensNummer))
                 .ToList();
         }
 

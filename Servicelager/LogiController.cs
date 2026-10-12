@@ -21,17 +21,28 @@ namespace Servicelager
 
 
         public List<string> HämtaUpptagnaLogi(
-        DateTime startDatum,
-        DateTime slutDatum)
+             DateTime startDatum,
+             DateTime slutDatum)
         {
-            using var unitOfWork = new UnitOfWork(new SkiContext());
+            using var unitOfWork =
+                new UnitOfWork(new SkiContext());
+
+            var avbokadeBokningsNummer =
+                unitOfWork.BokningRepository
+                    .GetAll()
+                    .Where(b => b.Status == "Avbokad")
+                    .Select(b => b.BokningsNummer)
+                    .ToHashSet();
 
             return unitOfWork.LogiRadRepository
                 .GetAll()
                 .Where(r =>
                     r.LogiNummer != null &&
                     r.StartDatum < slutDatum &&
-                    r.SlutDatum > startDatum)
+                    r.SlutDatum > startDatum &&
+                    (!r.BokningsNummer.HasValue ||
+                     !avbokadeBokningsNummer.Contains(
+                         r.BokningsNummer.Value)))
                 .Select(r => r.LogiNummer!)
                 .Distinct()
                 .ToList();

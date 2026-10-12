@@ -115,11 +115,19 @@ namespace Servicelager
         {
             HashSet<string> upptagna = new HashSet<string>();
 
+            var avbokadeBokningsNummer = _unitOfWork.BokningRepository
+                .GetAll()
+                .Where(b => b.Status == "Avbokad")
+                .Select(b => b.BokningsNummer)
+                .ToHashSet();
+
             var upptagnaRader = _unitOfWork.UtrustningRadRepository
                 .GetAll()
                 .Where(r =>
                     r.StartDatum < slutDatum &&
-                    r.SlutDatum > startDatum)
+                    r.SlutDatum > startDatum &&
+                    (!r.BokningsNummer.HasValue ||
+                     !avbokadeBokningsNummer.Contains(r.BokningsNummer.Value)))
                 .ToList();
 
             foreach (UtrustningRad rad in upptagnaRader)

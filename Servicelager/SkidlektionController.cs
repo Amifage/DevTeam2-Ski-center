@@ -28,20 +28,42 @@ namespace Servicelager
         {
             Skidlektion? skidlektion = _unitOfWork.SkidlektionRepository
                 .GetAll()
-                .FirstOrDefault(s => s.SkidlektionNummer == skidlektionNummer);
+                .FirstOrDefault(s =>
+                    s.SkidlektionNummer == skidlektionNummer);
 
             if (skidlektion == null)
                 return 0;
 
-            int bokadePlatser = _unitOfWork.SkidlektionRadRepository
-                .GetAll()
-                .Where(r => r.SkidlektionNummer == skidlektionNummer)
-                .Sum(r => r.AntalPersoner);
+            var avbokadeBokningsNummer =
+                _unitOfWork.BokningRepository
+                    .GetAll()
+                    .Where(b => b.Status == "Avbokad")
+                    .Select(b => b.BokningsNummer)
+                    .ToHashSet();
 
-            return Math.Max(0, skidlektion.Kapacitet - bokadePlatser);
+            int bokadePlatser =
+                _unitOfWork.SkidlektionRadRepository
+                    .GetAll()
+                    .Where(r =>
+                        r.SkidlektionNummer == skidlektionNummer &&
+                        (!r.BokningsNummer.HasValue ||
+                         !avbokadeBokningsNummer.Contains(
+                             r.BokningsNummer.Value)))
+                    .Sum(r => r.AntalPersoner);
+
+            return Math.Max(
+                0,
+                skidlektion.Kapacitet - bokadePlatser);
         }
         public List<Skidlektion> HämtaTillgängligaSkidlektioner(DateTime datum)
         {
+            var avbokadeBokningsNummer =
+            _unitOfWork.BokningRepository
+                .GetAll()
+                .Where(b => b.Status == "Avbokad")
+                .Select(b => b.BokningsNummer)
+                .ToHashSet();
+
             var skidlektioner = _unitOfWork.SkidlektionRepository
                 .GetAll()
                 .Where(s => s.Datum.Date == datum.Date)
@@ -57,8 +79,13 @@ namespace Servicelager
                 skidlektion.artikelTyp = artikelTyper.FirstOrDefault(a => a.ArtikelTypNummer == skidlektion.ArtikelTypNummer);
             }
 
-            var bokadeRader = _unitOfWork.SkidlektionRadRepository
+            var bokadeRader =
+            _unitOfWork.SkidlektionRadRepository
                 .GetAll()
+                .Where(r =>
+                    !r.BokningsNummer.HasValue ||
+                    !avbokadeBokningsNummer.Contains(
+                        r.BokningsNummer.Value))
                 .ToList();
 
             foreach (Skidlektion skidlektion in skidlektioner)
