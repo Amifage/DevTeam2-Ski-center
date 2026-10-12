@@ -1,10 +1,13 @@
-﻿using System.Collections.ObjectModel;
+﻿using System;
+using System.Linq;
+using System.Collections.ObjectModel;
 using System.Windows.Input;
+using System.ComponentModel;
+using System.Windows;
+using System.Windows.Data;
 using Entitetslager;
 using Servicelager;
 using Presentationslager.Command;
-using System.ComponentModel;
-using System.Windows;
 
 namespace Presentationslager.ViewModel
 {
@@ -12,18 +15,24 @@ namespace Presentationslager.ViewModel
     {
         private readonly KundController _kundController;
 
-
         public ObservableCollection<Kund> Kunder { get; set; }
+
+        public ICollectionView FiltreradeKunder { get; set; }
+
         public ICommand TillbakaCommand { get; set; }
-
         public ICommand UppdateraKundCommand { get; set; }
-
         public ICommand TaBortKundCommand { get; set; }
+        public ICommand SparaKundCommand { get; set; }
+        public ICommand RensaFormularCommand { get; set; }
+
 
         public KundregisterViewModel()
         {
             _kundController = new KundController();
             Kunder = new ObservableCollection<Kund>(_kundController.HämtaAllaKunder());
+
+            FiltreradeKunder = CollectionViewSource.GetDefaultView(Kunder);
+            FiltreradeKunder.Filter = FiltreraKundLista;
 
             SparaKundCommand = new RelayCommand(SparaKund);
             RensaFormularCommand = new RelayCommand(RensaFormular);
@@ -32,6 +41,68 @@ namespace Presentationslager.ViewModel
             TaBortKundCommand = new RelayCommand(TaBortKund);
 
             NyKredit = 12000;
+        }
+        public string NyEpost { get; set; }
+        public string NyTelefon { get; set; }
+        public string NyttFörnamn { get; set; }
+        public string NyttEfternamn { get; set; }
+        public string NyAdress { get; set; }
+        public string NyPostnummer { get; set; }
+        public string NyOrt { get; set; }
+        public decimal NyRabatt { get; set; }
+        public decimal NyKredit { get; set; }
+        public string NyttFöretagsnamn { get; set; }
+
+        #region Metoder
+        private string _sökText;
+        public string SökText
+        {
+            get { return _sökText; }
+            set
+            {
+                _sökText = value;
+                OnPropertyChanged(nameof(SökText));
+                FiltreradeKunder?.Refresh();
+            }
+        }
+
+        private int _valdFilterTypIndex = 0; 
+        public int ValdFilterTypIndex
+        {
+            get { return _valdFilterTypIndex; }
+            set
+            {
+                _valdFilterTypIndex = value;
+                OnPropertyChanged(nameof(ValdFilterTypIndex));
+                FiltreradeKunder?.Refresh();
+            }
+        }
+      
+        private bool FiltreraKundLista(object obj)
+        {
+            if (obj is Kund kund)
+            {
+                
+                bool typMatchar = true;
+                if (ValdFilterTypIndex == 1)
+                    typMatchar = kund is PrivatKund;
+                else if (ValdFilterTypIndex == 2)
+                    typMatchar = kund is FöretagsKund;
+
+                
+                bool sökMatchar = true;
+                if (!string.IsNullOrWhiteSpace(SökText))
+                {
+                    string sökning = SökText.ToLower();
+                    sökMatchar = (kund.VisningsNamn?.ToLower().Contains(sökning) == true) ||
+                                 (kund.Ort?.ToLower().Contains(sökning) == true) ||
+                                 (kund.Epost?.ToLower().Contains(sökning) == true) ||
+                                 (kund.KundNummer.ToString().Contains(sökning));
+                }
+
+                return typMatchar && sökMatchar;
+            }
+            return false;
         }
 
         private Kund _valdKund;
@@ -49,11 +120,7 @@ namespace Presentationslager.ViewModel
             }
         }
 
-
         private int _valdKundTypIndex = 0;
-
-        public event PropertyChangedEventHandler? PropertyChanged;
-
         public int ValdKundTypIndex
         {
             get { return _valdKundTypIndex; }
@@ -64,35 +131,16 @@ namespace Presentationslager.ViewModel
             }
         }
 
+        
+
+        public event PropertyChangedEventHandler? PropertyChanged;
         private void OnPropertyChanged(string propertyName)
         {
             PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(propertyName));
         }
 
-        public string NyEpost { get; set; }
-        public string NyTelefon { get; set; }
-
-        public string NyttFörnamn { get; set; }
-        public string NyttEfternamn { get; set; }
-        public string NyAdress { get; set; }
-
-        public string NyPostnummer { get; set; }
-
-        public string NyOrt { get; set; }
-
-        public decimal NyRabatt { get; set; }
-
-        public decimal NyKredit { get; set; }
-        public string NyttFöretagsnamn { get; set; }
-
-        public ICommand SparaKundCommand { get; set; }
-        public ICommand RensaFormularCommand { get; set; }
-
-
-
         private void SparaKund(object obj)
         {
-
             if (!ValideraInmatning()) return;
 
             if (ValdKundTypIndex == 0)
@@ -127,7 +175,6 @@ namespace Presentationslager.ViewModel
                     Rabatt = NyRabatt,
                     Kredit = 0,
                     SenastUppdaterad = DateTime.Now,
-
                 };
                 _kundController.SkapaKund(nyForetagsKund);
             }
@@ -139,13 +186,12 @@ namespace Presentationslager.ViewModel
 
         private void RensaFormular(object obj)
         {
-        
             NyEpost = string.Empty;
             NyTelefon = string.Empty;
-            NyAdress = string.Empty;      
-            NyPostnummer = string.Empty; 
-            NyOrt = string.Empty;         
-            NyRabatt = 0;                 
+            NyAdress = string.Empty;
+            NyPostnummer = string.Empty;
+            NyOrt = string.Empty;
+            NyRabatt = 0;
 
             NyttFörnamn = string.Empty;
             NyttEfternamn = string.Empty;
@@ -177,7 +223,6 @@ namespace Presentationslager.ViewModel
             Meny menyFonster = new Meny();
             menyFonster.Show();
 
-            // Stäng det nuvarande fönstret
             if (obj is Window nuvarandeFonster)
             {
                 nuvarandeFonster.Close();
@@ -208,14 +253,11 @@ namespace Presentationslager.ViewModel
                 NyKredit = foretag.Kredit;
             }
             OnPropertyChanged(string.Empty);
-
         }
-
 
         private void UppdateraKund(object obj)
         {
             if (ValdKund == null) return;
-
             if (!ValideraInmatning()) return;
 
             ValdKund.Epost = NyEpost;
@@ -237,6 +279,7 @@ namespace Presentationslager.ViewModel
                 foretag.Rabatt = NyRabatt;
                 foretag.Kredit = NyKredit;
             }
+
             _kundController.UppdateraKund(ValdKund);
             UppdateraKundLista();
             RensaFormular(null);
@@ -246,7 +289,6 @@ namespace Presentationslager.ViewModel
 
         private bool ValideraInmatning()
         {
-            // 1. Kontrollera att gemensamma fält inte är tomma
             if (string.IsNullOrWhiteSpace(NyEpost) ||
                 string.IsNullOrWhiteSpace(NyTelefon) ||
                 string.IsNullOrWhiteSpace(NyAdress) ||
@@ -267,7 +309,7 @@ namespace Presentationslager.ViewModel
                     return false;
                 }
             }
-            else if (ValdKundTypIndex == 1) 
+            else if (ValdKundTypIndex == 1)
             {
                 if (string.IsNullOrWhiteSpace(NyttFöretagsnamn))
                 {
@@ -292,9 +334,7 @@ namespace Presentationslager.ViewModel
             if (ValdKund == null)
             {
                 MessageBox.Show("Du måste välja en kund i listan först.",
-                                "Ingen kund vald",
-                                MessageBoxButton.OK,
-                                MessageBoxImage.Warning);
+                                "Ingen kund vald", MessageBoxButton.OK, MessageBoxImage.Warning);
                 return;
             }
 
@@ -304,12 +344,11 @@ namespace Presentationslager.ViewModel
                 MessageBoxButton.YesNo,
                 MessageBoxImage.Warning);
 
-       
             if (svar == MessageBoxResult.Yes)
             {
-                _kundController.TaBortKund(ValdKund); 
-                UppdateraKundLista();                 
-                RensaFormular(null);                 
+                _kundController.TaBortKund(ValdKund);
+                UppdateraKundLista();
+                RensaFormular(null);
 
                 MessageBox.Show("Kunden har tagits bort från registret.",
                                 "Kund borttagen",
@@ -317,5 +356,6 @@ namespace Presentationslager.ViewModel
                                 MessageBoxImage.Information);
             }
         }
+        #endregion  
     }
 }
