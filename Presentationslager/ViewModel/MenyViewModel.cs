@@ -10,8 +10,10 @@ namespace Presentationslager.ViewModel
     {
         public ICommand LoggaUtCommand { get; }
         public ICommand ÖppnaSkidlektionerCommand { get; }
+        public ICommand ÖppnaBokningCommand {  get; }
         public ICommand ÖppnaKundregisterCommand { get; }
         public ICommand ÖppnaUtrustningCommand { get; }
+        public ICommand ÖppnaKonferenscommand {  get; }
 
         public event PropertyChangedEventHandler? PropertyChanged;
 
@@ -21,18 +23,52 @@ namespace Presentationslager.ViewModel
             ÖppnaKundregisterCommand = new RelayCommand(ÖppnaKundregister);
             ÖppnaUtrustningCommand = new RelayCommand(ÖppnaUtrustning);
             ÖppnaSkidlektionerCommand = new RelayCommand(ÖppnaSkidlektioner);
+            ÖppnaBokningCommand = new RelayCommand(ÖppnaBokning);
+            ÖppnaKonferenscommand = new RelayCommand(ÖpnnaKonferens);
         }
 
-        public void ÖppnaKundregister(object? obj)
+        public void ÖppnaKundregister(object obj)
         {
             Kundregister kundregister = new Kundregister();
             kundregister.Show();
+
+            if (obj is Window nuvarandeFonster)
+            {
+                nuvarandeFonster.Close();
+            }
         }
 
-        public void ÖppnaUtrustning(object? obj)
+        public void ÖpnnaKonferens(Object obj)
+        {
+            KonferensFönster window = new KonferensFönster();
+            window.Show();
+
+            if (obj is Window nuvarandeFonster)
+            {
+                nuvarandeFonster.Close();
+            }
+        }
+
+        public void ÖppnaBokning (Object obj)
+        {
+            Bokning bokning = new Bokning();
+            bokning.Show();
+
+            if (obj is Window nuvarandeFonster)
+            {
+                nuvarandeFonster.Close();
+            }
+        }
+
+        public void ÖppnaUtrustning(object obj)
         {
             Utrustning utrustning = new Utrustning();
             utrustning.Show();
+
+            if (obj is Window nuvarandeFonster)
+            {
+                nuvarandeFonster.Close();
+            }
         }
 
         public void ÖppnaSkidlektioner(object obj)
@@ -46,7 +82,7 @@ namespace Presentationslager.ViewModel
             }
         }
 
-        private void LoggaUt(object? parameter)
+        private void LoggaUt(object parameter)
         {
             Startsida startsida = new Startsida();
             startsida.Show();
