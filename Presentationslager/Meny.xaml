@@ -21,8 +21,8 @@
         <!-- Menyknappar -->
         <UniformGrid Grid.Row="1" Columns="4" Rows="2" HorizontalAlignment="Center" VerticalAlignment="Center">
 
-            <Button Margin="10" Width="160" Height="100" Click="SkapaBokning_Click">
-                <StackPanel HorizontalAlignment="Center" VerticalAlignment="Center">
+            <Button Margin="10" Width="160" Height="100" Command="{Binding ÖppnaBokningCommand}" CommandParameter="{Binding RelativeSource={RelativeSource AncestorType=Window}}">
+            <StackPanel HorizontalAlignment="Center" VerticalAlignment="Center">
                     <TextBlock Text="📅" FontSize="28" HorizontalAlignment="Center" Margin="0,0,0,5"/>
                     <TextBlock Text="Skapa bokning" HorizontalAlignment="Center"/>
                 </StackPanel>
@@ -35,7 +35,7 @@
                 </StackPanel>
             </Button>
 
-            <Button Margin="10" Width="160" Height="100">
+            <Button Margin="10" Width="160" Height="100" Command="{Binding ÖppnaKonferenscommand}" CommandParameter="{Binding RelativeSource={RelativeSource AncestorType=Window}}" >
                 <StackPanel HorizontalAlignment="Center" VerticalAlignment="Center">
                     <TextBlock Text="💼" FontSize="28" HorizontalAlignment="Center" Margin="0,0,0,5"/>
                     <TextBlock Text="Konferens" HorizontalAlignment="Center"/>
@@ -49,14 +49,13 @@
                 </StackPanel>
             </Button>
 
-            <Button Margin="10" Width="160" Height="100" Command="{Binding ÖppnaUtrustningCommand}">
+            <Button Margin="10" Width="160" Height="100" Command="{Binding ÖppnaUtrustningCommand}" CommandParameter="{Binding RelativeSource={RelativeSource AncestorType=Window}}" >
                 <StackPanel HorizontalAlignment="Center" VerticalAlignment="Center">
                     <TextBlock Text="🎿" FontSize="28" HorizontalAlignment="Center" Margin="0,0,0,5"/>
                     <TextBlock Text="Utrustning" HorizontalAlignment="Center"/>
                 </StackPanel>
             </Button>
 
-            <!-- NY KNAPP: Statistik (Ersätter Systemadmin i nätverk) -->
             <Button Margin="10" Width="160" Height="100">
                 <StackPanel HorizontalAlignment="Center" VerticalAlignment="Center">
                     <TextBlock Text="📊" FontSize="28" HorizontalAlignment="Center" Margin="0,0,0,5"/>
@@ -80,7 +79,6 @@
 
         </UniformGrid>
 
-        <!-- Logga ut -->
         <Button Grid.Row="2" 
                 Command="{Binding LoggaUtCommand}"
                 CommandParameter="{Binding RelativeSource={RelativeSource AncestorType=Window}}"

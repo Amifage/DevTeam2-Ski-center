@@ -12,6 +12,7 @@ namespace Entitetslager
     {
         [Key] public string KonferensNummer { get; set; }
         public int KonferensKapacitet { get; set; }
+        
         public string Status { get; set; }
         public DateTime SenastUppdaterad { get; set; }
 
