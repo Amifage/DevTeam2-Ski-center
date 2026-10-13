@@ -9,12 +9,8 @@
         Title="Ski-Center Startsida" Height="600" Width="800"
         WindowStartupLocation="CenterScreen">
 
+    <Grid Background="{StaticResource Snövit}">
 
-
-    <!-- Huvudbakgrund, en neutral ljus färg hjälper inloggningskortet att poppa fram -->
-    <Grid Background="#F4F6F9">
-
-        <!-- Inloggningskortet med IsBlå bakgrund -->
         <Border Background="{StaticResource IsBlå}" 
                 Margin="40" 
                 CornerRadius="15" 
@@ -22,20 +18,17 @@
                 MaxWidth="450" 
                 VerticalAlignment="Center">
 
-            <!-- Lägger till en snygg skugga bakom kortet -->
             <Border.Effect>
                 <DropShadowEffect BlurRadius="20" ShadowDepth="4" Opacity="0.15" Color="Black"/>
             </Border.Effect>
 
             <StackPanel VerticalAlignment="Center" HorizontalAlignment="Stretch">
 
-                <!-- Logotyp -->
                 <Image Source="Logotyp Ski-center.png" 
                        Height="90" 
                        Margin="0,0,0,5" 
                        RenderOptions.BitmapScalingMode="HighQuality"/>
 
-                <!-- Slogan -->
                 <TextBlock Text="“Mer än bara skidåkning.”" 
                            FontSize="15" 
                            FontStyle="Italic" 
@@ -43,14 +36,11 @@
                            HorizontalAlignment="Center" 
                            Margin="0,0,0,25" />
 
-                <!-- Rubrik för formuläret -->
                 <TextBlock Text="Personalportal - Inloggning" 
-                           FontSize="16" 
-                           FontWeight="Bold" 
+                           Style="{StaticResource HeaderTextStyle}"                          
                            HorizontalAlignment="Center" 
                            Margin="0,0,0,25" />
 
-                <!-- E-post -->
                 <TextBlock Text="Email" FontWeight="SemiBold" Margin="0,0,0,5"/>
                 <TextBox x:Name="txtEmailInlogg" 
                          Height="40" 
@@ -60,7 +50,6 @@
                          VerticalContentAlignment="Center" 
                          BorderThickness="0"/>
 
-                <!-- Lösenord -->
                 <TextBlock Text="Lösenord" FontWeight="SemiBold" Margin="0,0,0,5"/>
                 <PasswordBox x:Name="txtLösenord" 
                              Height="40" 
