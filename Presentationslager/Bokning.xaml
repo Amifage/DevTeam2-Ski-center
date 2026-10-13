@@ -133,7 +133,7 @@
                     <!-- BOENDE                                -->
                     <!-- ===================================== -->
 
-                    <Border Background="White"
+                    <Border Background="{StaticResource Snövit}"
                             CornerRadius="5"
                             Padding="15"
                             Margin="0,0,0,15">
@@ -335,7 +335,7 @@
                     <!-- UTRUSTNING                            -->
                     <!-- ===================================== -->
 
-                    <Border Background="White"
+                    <Border Background="{StaticResource Snövit}"
                             CornerRadius="5"
                             Padding="15"
                             Margin="0,0,0,15">
@@ -533,7 +533,7 @@
                     <!-- KONFERENS                             -->
                     <!-- ===================================== -->
 
-                    <Border Background="White"
+                    <Border Background="{StaticResource Snövit}"
                             CornerRadius="5"
                             Padding="15"
                             Margin="0,0,0,15">
@@ -697,7 +697,7 @@
                     <!-- SKIDLEKTION                           -->
                     <!-- ===================================== -->
 
-                    <Border Background="White"
+                    <Border Background="{StaticResource Snövit}"
                             CornerRadius="5"
                             Padding="15"
                             Margin="0,0,0,15">
@@ -1044,7 +1044,7 @@
 
         <Border Grid.Column="1"
                 Width="340"
-                Background="White"
+                Background="{StaticResource Snövit}"
                 CornerRadius="5"
                 Padding="15"
                 Margin="20,0,0,0">

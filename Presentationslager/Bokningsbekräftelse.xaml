@@ -30,7 +30,7 @@
         <ScrollViewer Grid.Row="1"
                       VerticalScrollBarVisibility="Auto">
 
-            <Border Background="White"
+            <Border Background="{StaticResource Snövit}"
                     CornerRadius="8"
                     Padding="20">
 
