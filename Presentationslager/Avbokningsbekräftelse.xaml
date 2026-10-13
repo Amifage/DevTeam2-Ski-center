@@ -29,10 +29,17 @@
                 <Run Text="{Binding BokningsNummer, Mode=OneWay}"/>
             </TextBlock>
 
-            <TextBlock>
-                <Run Text="Kund: "/>
-                <Run Text="{Binding KundText, Mode=OneWay}"/>
-            </TextBlock>
+            <StackPanel Margin="0,15,0,0">
+                <TextBlock>
+                <Run Text="Kund: " FontWeight="Bold"/>
+                <Run Text="{Binding KundNamnText, Mode=OneWay}"/>
+                        </TextBlock>
+
+                        <TextBlock>
+                <Run Text="Kundnummer: " FontWeight="Bold"/>
+                <Run Text="{Binding KundNummerText, Mode=OneWay}"/>
+                </TextBlock>
+            </StackPanel>
 
             <TextBlock>
                 <Run Text="Avbokningsdatum: "/>
@@ -421,12 +428,26 @@
 
         <!-- STÄNG -->
 
-        <Button Grid.Row="2"
-                Content="Stäng"
-                Width="120"
-                Margin="0,20,0,0"
-                HorizontalAlignment="Right"
-                Click="Stäng_Click"/>
+        <StackPanel Grid.Row="2"
+            Orientation="Horizontal"
+            HorizontalAlignment="Right"
+            Margin="0,20,0,0">
+
+            <Button Content="Exportera PDF"
+            Width="145"
+            Margin="0,0,10,0"
+            Command="{Binding ExporteraPdfCommand}"/>
+
+            <Button Content="Exportera JSON"
+            Width="145"
+            Margin="0,0,10,0"
+            Command="{Binding ExporteraJsonCommand}"/>
+
+            <Button Content="Stäng"
+            Width="120"
+            Command="{Binding StängCommand}"/>
+
+        </StackPanel>
 
     </Grid>
 
