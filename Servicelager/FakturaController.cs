@@ -28,13 +28,13 @@ namespace Servicelager
               .ToList(); 
         }
 
-        //public List<Faktura> HämtaFakturorMedKund()
-        //{
-        //    return _unitOfWork
-        //        .Include(f => f.bokning)
-        //        .ThenInclude(b => b.KundNummer) // Byt ut 'Kund' om din egenskap i Bokning-klassen heter något annat
-        //        .ToList();
-        //}
+        public void UppdateraFaktura (Faktura faktura)
+        {
+            _unitOfWork.FakturaRepository.Update(faktura);
+            _unitOfWork.Save();
+        }
+
+      
 
 
     }

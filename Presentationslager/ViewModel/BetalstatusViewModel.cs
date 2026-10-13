@@ -1,6 +1,6 @@
 ﻿using Presentationslager.Command;
 using Servicelager;
-using Entitetslager; // Lägg till referensen till ditt entitetslager här!
+using Entitetslager; 
 using System;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
@@ -16,7 +16,6 @@ namespace Presentationslager.ViewModel
     {
         public event PropertyChangedEventHandler? PropertyChanged;
 
-        // Din controller från Servicelagret
         private readonly FakturaController fakturaController;
 
         public ICommand TillbakaCommand { get; set; }
@@ -25,7 +24,6 @@ namespace Presentationslager.ViewModel
 
         public ICommand UppdateraStatusCommand { get; set; }
 
-        // Använder nu din faktiska modell från Entitetslagret (här kallad 'Faktura')
         private List<Faktura> _allaFakturor;
 
         private string _sokFakturaNummer;
@@ -44,7 +42,6 @@ namespace Presentationslager.ViewModel
             set { _valdStatus = value; OnPropertyChanged(); }
         }
 
-        // Listan som XAML-filens DataGrid binder till
         private ObservableCollection<Faktura> _fakturaLista;
         public ObservableCollection<Faktura> FakturaLista
         {
@@ -61,7 +58,6 @@ namespace Presentationslager.ViewModel
 
         public BetalstatusViewModel()
         {
-            // 1. Skapa en instans av din controller
             fakturaController = new FakturaController();
 
             Status = new List<string> { "Alla", "Betald", "Obetald" };
@@ -108,11 +104,6 @@ namespace Presentationslager.ViewModel
             FakturaLista = new ObservableCollection<Faktura>(resultat);
         }
 
-        public void UppdateraStatus()
-        {
-
-        }
-
         private void RensaSokning(object obj)
         {
             SokFakturaNummer = string.Empty;
@@ -129,6 +120,38 @@ namespace Presentationslager.ViewModel
             if (obj is Window nuvarandeFonster)
             {
                 nuvarandeFonster.Close();
+            }
+        }
+
+        private void UppdateraStatus(object obj)
+        {
+            if (ValdFaktura != null)
+            {
+                if (ValdFaktura.Status == "Obetald")
+                {
+                    ValdFaktura.Status = "Betald";
+                }
+                else
+                {
+                    ValdFaktura.Status = "Obetald";
+                }
+
+                fakturaController.UppdateraFaktura(ValdFaktura);
+
+                MessageBox.Show($"Status för faktura {ValdFaktura.FakturaNummer} har ändrats till: {ValdFaktura.Status}",
+                                "Status uppdaterad",
+                                MessageBoxButton.OK,
+                                MessageBoxImage.Information);
+
+                SokFakturor(null);
+                
+            }
+            else
+            {
+                MessageBox.Show("Vänligen markera en faktura i listan först.",
+                                "Ingen faktura vald",
+                                MessageBoxButton.OK,
+                                MessageBoxImage.Warning);
             }
         }
 
