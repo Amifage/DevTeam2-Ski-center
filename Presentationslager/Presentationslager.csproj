@@ -11,6 +11,7 @@
   <ItemGroup>
     <None Remove="Fonts\OpenSans-Medium.ttf" />
     <None Remove="Fonts\Poppins-SemiBold.ttf" />
+    <None Remove="Logotyp Ski-center.png" />
   </ItemGroup>
 
   <ItemGroup>
@@ -30,6 +31,7 @@
     <Resource Include="Fonts\Poppins-SemiBold.ttf">
       <CopyToOutputDirectory>Never</CopyToOutputDirectory>
     </Resource>
+    <Resource Include="Logotyp Ski-center.png" />
   </ItemGroup>
 
 </Project>
