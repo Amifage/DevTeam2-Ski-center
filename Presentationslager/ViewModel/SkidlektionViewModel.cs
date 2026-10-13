@@ -20,10 +20,8 @@ namespace Presentationslager.ViewModel
 
         private readonly SkidlektionController _controller;
 
-        // Kommande två veckor (laddas en gång vid start)
         private List<Entitetslager.Skidlektion> _alla = new();
 
-        // Cache för datum som användaren sökt på utanför de två veckorna
         private readonly Dictionary<DateTime, List<Entitetslager.Skidlektion>> _datumCache = new();
 
         public ObservableCollection<Entitetslager.Skidlektion> VisadeLektioner { get; } = new();
@@ -105,14 +103,12 @@ namespace Presentationslager.ViewModel
 
             if (ärDatumSökning)
             {
-                // Fullständigt datum: hämta den dagens lektioner (från databasen vid behov)
                 resultat = HämtaLektionerFörDatum(sökDatum);
             }
             else
             {
                 resultat = _alla;
 
-                // Delvis text: sök på datum (t.ex. "2026-10", "torsdag"), typ och status
                 if (!string.IsNullOrWhiteSpace(text))
                 {
                     string sök = text.ToLower();
@@ -143,7 +139,6 @@ namespace Presentationslager.ViewModel
         {
             datum = datum.Date;
 
-            // Finns datumet redan inom de två veckor vi laddat behövs ingen ny databasfråga
             if (_alla.Any(l => l.Datum.Date == datum))
                 return _alla.Where(l => l.Datum.Date == datum);
 
@@ -171,7 +166,6 @@ namespace Presentationslager.ViewModel
                 DateTimeStyles.None, out datum);
         }
 
-        // Olika sätt att skriva datumet på vid delsökning, t.ex. "2026-10", "15/10" eller "oktober"
         private static IEnumerable<string> DatumTexter(DateTime datum)
         {
             var sv = new CultureInfo("sv-SE");
