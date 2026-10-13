@@ -170,7 +170,6 @@ namespace Presentationslager.ViewModel
         {
             if (ValdLogi != null)
             {
-                // Byt status mellan Tillgänglig och Ur bruk
                 if (ValdLogi.Status == "Tillgänglig")
                 {
                     ValdLogi.Status = "Ur bruk";
@@ -180,16 +179,13 @@ namespace Presentationslager.ViewModel
                     ValdLogi.Status = "Tillgänglig";
                 }
 
-                // Spara ändringen till databasen via controllern
                 logiController.UppdateraLogi(ValdLogi);
 
-                // Ge användaren feedback
                 MessageBox.Show($"Status för {ValdLogi.LogiNummer} har ändrats till: {ValdLogi.Status}",
                                 "Status uppdaterad",
                                 MessageBoxButton.OK,
                                 MessageBoxImage.Information);
 
-                // Ladda om listan så att gränssnittet reflekterar ändringen (och om det finns en SenastUppdaterad-tid)
                 LaddaData();
             }
         }

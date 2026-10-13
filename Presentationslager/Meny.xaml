@@ -70,7 +70,7 @@
                 </StackPanel>
             </Button>
 
-            <Button Margin="10" Width="160" Height="100">
+            <Button Margin="10" Width="160" Height="100"  Command="{Binding ÖppnaBetalstatusCommand}" CommandParameter="{Binding RelativeSource={RelativeSource AncestorType=Window}}">
                 <StackPanel HorizontalAlignment="Center" VerticalAlignment="Center">
                     <TextBlock Text="💳" FontSize="28" HorizontalAlignment="Center" Margin="0,0,0,5"/>
                     <TextBlock Text="Betalstatus" HorizontalAlignment="Center"/>

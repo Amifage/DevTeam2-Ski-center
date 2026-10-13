@@ -16,6 +16,7 @@ namespace Presentationslager.ViewModel
         public ICommand ÖppnaKonferenscommand {  get; }
 
         public ICommand ÖppnaLogiCommand { get; }
+        public ICommand ÖppnaBetalstatusCommand { get; }
 
         public event PropertyChangedEventHandler? PropertyChanged;
 
@@ -28,12 +29,24 @@ namespace Presentationslager.ViewModel
             ÖppnaBokningCommand = new RelayCommand(ÖppnaBokning);
             ÖppnaKonferenscommand = new RelayCommand(ÖpnnaKonferens);
             ÖppnaLogiCommand = new RelayCommand(ÖpnnaLogi);
+            ÖppnaBetalstatusCommand = new RelayCommand(ÖppnaBetalstatus);
         }
 
         public void ÖppnaKundregister(object obj)
         {
             Kundregister kundregister = new Kundregister();
             kundregister.Show();
+
+            if (obj is Window nuvarandeFonster)
+            {
+                nuvarandeFonster.Close();
+            }
+        }
+
+        public void ÖppnaBetalstatus( Object obj ) 
+        { 
+            Betalstatus window = new Betalstatus();
+            window.Show();
 
             if (obj is Window nuvarandeFonster)
             {
@@ -65,8 +78,8 @@ namespace Presentationslager.ViewModel
 
         public void ÖppnaBokning (Object obj)
         {
-            Bokning bokning = new Bokning();
-            bokning.Show();
+            Bokning window = new Bokning();
+            window.Show();
 
             if (obj is Window nuvarandeFonster)
             {
@@ -76,8 +89,8 @@ namespace Presentationslager.ViewModel
 
         public void ÖppnaUtrustning(object obj)
         {
-            Utrustning utrustning = new Utrustning();
-            utrustning.Show();
+            Utrustning window = new Utrustning();
+            window.Show();
 
             if (obj is Window nuvarandeFonster)
             {
@@ -87,8 +100,8 @@ namespace Presentationslager.ViewModel
 
         public void ÖppnaSkidlektioner(object obj)
         {
-            Skidlektion skidlektion = new Skidlektion();
-            skidlektion.Show();
+            Skidlektion window = new Skidlektion();
+            window.Show();
 
             if (obj is Window nuvarandeFonster)
             {
@@ -96,10 +109,15 @@ namespace Presentationslager.ViewModel
             }
         }
 
-        private void LoggaUt(object parameter)
+        private void LoggaUt(object obj)
         {
-            Startsida startsida = new Startsida();
-            startsida.Show();
+            Startsida window = new Startsida();
+            window.Show();
+
+            if (obj is Window nuvarandeFonster)
+            {
+                nuvarandeFonster.Close();
+            }
         }
 
 

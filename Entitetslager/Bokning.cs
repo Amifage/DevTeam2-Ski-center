@@ -21,7 +21,7 @@ namespace Entitetslager
 
 
         public int? KundNummer { get; set; }
-        [ForeignKey(nameof(KundNummer))]
+        [ForeignKey("KundNummer")]
         public virtual Kund kund { get; set; }
 
 
