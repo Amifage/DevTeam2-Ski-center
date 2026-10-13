@@ -44,9 +44,9 @@
                 </TextBlock>
             </StackPanel>
 
-            <TextBlock>
-                <Run Text="Ändringsdatum: "/>
-                <Run Text="{Binding ÄndringsdatumText, Mode=OneWay}"/>
+            <TextBlock Margin="0,0,0,8">
+            <Run Text="Ändringsdatum: " FontWeight="Bold"/>
+            <Run Text="{Binding ÄndringsdatumText, Mode=OneWay}"/>
             </TextBlock>
 
         </StackPanel>

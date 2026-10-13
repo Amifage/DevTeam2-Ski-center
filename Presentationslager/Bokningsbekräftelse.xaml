@@ -45,11 +45,10 @@
 
                     <StackPanel Margin="0,10,0,15">
 
-                        <TextBlock Text="Bokningsnummer"
-                                   FontWeight="Bold"/>
-
-                        <TextBlock Text="{Binding BokningsNummer}"
-                                   FontSize="16"/>
+                        <TextBlock Margin="0,0,0,8">
+                        <Run Text="Bokningsnummer: " FontWeight="Bold"/>
+                        <Run Text="{Binding BokningsNummer, Mode=OneWay}"/>
+                        </TextBlock>
 
                     </StackPanel>
 
@@ -70,11 +69,10 @@
 
                     <!-- BOKNINGSDATUM -->
 
-                    <TextBlock Text="Bokningsdatum"
-                               FontWeight="Bold"/>
-
-                    <TextBlock Text="{Binding BokningsdatumText}"
-                               Margin="0,3,0,20"/>
+                    <TextBlock Margin="0,0,0,8">
+                    <Run Text="Bokningsdatum: " FontWeight="Bold"/>
+                    <Run Text="{Binding BokningsdatumText, Mode=OneWay}"/>
+                    </TextBlock>
 
 
                     <Separator Margin="0,0,0,15"/>
