@@ -9,10 +9,6 @@
         Title="Skidlektion" Height="500" Width="850"
         WindowStartupLocation="CenterScreen" Background="#F4F6F9">
 
-    <Window.DataContext>
-        <vm:SkidlektionViewModel />
-    </Window.DataContext>
-
     <Grid Margin="20">
         <Grid.RowDefinitions>
             <RowDefinition Height="Auto"/>

@@ -9,10 +9,6 @@
         Title="Utrustning" Height="700" Width="1000"
         WindowStartupLocation="CenterScreen">
 
-    <Window.DataContext>
-        <vm:UtrustningViewModel />
-    </Window.DataContext>
-
     <Grid Background="{StaticResource IsBlå}" Margin="20">
         <Grid.RowDefinitions>
             <RowDefinition Height="Auto"/>
@@ -21,13 +17,11 @@
             <RowDefinition Height="Auto"/>
         </Grid.RowDefinitions>
 
-        <!-- Rubrik -->
         <TextBlock Grid.Row="0"
                    Text="Utrustning" 
                    Style="{StaticResource HeaderTextStyle}"
                    Margin="0,0,0,20"/>
 
-        <!-- Sök- och filtreringssektion i vitt kort -->
         <Border Grid.Row="1" Background="White" CornerRadius="5" Padding="15" Margin="0,0,0,15">
             <WrapPanel Orientation="Horizontal">
                 <StackPanel Orientation="Vertical" Margin="0,0,15,10">
@@ -52,7 +46,6 @@
             </WrapPanel>
         </Border>
 
-        <!-- Tabell för utrustning i vitt kort -->
         <Border Grid.Row="2" Background="White" CornerRadius="5" Padding="10" Margin="0,0,0,15">
             <DataGrid ItemsSource="{Binding UtrustningsLista}" 
                       SelectedItem="{Binding ValdUtrustning}"
@@ -74,7 +67,6 @@
             </DataGrid>
         </Border>
 
-        <!-- Åtgärdsknappar längst ner -->
         <StackPanel Grid.Row="3" Orientation="Horizontal" HorizontalAlignment="Right" Margin="0,10,0,0">
             <Button Content="Uppdatera status" Command="{Binding UppdateraStatusCommand}" Width="150" Height="35" Margin="0,0,10,0"/>
             <Button Content="Tillbaka" 

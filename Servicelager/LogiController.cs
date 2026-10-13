@@ -10,6 +10,13 @@ namespace Servicelager
 {
     public class LogiController
     {
+        private readonly UnitOfWork _unitOfWork;
+
+
+        public LogiController()
+        {
+            _unitOfWork = new UnitOfWork(new SkiContext());
+        }
         public List<Logi> HämtaAllaLogi()
         {
             using var unitOfWork = new UnitOfWork(new SkiContext());
@@ -46,6 +53,55 @@ namespace Servicelager
                 .Select(r => r.LogiNummer!)
                 .Distinct()
                 .ToList();
+        }
+
+        public List<Logi> SokLogi(string logiNummer, string status, string artikelTypNamn)
+        {
+            var resultat = _unitOfWork.LogiRepository.GetAll().ToList();
+
+            if (!string.IsNullOrWhiteSpace(logiNummer))
+            {
+                resultat = resultat.Where(l => l.LogiNummer != null &&
+                    l.LogiNummer.IndexOf(logiNummer, StringComparison.OrdinalIgnoreCase) >= 0).ToList();
+            }
+
+            if (!string.IsNullOrWhiteSpace(status))
+            {
+                resultat = resultat.Where(l => l.Status != null &&
+                    l.Status.IndexOf(status, StringComparison.OrdinalIgnoreCase) >= 0).ToList();
+            }
+
+            if (!string.IsNullOrWhiteSpace(artikelTypNamn))
+            {
+                var matchandeArtikelTypNummer = _unitOfWork.ArtikelTypRepository.GetAll()
+                    .Where(at => at.TypNamn != null && at.TypNamn.Equals(artikelTypNamn, StringComparison.OrdinalIgnoreCase))
+                    .Select(at => at.ArtikelTypNummer)
+                    .ToList();
+
+                resultat = resultat.Where(l => l.ArtikelTypNummer.HasValue &&
+                    matchandeArtikelTypNummer.Contains(l.ArtikelTypNummer.Value)).ToList();
+            }
+
+            return resultat;
+        }
+
+        public Logi HamtaLogiMedArtikelTypNummer(string logiNummer)
+        {
+            return _unitOfWork.LogiRepository
+                .Find(l => l.LogiNummer == logiNummer)
+                .FirstOrDefault();
+        }
+
+        public List<ArtikelTyp> HamtaAllaArtikelTyper()
+        {
+            return _unitOfWork.ArtikelTypRepository.GetAll().ToList();
+        }
+       
+        public void UppdateraLogi(Logi logi)
+        {
+            logi.SenastUppdaterad = DateTime.Now;
+            _unitOfWork.LogiRepository.Update(logi);
+            _unitOfWork.Save();
         }
 
     }
