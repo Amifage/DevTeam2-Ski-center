@@ -23,7 +23,7 @@
                    Style="{StaticResource HeaderTextStyle}"
                    Margin="0,0,0,20"/>
 
-        <Border Grid.Row="1" Background="White" CornerRadius="5" Padding="15" Margin="0,0,0,15">
+        <Border Grid.Row="1" Background="{StaticResource Snövit}" CornerRadius="5" Padding="15" Margin="0,0,0,15">
             <WrapPanel Orientation="Horizontal">
                 <StackPanel Orientation="Vertical" Margin="0,0,15,10">
                     <TextBlock Text="Rumsnummer:" Margin="0,0,0,5"/>
@@ -47,7 +47,7 @@
                       SelectedItem="{Binding ValdKonferensrum}"
                       AutoGenerateColumns="False" 
                       IsReadOnly="True"
-                      Background="White"
+                      Background="{StaticResource Snövit}"
                       RowBackground="White"
                       AlternatingRowBackground="#F9F9F9"
                       Foreground="Black"

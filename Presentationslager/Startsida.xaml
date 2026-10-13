@@ -5,32 +5,76 @@
         xmlns:vm="clr-namespace:Presentationslager.ViewModel"
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
         xmlns:local="clr-namespace:Presentationslager"
-        mc:Ignorable="d" FontFamily="OpenSans-Medium" FontWeight="Bold"
-        Title="Ski-Center Startsida" Height="500" Width="700"
+        mc:Ignorable="d" FontFamily="OpenSans-Medium"
+        Title="Ski-Center Startsida" Height="600" Width="800"
         WindowStartupLocation="CenterScreen">
 
-    <Window.DataContext>
-        <vm:StartsidaViewModel />
-    </Window.DataContext>
+    <Grid Background="{StaticResource Snövit}">
 
-    <Grid>
-        <Border Background="{StaticResource IsBlå}" Margin="40" CornerRadius="12" Padding="30">
-            <StackPanel VerticalAlignment="Center" HorizontalAlignment="Center" Width="350">
+        <Border Background="{StaticResource IsBlå}" 
+                Margin="40" 
+                CornerRadius="15" 
+                Padding="40" 
+                MaxWidth="450" 
+                VerticalAlignment="Center">
 
-                <TextBlock Text="Ski-Center" Style="{StaticResource HeaderTextStyle}" HorizontalAlignment="Center" Margin="0,0,0,5" />
-                <TextBlock Text="Personalportal - Inloggning" FontSize="14" HorizontalAlignment="Center" Margin="0,0,0,30" FontWeight="Bold" />
+            <Border.Effect>
+                <DropShadowEffect BlurRadius="20" ShadowDepth="4" Opacity="0.15" Color="Black"/>
+            </Border.Effect>
 
-                <TextBlock Text="Email" Margin="0,0,0,5"/>
-                <TextBox x:Name="txtEmailInlogg" Height="35" Padding="5" Margin="0,0,0,15" FontSize="14"/>
+            <StackPanel VerticalAlignment="Center" HorizontalAlignment="Stretch">
 
-                <TextBlock Text="Lösenord" Margin="0,0,0,5"/>
-                <PasswordBox x:Name="txtLösenord" Height="35" Padding="5" Margin="0,0,0,25"/>
+                <Image Source="Logotyp Ski-center.png" 
+                       Height="90" 
+                       Margin="0,0,0,5" 
+                       RenderOptions.BitmapScalingMode="HighQuality"/>
 
+                <TextBlock Text="“Mer än bara skidåkning.”" 
+                           FontSize="15" 
+                           FontStyle="Italic" 
+                           FontWeight="Medium"
+                           HorizontalAlignment="Center" 
+                           Margin="0,0,0,25" />
+
+                <TextBlock Text="Personalportal - Inloggning" 
+                           Style="{StaticResource HeaderTextStyle}"                          
+                           HorizontalAlignment="Center" 
+                           Margin="0,0,0,25" />
+
+                <TextBlock Text="Email" FontWeight="SemiBold" Margin="0,0,0,5"/>
+                <TextBox x:Name="txtEmailInlogg" 
+                         Height="40" 
+                         Padding="10,0" 
+                         Margin="0,0,0,15" 
+                         FontSize="14" 
+                         VerticalContentAlignment="Center" 
+                         BorderThickness="0"/>
+
+                <TextBlock Text="Lösenord" FontWeight="SemiBold" Margin="0,0,0,5"/>
+                <PasswordBox x:Name="txtLösenord" 
+                             Height="40" 
+                             Padding="10,0" 
+                             Margin="0,0,0,30" 
+                             FontSize="14" 
+                             VerticalContentAlignment="Center" 
+                             BorderThickness="0"/>
+
+                <!-- Inloggningsknapp -->
                 <Button Content="Logga in" 
-                        FontWeight="Bold"
+                        FontWeight="Bold" 
+                        FontSize="15"
                         Command="{Binding OpenMenuCommand}" 
                         CommandParameter="{Binding RelativeSource={RelativeSource AncestorType=Window}}"
-                        HorizontalAlignment="Stretch" Height="40"/>
+                        HorizontalAlignment="Stretch" 
+                        Height="45" 
+                        Cursor="Hand">
+                    <!-- Gör knappen lite mjukare i kanterna (kräver att standardmallen tillåter det, annars ignoreras det) -->
+                    <Button.Resources>
+                        <Style TargetType="Border">
+                            <Setter Property="CornerRadius" Value="5"/>
+                        </Style>
+                    </Button.Resources>
+                </Button>
 
             </StackPanel>
         </Border>

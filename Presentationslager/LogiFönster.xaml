@@ -3,7 +3,7 @@
         xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
         xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
-        xmlns:local="clr-namespace:Presentationslager" xmlns:viewmodel="clr-namespace:Presentationslager.ViewModel" d:DataContext="{d:DesignInstance Type=viewmodel:LogiViewModel}"
+        xmlns:local="clr-namespace:Presentationslager" xmlns:viewmodel="clr-namespace:Presentationslager.ViewModel"
         mc:Ignorable="d"
         Title="Logi" Height="700" Width="1000"
  WindowStartupLocation="CenterScreen">
@@ -21,7 +21,7 @@
                Margin="0,0,0,20"/>
 
         <!-- Sök- och filtreringssektion i vitt kort -->
-        <Border Grid.Row="1" Background="White" CornerRadius="5" Padding="15" Margin="0,0,0,15">
+        <Border Grid.Row="1" Background="{StaticResource Snövit}" CornerRadius="5" Padding="15" Margin="0,0,0,15">
             <WrapPanel Orientation="Horizontal">
                 <StackPanel Orientation="Vertical" Margin="0,0,15,10">
                     <TextBlock Text="LogiNummer:" Margin="0,0,0,5"/>
@@ -50,7 +50,7 @@
                   SelectedItem="{Binding ValdLogi}"
                   AutoGenerateColumns="False" 
                   IsReadOnly="True"
-                  Background="White"
+                  Background="{StaticResource Snövit}"
                   RowBackground="White"
                   AlternatingRowBackground="#F9F9F9"
                   Foreground="Black"
