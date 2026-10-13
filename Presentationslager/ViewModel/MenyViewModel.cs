@@ -15,6 +15,8 @@ namespace Presentationslager.ViewModel
         public ICommand ÖppnaUtrustningCommand { get; }
         public ICommand ÖppnaKonferenscommand {  get; }
 
+        public ICommand ÖppnaLogiCommand { get; }
+
         public event PropertyChangedEventHandler? PropertyChanged;
 
         public MenyViewModel()
@@ -25,12 +27,24 @@ namespace Presentationslager.ViewModel
             ÖppnaSkidlektionerCommand = new RelayCommand(ÖppnaSkidlektioner);
             ÖppnaBokningCommand = new RelayCommand(ÖppnaBokning);
             ÖppnaKonferenscommand = new RelayCommand(ÖpnnaKonferens);
+            ÖppnaLogiCommand = new RelayCommand(ÖpnnaLogi);
         }
 
         public void ÖppnaKundregister(object obj)
         {
             Kundregister kundregister = new Kundregister();
             kundregister.Show();
+
+            if (obj is Window nuvarandeFonster)
+            {
+                nuvarandeFonster.Close();
+            }
+        }
+
+        public void ÖpnnaLogi(Object obj)
+        {
+            LogiFönster window = new LogiFönster();
+            window.Show();
 
             if (obj is Window nuvarandeFonster)
             {
