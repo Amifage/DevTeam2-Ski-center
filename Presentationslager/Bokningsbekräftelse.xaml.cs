@@ -19,7 +19,8 @@ namespace Presentationslager
         {
             InitializeComponent();
 
-            DataContext = new BokningsbekräftelseViewModel(
+            BokningsbekräftelseViewModel viewModel =
+            new BokningsbekräftelseViewModel(
                 bokningsNummer,
                 kundText,
                 bokningsDatum,
@@ -27,12 +28,10 @@ namespace Presentationslager
                 utrustningRader,
                 konferensRader,
                 skidlektionRader);
-        }
 
-        private void Ok_Click(object sender, RoutedEventArgs e)
-        {
-            DialogResult = true;
-            Close();
+            viewModel.StängFönster += Close;
+
+            DataContext = viewModel;
         }
     }
 }

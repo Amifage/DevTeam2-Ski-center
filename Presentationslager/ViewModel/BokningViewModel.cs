@@ -184,7 +184,7 @@ namespace Presentationslager.ViewModel
             #endregion
 
             #region Ändra/Ta bort bokning
-            VäxlaRedigeringslägeCommand = new RelayCommand(_ => ÄrRedigeringsläge = !ÄrRedigeringsläge);
+
             BokningarFörRedigering = new ObservableCollection<BokningEntitet>();
             VäxlaRedigeringslägeCommand = new RelayCommand(_ => VäxlaRedigeringsläge());
             SökBokningCommand = new RelayCommand(_ => SökBokningar());
@@ -2213,11 +2213,12 @@ namespace Presentationslager.ViewModel
 
             try
             {
-                BokningController bokningController = new BokningController();
+                BokningController bokningController =
+                    new BokningController();
 
                 BokningEntitet? gammalBokning =
-                    bokningController.HämtaBokningMedRader(
-                        ValdBokningFörRedigering.BokningsNummer);
+                bokningController.HämtaBokningMedRader(
+                    ValdBokningFörRedigering.BokningsNummer);
 
                 decimal tidigareTotalBelopp = 0;
 
@@ -2239,16 +2240,16 @@ namespace Presentationslager.ViewModel
                     SkidlektionRader.ToList());
 
 
-               Ändringsbekräftelse ändringsbekräftelse =
-                    new Ändringsbekräftelse(
-                        ValdBokningFörRedigering.BokningsNummer,
-                        ValdKund.VisningsNamn,
-                        DateTime.Now,
-                        tidigareTotalBelopp,
-                        LogiRader.ToList(),
-                        UtrustningRader.ToList(),
-                        KonferensRader.ToList(),
-                        SkidlektionRader.ToList());
+                Ändringsbekräftelse ändringsbekräftelse =
+                 new Ändringsbekräftelse(
+                     ValdBokningFörRedigering.BokningsNummer,
+                     $"{ValdKund.VisningsNamn}|{ValdKund.KundNummer}",
+                     DateTime.Now,
+                     tidigareTotalBelopp,
+                     LogiRader.ToList(),
+                     UtrustningRader.ToList(),
+                     KonferensRader.ToList(),
+                     SkidlektionRader.ToList());
 
                 ändringsbekräftelse.ShowDialog();
 
@@ -2300,7 +2301,7 @@ namespace Presentationslager.ViewModel
             if (ValdBokningFörRedigering == null)
             {
                 VisaMeddelande?.Invoke(
-                    "Du måste välja en bokning att ta bort.");
+                    "Du måste välja en bokning att avboka.");
 
                 return;
             }
@@ -2329,8 +2330,9 @@ namespace Presentationslager.ViewModel
             List<SkidlektionRad> avbokadeSkidlektionRader =
                 SkidlektionRader.ToList();
 
-            string kundText =
-                ValdKund?.VisningsNamn ?? "Okänd kund";
+            string kundText = ValdKund != null
+                ? $"{ValdKund.VisningsNamn}|{ValdKund.KundNummer}"
+                : "Okänd kund|-";
 
 
             try
@@ -2426,12 +2428,7 @@ namespace Presentationslager.ViewModel
             BokningController bokningController = new BokningController();
             bokningController.SkapaBokning(nyBokning);
 
-            string kundText = ValdKund switch
-            {
-                PrivatKund privatKund => privatKund.DisplayText,
-                FöretagsKund företagsKund => företagsKund.DisplayText,
-                _ => ValdKund.KundNummer.ToString()
-            };
+            string kundText = $"{ValdKund.VisningsNamn}|{ValdKund.KundNummer}";
 
             BokningSparad?.Invoke(
                 nyBokning.BokningsNummer, 

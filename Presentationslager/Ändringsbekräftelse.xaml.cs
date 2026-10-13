@@ -19,7 +19,8 @@ namespace Presentationslager
         {
             InitializeComponent();
 
-            DataContext = new ÄndringsbekräftelseViewModel(
+            ÄndringsbekräftelseViewModel viewModel =
+             new ÄndringsbekräftelseViewModel(
                  bokningsNummer,
                  kundText,
                  ändringsdatum,
@@ -28,13 +29,12 @@ namespace Presentationslager
                  utrustningRader,
                  konferensRader,
                  skidlektionRader);
+
+            viewModel.StängFönster += Close;
+
+            DataContext = viewModel;
         }
 
-        private void Stäng_Click(
-            object sender,
-            RoutedEventArgs e)
-        {
-            Close();
-        }
+       
     }
 }

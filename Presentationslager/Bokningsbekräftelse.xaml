@@ -52,15 +52,21 @@
                                    FontSize="16"/>
 
                     </StackPanel>
-                    
+
                     <!-- KUND -->
 
-                    <TextBlock Text="Kund"
-                               FontWeight="Bold"/>
+                    
+                    <StackPanel Margin="0,15,0,0">
+                    <TextBlock>
+                        <Run Text="Kund: " FontWeight="Bold"/>
+                        <Run Text="{Binding KundNamnText, Mode=OneWay}"/>
+                    </TextBlock>
 
-                    <TextBlock Text="{Binding KundText}"
-                               Margin="0,3,0,15"/>
-
+                    <TextBlock>
+                        <Run Text="Kundnummer: " FontWeight="Bold"/>
+                        <Run Text="{Binding KundNummerText, Mode=OneWay}"/>
+                    </TextBlock>
+                </StackPanel>
 
                     <!-- BOKNINGSDATUM -->
 
@@ -321,7 +327,7 @@
                                             <StackPanel>
                                                 <TextBlock Text="{Binding SkidlektionDisplayText}"
                                                            FontWeight="Bold"/>
-                                        
+
 
                                                 <TextBlock>
                                 <Run Text="Antal personer: "/>
@@ -351,8 +357,8 @@
                         </ItemsControl>
 
                     </StackPanel>
-                    
-                    
+
+
 
                     <!-- TOTAL -->
 
@@ -380,16 +386,31 @@
         </ScrollViewer>
 
 
+
+
         <!-- OK -->
 
-        <Button Grid.Row="2"
-                Content="OK"
-                Width="140"
-                Height="45"
-                HorizontalAlignment="Right"
-                Margin="0,20,0,0"
-                Click="Ok_Click"/>
+        <StackPanel Grid.Row="2"
+            Orientation="Horizontal"
+            HorizontalAlignment="Right"
+            Margin="0,20,0,0">
 
+            <Button Content="Exportera PDF"
+            Width="145"
+            Margin="0,0,10,0"
+            Command="{Binding ExporteraPdfCommand}"/>
+
+            <Button Content="Exportera JSON"
+            Width="145"
+            Margin="0,0,10,0"
+            Command="{Binding ExporteraJsonCommand}"/>
+
+            <Button Content="Stäng"
+            Width="120"
+            Command="{Binding StängCommand}"/>
+
+        </StackPanel>
+        
     </Grid>
 
 </Window>
