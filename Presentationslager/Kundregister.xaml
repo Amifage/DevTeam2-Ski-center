@@ -167,13 +167,13 @@
 
                         <StackPanel Orientation="Horizontal" HorizontalAlignment="Right" Margin="0,20,0,0">
 
-                            <Button Content="Ta bort" Command="{Binding TaBortKundCommand}" Width="70" Margin="0,0,10,0" Background="#FFD66570" Foreground="White" BorderThickness="0" Padding="5"/>
+                            <Button Content="Ta bort" Command="{Binding TaBortKundCommand}" Width="70" Margin="0,0,10,0" Background="#FFD66570"  Padding="5"/>
                             
-                            <Button Content="Rensa" Command="{Binding RensaFormularCommand}" Width="70" Margin="0,0,10,0" Background="LightGray" Foreground="Black" BorderThickness="0" Padding="5"/>
+                            <Button Content="Rensa" Command="{Binding RensaFormularCommand}" Width="70" Margin="0,0,10,0" Padding="5"/>
 
-                            <Button Content="Spara Ny" Command="{Binding SparaKundCommand}" Width="70" Margin="0,0,10,0" Background="{StaticResource SolnedgångOrange}" Foreground="White" BorderThickness="0" Padding="5"/>
+                            <Button Content="Spara Ny" Command="{Binding SparaKundCommand}" Width="70" Margin="0,0,10,0" Background="{StaticResource FjällBlå}"  Padding="5"/>
 
-                            <Button Content="Uppdatera" Command="{Binding UppdateraKundCommand}" Width="70" Background="#FF68D068" Foreground="White" BorderThickness="0" Padding="5"/>
+                            <Button Content="Uppdatera" Command="{Binding UppdateraKundCommand}" Width="70" Background="#FF68D068"  Padding="5"/>
                         </StackPanel>
                     </StackPanel>
                 </ScrollViewer>
@@ -184,11 +184,7 @@
                         CommandParameter="{Binding RelativeSource={RelativeSource AncestorType=Window}}"
                         HorizontalAlignment="Right" 
                         Margin="0,15,0,0" 
-                        Width="120" 
-                        Background="Transparent"
-                        Foreground="Gray" 
-                        BorderBrush="Gray" 
-                        BorderThickness="1" 
+                        Width="120"                        
                         Padding="5"/>
             </Grid>
         </Border>
