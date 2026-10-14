@@ -59,16 +59,15 @@
                              VerticalContentAlignment="Center" 
                              BorderThickness="0"/>
 
-                <!-- Inloggningsknapp -->
                 <Button Content="Logga in" 
                         FontWeight="Bold" 
                         FontSize="15"
                         Command="{Binding OpenMenuCommand}" 
                         CommandParameter="{Binding RelativeSource={RelativeSource AncestorType=Window}}"
                         HorizontalAlignment="Stretch" 
-                        Height="45" 
+                        Height="40" 
                         Cursor="Hand">
-                    <!-- Gör knappen lite mjukare i kanterna (kräver att standardmallen tillåter det, annars ignoreras det) -->
+
                     <Button.Resources>
                         <Style TargetType="Border">
                             <Setter Property="CornerRadius" Value="5"/>

@@ -1,4 +1,5 @@
-﻿using System;
+﻿using Presentationslager.ViewModel;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
@@ -23,7 +24,7 @@ namespace Presentationslager
         public Kundregister()
         {
             InitializeComponent();
-            DataContext = new ViewModel.KundregisterViewModel();
+            DataContext = new KundregisterViewModel();
         }
 
         private void EndastSiffror_PreviewTextInput(object sender, TextCompositionEventArgs e)
