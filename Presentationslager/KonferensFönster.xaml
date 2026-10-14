@@ -31,6 +31,13 @@
                 </StackPanel>
 
                 <StackPanel Orientation="Vertical" Margin="0,0,15,10">
+                    <TextBlock Text="Status:" Margin="0,0,0,5"/>
+                    <ComboBox ItemsSource="{Binding StatusAlternativ}"
+                     SelectedItem="{Binding SokStatus, UpdateSourceTrigger=PropertyChanged}"                    
+                      Width="140" Height="30" Padding="5,3,5,3" VerticalContentAlignment="Center"/>
+                </StackPanel>
+
+                <StackPanel Orientation="Vertical" Margin="0,0,15,10">
                     <TextBlock Text="Rumstyp / Storlek:" Margin="0,0,0,5"/>
                     <ComboBox ItemsSource="{Binding RumsTyper}" SelectedItem="{Binding ValdRumsTyp}" Width="160" Height="30" VerticalContentAlignment="Center"/>
                 </StackPanel>
