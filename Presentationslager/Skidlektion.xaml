@@ -6,7 +6,7 @@
         mc:Ignorable="d"
         x:Name="skidlektionFönster"
         Title="Skidlektion" Height="500" Width="1000"
-        WindowStartupLocation="CenterScreen" Background="#F4F6F9">
+        WindowStartupLocation="CenterScreen">
 
     <Grid Margin="20">
         <Grid.RowDefinitions>
@@ -16,20 +16,20 @@
             <RowDefinition Height="Auto"/>
         </Grid.RowDefinitions>
 
-        <TextBlock Grid.Row="0" Text="Kommande skidlektioner" FontSize="22" FontWeight="Bold"
-                   Foreground="#2C3E50" Margin="0,0,0,15"/>
+        <!-- Använder HeaderTextStyle från App.xaml för rubriken -->
+        <TextBlock Grid.Row="0" Text="Kommande skidlektioner" 
+                   Style="{StaticResource HeaderTextStyle}" 
+                   Margin="0,0,0,15"/>
 
-        <Border Grid.Row="1" Background="White" CornerRadius="5" Padding="15" Margin="0,0,0,15">
-            <Border.Effect>
-                <DropShadowEffect BlurRadius="5" Color="Gray" Opacity="0.1"/>
-            </Border.Effect>
+        <!-- Filter-kort med rundade hörn och IsBlå ram/bakgrund -->
+        <Border Grid.Row="1" Background="{StaticResource IsBlå}" CornerRadius="8" Padding="15" Margin="0,0,0,15">
             <StackPanel Orientation="Horizontal">
 
                 <StackPanel Margin="0,0,15,0">
-                    <TextBlock Text="Anställd / instruktör:" FontSize="12" Foreground="#7F8C8D" Margin="0,0,0,5"/>
+                    <TextBlock Text="Anställd / instruktör:" FontSize="12" Foreground="{StaticResource Midnattsgrå}" Margin="0,0,0,5"/>
                     <ComboBox ItemsSource="{Binding Instruktörer}"
                               SelectedItem="{Binding ValdInstruktör}"
-                              Width="220" Height="30" VerticalContentAlignment="Center">
+                              Width="220" Height="32" VerticalContentAlignment="Center">
                         <ComboBox.ItemTemplate>
                             <DataTemplate>
                                 <StackPanel Orientation="Horizontal">
@@ -45,25 +45,26 @@
                 </StackPanel>
 
                 <StackPanel Margin="0,0,15,0">
-                    <TextBlock Text="Sök (datum, typ, status):" FontSize="12" Foreground="#7F8C8D" Margin="0,0,0,5"/>
+                    <TextBlock Text="Sök (datum, typ, status):" FontSize="12" Foreground="{StaticResource Midnattsgrå}" Margin="0,0,0,5"/>
                     <TextBox Text="{Binding Söktext, UpdateSourceTrigger=PropertyChanged}"
                              ToolTip="Skriv ett helt datum, t.ex. 2026-12-15, för att se lektioner längre fram än två veckor"
-                             Width="200" Height="30" VerticalContentAlignment="Center" Padding="5,0"/>
+                             Width="200" Height="32" VerticalContentAlignment="Center" Padding="5,0"/>
                 </StackPanel>
 
+                <!-- Använder den globala rundade knappstilen med sekundär färg (FjällBlå) -->
                 <Button Content="Rensa filter" Command="{Binding RensaFilterCommand}"
-                        Width="110" Height="30" VerticalAlignment="Bottom"
-                        Background="#95A5A6" Foreground="White" FontWeight="SemiBold"
-                        BorderThickness="0" Cursor="Hand"/>
+                        Width="120" Height="32" VerticalAlignment="Bottom"
+                        />
 
                 <TextBlock Text="{Binding InfoText}" VerticalAlignment="Bottom"
-                           Margin="20,0,0,5" Foreground="#7F8C8D"/>
+                           Margin="20,0,0,8" Foreground="{StaticResource Midnattsgrå}"/>
             </StackPanel>
         </Border>
 
+        <!-- DataGrid anpassat efter profilen -->
         <DataGrid Grid.Row="2" ItemsSource="{Binding VisadeLektioner}" AutoGenerateColumns="False"
                   IsReadOnly="True" GridLinesVisibility="Horizontal" HeadersVisibility="Column"
-                  Background="White" RowHeight="35">
+                  Background="{StaticResource Snövit}" HorizontalGridLinesBrush="{StaticResource IsBlå}" RowHeight="35">
             <DataGrid.Columns>
                 <DataGridTextColumn Header="Lektions-ID" Binding="{Binding SkidlektionNummer}" Width="90"/>
                 <DataGridTextColumn Header="Typ / Nivå" Binding="{Binding artikelTyp.TypNamn}" Width="140"/>
@@ -77,11 +78,11 @@
             </DataGrid.Columns>
         </DataGrid>
 
+        <!-- Stäng-knapp (använder global knappstil med SolnedgångOrange eller FjällBlå) -->
         <StackPanel Grid.Row="3" Orientation="Horizontal" HorizontalAlignment="Right" Margin="0,15,0,0">
-            <Button Content="Stäng" Command="{Binding StängCommand}"
-                    CommandParameter="{Binding ElementName=skidlektionFönster}"
-                    Width="100" Height="32" Background="#E74C3C" Foreground="White"
-                    FontWeight="SemiBold" BorderThickness="0" Cursor="Hand"/>
+            <Button Content="Tillbaka" Command="{Binding TillbakaCommand}" 
+CommandParameter="{Binding RelativeSource={RelativeSource AncestorType=Window}}"
+                    Width="100" Height="35"/>
         </StackPanel>
     </Grid>
 </Window>

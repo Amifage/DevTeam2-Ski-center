@@ -37,8 +37,8 @@ namespace Presentationslager.ViewModel
             SparaKundCommand = new RelayCommand(SparaKund);
             RensaFormularCommand = new RelayCommand(RensaFormular);
             TillbakaCommand = new RelayCommand(TillbakaTillMeny);
-            UppdateraKundCommand = new RelayCommand(UppdateraKund);
-            TaBortKundCommand = new RelayCommand(TaBortKund);
+            UppdateraKundCommand = new RelayCommand(UppdateraKund, CanUppdateraKund);
+            TaBortKundCommand = new RelayCommand(TaBortKund, CanUppdateraKund);
 
             NyKredit = 12000;
         }
@@ -117,6 +117,8 @@ namespace Presentationslager.ViewModel
                 {
                     FyllFormularForUppdatering();
                 }
+
+                CommandManager.InvalidateRequerySuggested();
             }
         }
 
@@ -207,6 +209,8 @@ namespace Presentationslager.ViewModel
             {
                 NyKredit = 0;
             }
+            UppdateraKundLista();
+
         }
 
         private void UppdateraKundLista()
@@ -253,6 +257,11 @@ namespace Presentationslager.ViewModel
                 NyKredit = foretag.Kredit;
             }
             OnPropertyChanged(string.Empty);
+        }
+
+        private bool CanUppdateraKund(object obj)
+        {
+            return ValdKund != null;
         }
 
         private void UppdateraKund(object obj)

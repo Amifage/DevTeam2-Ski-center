@@ -63,14 +63,14 @@ namespace Presentationslager.ViewModel
         }
 
         public ICommand RensaFilterCommand { get; }
-        public ICommand StängCommand { get; }
+        public ICommand TillbakaCommand { get; set; }
 
         public SkidlektionViewModel(SkidlektionController controller)
         {
             _controller = controller;
 
             RensaFilterCommand = new RelayCommand(RensaFilter);
-            StängCommand = new RelayCommand(Stäng);
+            TillbakaCommand = new RelayCommand(TillbakaTillMeny);
 
             LaddaData();
         }
@@ -188,17 +188,25 @@ namespace Presentationslager.ViewModel
             FiltreraLektioner();
         }
 
-        private void Stäng(object? obj)
-        {
-            if (obj is Window fönster)
-                fönster.Close();
-        }
-
         public event PropertyChangedEventHandler? PropertyChanged;
 
         protected void OnPropertyChanged([CallerMemberName] string? propertyName = null)
         {
             PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(propertyName));
         }
+
+        private void TillbakaTillMeny(object obj)
+        {
+            Meny menyFonster = new Meny();
+            menyFonster.Show();
+
+            if (obj is Window nuvarandeFonster)
+            {
+                nuvarandeFonster.Close();
+            }
+        }
+
+
+
     }
 }
