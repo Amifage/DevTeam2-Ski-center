@@ -179,7 +179,7 @@
                 </ScrollViewer>
 
                 <Button Grid.Row="1" 
-                        Content="Tillbaka till Meny" 
+                        Content="Tillbaka" 
                         Command="{Binding TillbakaCommand}" 
                         CommandParameter="{Binding RelativeSource={RelativeSource AncestorType=Window}}"
                         HorizontalAlignment="Right" 

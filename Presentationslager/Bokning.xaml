@@ -926,10 +926,11 @@
                             Orientation="Horizontal">
 
 
-                    <Button Content="Avbryt"
+                    <Button Content="Tillbaka"
                             Width="120"
                             Margin="5"
-                            Command="{Binding AvbrytCommand}"/>
+                            Command="{Binding TillbakaCommand}" 
+CommandParameter="{Binding RelativeSource={RelativeSource AncestorType=Window}}" />
 
 
                     <!-- TA BORT HELA BOKNINGEN -->

@@ -49,7 +49,6 @@ namespace Presentationslager.ViewModel
 
         public event Action<string>? VisaMeddelande;
         public event Action<int, string, DateTime, List<LogiRad>, List<UtrustningRad>, List<KonferensRad>, List<SkidlektionRad>>? BokningSparad;
-        public event Action? StängFönster;
 
         #endregion
 
@@ -107,7 +106,7 @@ namespace Presentationslager.ViewModel
         public ICommand TaBortSkidlektionRadCommand { get; }
 
         public ICommand SkapaBokningCommand { get; }
-        public ICommand AvbrytCommand { get; }
+        public ICommand TillbakaCommand { get; }
 
 
         public ICommand VäxlaRedigeringslägeCommand { get; }
@@ -194,7 +193,7 @@ namespace Presentationslager.ViewModel
             #endregion
 
             SkapaBokningCommand = new RelayCommand(_ => SkapaBokning());
-            AvbrytCommand = new RelayCommand(_ => StängFönster?.Invoke());
+            TillbakaCommand = new RelayCommand(TillbakaTillMeny);
         }
 
         #endregion
@@ -2603,5 +2602,17 @@ namespace Presentationslager.ViewModel
         }
 
         #endregion
+
+
+        private void TillbakaTillMeny(object obj)
+        {
+            Meny menyFonster = new Meny();
+            menyFonster.Show();
+
+            if (obj is Window nuvarandeFonster)
+            {
+                nuvarandeFonster.Close();
+            }
+        }
     }
 }

@@ -80,8 +80,8 @@
 
         <!-- Stäng-knapp (använder global knappstil med SolnedgångOrange eller FjällBlå) -->
         <StackPanel Grid.Row="3" Orientation="Horizontal" HorizontalAlignment="Right" Margin="0,15,0,0">
-            <Button Content="Stäng" Command="{Binding StängCommand}"
-                    CommandParameter="{Binding ElementName=skidlektionFönster}"
+            <Button Content="Tillbaka" Command="{Binding TillbakaCommand}" 
+CommandParameter="{Binding RelativeSource={RelativeSource AncestorType=Window}}"
                     Width="100" Height="35"/>
         </StackPanel>
     </Grid>
