@@ -595,6 +595,9 @@ namespace Servicelager
                     KundNummer =
                         bokning.KundNummer,
 
+                    HarAvbeställningsskydd = 
+                        bokning.HarAvbeställningsskydd,
+
                     kund =
                         kund,
 
@@ -614,7 +617,7 @@ namespace Servicelager
             return resultat;
         }
 
-        public void SparaÄndringar(int bokningsNummer, int? kundNummer, List<LogiRad> logiRader, List<UtrustningRad> utrustningRader, List<KonferensRad> konferensRader, List<SkidlektionRad> skidlektionRader)
+        public void SparaÄndringar(int bokningsNummer, int? kundNummer, bool harAvbeställningsskydd, List<LogiRad> logiRader, List<UtrustningRad> utrustningRader, List<KonferensRad> konferensRader, List<SkidlektionRad> skidlektionRader)
         {
             using var unitOfWork = new UnitOfWork(new SkiContext());
 
@@ -631,6 +634,8 @@ namespace Servicelager
                 throw new InvalidOperationException("Bokningen kunde inte hittas.");
 
             bokning.KundNummer = kundNummer;
+
+            bokning.HarAvbeställningsskydd = harAvbeställningsskydd;
 
             unitOfWork.BokningRepository.Update(bokning);
 

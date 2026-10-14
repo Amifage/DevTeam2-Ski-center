@@ -74,6 +74,10 @@
                     <Run Text="{Binding BokningsdatumText, Mode=OneWay}"/>
                     </TextBlock>
 
+                    <TextBlock Margin="0,0,0,8">
+                    <Run Text="Avbeställningsskydd: " FontWeight="Bold"/>
+                    <Run Text="{Binding AvbeställningsskyddText, Mode=OneWay}"/>    
+                    </TextBlock>
 
                     <Separator Margin="0,0,0,15"/>
 
@@ -187,8 +191,14 @@
 
                                             <StackPanel>
                                                 <TextBlock Text="{Binding UtrustningDisplayText}"
+                                                           
                                        FontWeight="Bold"/>
 
+                                                <TextBlock>
+                                                <Run Text="Exemplarnummer: " FontWeight="Bold"/>
+                                                <Run Text="{Binding ExemplarNummerText, Mode=OneWay}"/>
+                                                </TextBlock>
+                                                
                                                 <TextBlock>
                                 <Run Text="Period: "/>
                                 <Run Text="{Binding StartDatum,

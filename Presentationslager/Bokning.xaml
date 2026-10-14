@@ -25,6 +25,7 @@
             <Grid.RowDefinitions>
                 <RowDefinition Height="Auto"/>
                 <RowDefinition Height="Auto"/>
+                <RowDefinition Height="Auto"/>
                 <RowDefinition Height="*"/>
                 <RowDefinition Height="Auto"/>
             </Grid.RowDefinitions>
@@ -119,11 +120,15 @@
             </Grid>
 
 
+            
+          
+            
+            
             <!-- ===================================== -->
             <!-- ALLA BOKNINGSDELAR                    -->
             <!-- ===================================== -->
 
-            <ScrollViewer Grid.Row="2"
+            <ScrollViewer Grid.Row="3"
                           VerticalScrollBarVisibility="Auto">
 
                 <StackPanel>
@@ -785,6 +790,7 @@
                             </ItemsControl>
 
 
+
                             <!-- LÄGG TILL SKIDLEKTION -->
 
                             <Expander Header="+ Lägg till skidlektion">
@@ -891,12 +897,17 @@
 
             </ScrollViewer>
 
+            <CheckBox Grid.Row="2"
+              Content="Avbeställningsskydd +300 kr"
+              IsChecked="{Binding HarAvbeställningsskydd}"
+              Margin="5,0,0,15"/>
+
 
             <!-- ===================================== -->
             <!-- TOTAL OCH KNAPPAR                     -->
             <!-- ===================================== -->
 
-            <Grid Grid.Row="3"
+            <Grid Grid.Row="4"
                   Margin="0,20,0,0">
 
                 <Grid.ColumnDefinitions>
@@ -1176,7 +1187,7 @@
                         </ListBox.ItemTemplate>
 
                     </ListBox>
-
+ 
             </Grid>
                     
            

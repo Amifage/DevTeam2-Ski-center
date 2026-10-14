@@ -43,12 +43,14 @@ namespace Presentationslager.ViewModel
 
         private bool _ärRedigeringsläge;
 
+        private bool _harAvbeställningsskydd;
+
         #endregion
 
         #region Events
 
         public event Action<string>? VisaMeddelande;
-        public event Action<int, string, DateTime, List<LogiRad>, List<UtrustningRad>, List<KonferensRad>, List<SkidlektionRad>>? BokningSparad;
+        public event Action<int, string, DateTime, bool, List<LogiRad>, List<UtrustningRad>, List<KonferensRad>, List<SkidlektionRad>>? BokningSparad;
         public event Action? StängFönster;
 
         #endregion
@@ -2002,6 +2004,23 @@ namespace Presentationslager.ViewModel
         #endregion
 
 
+        #region Avbeställningsskydd
+        public bool HarAvbeställningsskydd
+        {
+            get => _harAvbeställningsskydd;
+            set
+            {
+                if (_harAvbeställningsskydd == value)
+                    return;
+
+                _harAvbeställningsskydd = value;
+
+                OnPropertyChanged();
+                OnPropertyChanged(nameof(TotalBeloppText));
+            }
+        }
+        #endregion
+
 
         #region Ändra / ta bort bokning
 
@@ -2130,6 +2149,7 @@ namespace Presentationslager.ViewModel
                 return;
             }
 
+            HarAvbeställningsskydd = fullständigBokning.HarAvbeställningsskydd;
 
             // Kund
 
@@ -2228,12 +2248,14 @@ namespace Presentationslager.ViewModel
                         (gammalBokning.LogiRader?.Sum(x => x.LogiBelopp) ?? 0) +
                         (gammalBokning.UtrustningRader?.Sum(x => x.UtrustningBelopp) ?? 0) +
                         (gammalBokning.KonferensRader?.Sum(x => x.KonferensBelopp) ?? 0) +
-                        (gammalBokning.SkidlektionRader?.Sum(x => x.SkidlektionBelopp) ?? 0);
+                        (gammalBokning.SkidlektionRader?.Sum(x => x.SkidlektionBelopp) ?? 0) +
+                        (gammalBokning.HarAvbeställningsskydd ? 300 : 0);
                 }
 
                 bokningController.SparaÄndringar(
                     ValdBokningFörRedigering.BokningsNummer,
                     ValdKund.KundNummer,
+                    HarAvbeställningsskydd,
                     LogiRader.ToList(),
                     UtrustningRader.ToList(),
                     KonferensRader.ToList(),
@@ -2245,6 +2267,7 @@ namespace Presentationslager.ViewModel
                      ValdBokningFörRedigering.BokningsNummer,
                      $"{ValdKund.VisningsNamn}|{ValdKund.KundNummer}",
                      DateTime.Now,
+                     HarAvbeställningsskydd,
                      tidigareTotalBelopp,
                      LogiRader.ToList(),
                      UtrustningRader.ToList(),
@@ -2330,6 +2353,8 @@ namespace Presentationslager.ViewModel
             List<SkidlektionRad> avbokadeSkidlektionRader =
                 SkidlektionRader.ToList();
 
+            bool hadeAvbeställningsskydd = HarAvbeställningsskydd;
+
             string kundText = ValdKund != null
                 ? $"{ValdKund.VisningsNamn}|{ValdKund.KundNummer}"
                 : "Okänd kund|-";
@@ -2348,6 +2373,7 @@ namespace Presentationslager.ViewModel
                     bokningsNummer,
                     kundText,
                     DateTime.Now,
+                    hadeAvbeställningsskydd,
                     avbokadeLogiRader,
                     avbokadeUtrustningRader,
                     avbokadeKonferensRader,
@@ -2393,10 +2419,11 @@ namespace Presentationslager.ViewModel
         #region Totalbelopp
 
         public string TotalBeloppText =>
-                    $"{LogiRader.Sum(x => x.LogiBelopp) +
-                       UtrustningRader.Sum(x => x.UtrustningBelopp) +
-                       KonferensRader.Sum(x => x.KonferensBelopp) +
-                       SkidlektionRader.Sum(x => x.SkidlektionBelopp):N0} kr";
+            $"{LogiRader.Sum(x => x.LogiBelopp) +
+               UtrustningRader.Sum(x => x.UtrustningBelopp) +
+               KonferensRader.Sum(x => x.KonferensBelopp) +
+               SkidlektionRader.Sum(x => x.SkidlektionBelopp) +
+               (HarAvbeställningsskydd ? 300 : 0):N0} kr";
 
         #endregion
 
@@ -2418,6 +2445,8 @@ namespace Presentationslager.ViewModel
                 KundNummer = ValdKund.KundNummer,
                 BokningsDatum = DateTime.Now,
                 Status = "Aktiv",
+                HarAvbeställningsskydd = HarAvbeställningsskydd,
+
 
                 LogiRader = LogiRader.ToList(),
                 UtrustningRader = UtrustningRader.ToList(),
@@ -2434,6 +2463,7 @@ namespace Presentationslager.ViewModel
                 nyBokning.BokningsNummer, 
                 kundText,
                 DateTime.Now,
+                HarAvbeställningsskydd,
                 LogiRader.ToList(),
                 UtrustningRader.ToList(),
                 KonferensRader.ToList(),
@@ -2501,6 +2531,8 @@ namespace Presentationslager.ViewModel
             StartDatum = null;
             SlutDatum = null;
             AntalPersonerTotalt = null;
+
+            HarAvbeställningsskydd = false;
 
             ValdBoendeTyp = null;
             ValdLogiArtikelTyp = null;

@@ -37,6 +37,30 @@ namespace Entitetslager
         public virtual Bokning? bokning { get; set; }
 
 
+
+        [NotMapped]
+        public string ExemplarNummerText //Används i bekräftelser för att visa exemplarnummer /sara
+        {
+            get
+            {
+                if (!string.IsNullOrWhiteSpace(UtrustningNummer))
+                    return UtrustningNummer;
+
+                if (UtrustningPaketRader != null &&
+                    UtrustningPaketRader.Any())
+                {
+                    return string.Join(
+                        ", ",
+                        UtrustningPaketRader
+                            .Where(x => !string.IsNullOrWhiteSpace(x.UtrustningNummer))
+                            .Select(x => x.UtrustningNummer));
+                }
+
+                return "-";
+            }
+        }
+
+
         public virtual List<UtrustningPaketRad> UtrustningPaketRader { get; set; } = new List<UtrustningPaketRad>();
 
 

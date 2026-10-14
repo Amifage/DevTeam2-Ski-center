@@ -19,6 +19,7 @@ namespace Entitetslager
         public virtual List<UtrustningRad>? UtrustningRader { get; set; }
         public virtual List<SkidlektionRad>? SkidlektionRader { get; set; }
 
+        public bool HarAvbeställningsskydd { get; set; }
 
         public int? KundNummer { get; set; }
         [ForeignKey(nameof(KundNummer))]

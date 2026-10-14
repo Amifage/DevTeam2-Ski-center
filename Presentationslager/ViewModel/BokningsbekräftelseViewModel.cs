@@ -52,18 +52,18 @@ namespace Presentationslager.ViewModel
         public bool HarUtrustning => UtrustningRader.Any();
         public bool HarKonferens => KonferensRader.Any();
         public bool HarSkidlektion => SkidlektionRader.Any();
+        public bool HarAvbeställningsskydd { get; }
 
-
-        public string TotalBeloppText =>
-                        $"{LogiRader.Sum(x => x.LogiBelopp) +
-                           UtrustningRader.Sum(x => x.UtrustningBelopp) +
-                           KonferensRader.Sum(x => x.KonferensBelopp) +
-                           SkidlektionRader.Sum(x => x.SkidlektionBelopp):N0} kr";
+        public string AvbeställningsskyddText =>
+                        HarAvbeställningsskydd
+                            ? "Ja, 300 kr"
+                            : "Nej";
 
         public BokningsbekräftelseViewModel(
                  int bokningsNummer,
                  string kundText,
                  DateTime bokningsDatum,
+                 bool harAvbeställningsskydd,
                  IEnumerable<LogiRad> logiRader,
                  IEnumerable<UtrustningRad> utrustningRader,
                  IEnumerable<KonferensRad> konferensRader,
@@ -72,6 +72,7 @@ namespace Presentationslager.ViewModel
             BokningsNummer = bokningsNummer;
             KundText = kundText;
             BokningsdatumText = bokningsDatum.ToString("yyyy-MM-dd");
+            HarAvbeställningsskydd = harAvbeställningsskydd;
 
             LogiRader = new ObservableCollection<LogiRad>(logiRader);
             UtrustningRader = new ObservableCollection<UtrustningRad>(utrustningRader);
@@ -83,6 +84,34 @@ namespace Presentationslager.ViewModel
 
             StängCommand = new RelayCommand(_ => StängFönster?.Invoke());
         }
+
+        public string TotalBeloppText =>
+            $"{LogiRader.Sum(x => x.LogiBelopp) +
+               UtrustningRader.Sum(x => x.UtrustningBelopp) +
+               KonferensRader.Sum(x => x.KonferensBelopp) +
+               SkidlektionRader.Sum(x => x.SkidlektionBelopp) +
+               (HarAvbeställningsskydd ? 300 : 0):N0} kr";
+
+
+        public string HämtaExemplarNummer(UtrustningRad rad)
+        {
+            if (!string.IsNullOrWhiteSpace(rad.UtrustningNummer))
+                return rad.UtrustningNummer;
+
+            if (rad.UtrustningPaketRader != null &&
+                rad.UtrustningPaketRader.Any())
+            {
+                return string.Join(
+                    ", ",
+                    rad.UtrustningPaketRader
+                        .Where(x => !string.IsNullOrWhiteSpace(x.UtrustningNummer))
+                        .Select(x => x.UtrustningNummer));
+            }
+
+            return "-";
+        }
+
+
 
         private void ExporteraJson()
         {
@@ -106,6 +135,9 @@ namespace Presentationslager.ViewModel
                             : 0,
                 Bokningsdatum = BokningsdatumText,
 
+                HarAvbeställningsskydd,
+                Avbeställningsskydd = AvbeställningsskyddText,
+
                 Logi = LogiRader.Select(r => new
                 {
                     r.LogiNummer,
@@ -120,6 +152,7 @@ namespace Presentationslager.ViewModel
                 {
                     r.UtrustningNummer,
                     r.UtrustningPaketNummer,
+                    Exemplarnummer = r.ExemplarNummerText,
                     r.StartDatum,
                     r.SlutDatum,
                     Belopp = r.UtrustningBelopp,
@@ -218,6 +251,8 @@ namespace Presentationslager.ViewModel
                             column.Item()
                                 .Text($"Bokningsdatum: {BokningsdatumText}");
 
+                            column.Item()
+                                   .Text($"Avbeställningsskydd: {AvbeställningsskyddText}");
 
                             // BOENDE
 
@@ -254,6 +289,7 @@ namespace Presentationslager.ViewModel
                                 {
                                     column.Item().Text(
                                         $"{rad.UtrustningDisplayText}\n" +
+                                        $"Exemplarnummer: {rad.ExemplarNummerText}\n" +
                                         $"Period: {rad.StartDatum:yyyy-MM-dd} - {rad.SlutDatum:yyyy-MM-dd}\n" +
                                         $"Belopp: {rad.UtrustningBelopp:N0} kr");
                                 }
