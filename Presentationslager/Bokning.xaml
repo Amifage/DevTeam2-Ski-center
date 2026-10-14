@@ -973,26 +973,15 @@
                             Command="{Binding SkapaBokningCommand}">
 
                         <Button.Style>
-
-                            <Style TargetType="Button">
-
-                                <Setter Property="Visibility"
-                                        Value="Visible"/>
+                            <Style TargetType="Button" BasedOn="{StaticResource {x:Type Button}}">
+                                <Setter Property="Visibility" Value="Visible"/>
 
                                 <Style.Triggers>
-
-                                    <DataTrigger Binding="{Binding ÄrRedigeringsläge}"
-                                                 Value="True">
-
-                                        <Setter Property="Visibility"
-                                                Value="Collapsed"/>
-
+                                    <DataTrigger Binding="{Binding ÄrRedigeringsläge}" Value="True">
+                                        <Setter Property="Visibility" Value="Collapsed"/>
                                     </DataTrigger>
-
                                 </Style.Triggers>
-
                             </Style>
-
                         </Button.Style>
 
                     </Button>

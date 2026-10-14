@@ -12,6 +12,7 @@
     <None Remove="Fonts\OpenSans-Medium.ttf" />
     <None Remove="Fonts\Poppins-SemiBold.ttf" />
     <None Remove="Logotyp Ski-center.png" />
+    <None Remove="Meny-header-2.jpg" />
   </ItemGroup>
 
   <ItemGroup>
@@ -32,6 +33,7 @@
       <CopyToOutputDirectory>Never</CopyToOutputDirectory>
     </Resource>
     <Resource Include="Logotyp Ski-center.png" />
+    <Resource Include="Meny-header-2.jpg" />
   </ItemGroup>
 
 </Project>

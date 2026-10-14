@@ -66,7 +66,7 @@
                         Command="{Binding OpenMenuCommand}" 
                         CommandParameter="{Binding RelativeSource={RelativeSource AncestorType=Window}}"
                         HorizontalAlignment="Stretch" 
-                        Height="45" 
+                        Height="40" 
                         Cursor="Hand">
                     <!-- Gör knappen lite mjukare i kanterna (kräver att standardmallen tillåter det, annars ignoreras det) -->
                     <Button.Resources>
