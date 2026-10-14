@@ -70,10 +70,11 @@ namespace Presentationslager
         public decimal TidigareTotalBelopp { get; }
 
         public decimal NyTotalBelopp =>
-            LogiRader.Sum(x => x.LogiBelopp) +
-            UtrustningRader.Sum(x => x.UtrustningBelopp) +
-            KonferensRader.Sum(x => x.KonferensBelopp) +
-            SkidlektionRader.Sum(x => x.SkidlektionBelopp);
+             LogiRader.Sum(x => x.LogiBelopp) +
+             UtrustningRader.Sum(x => x.UtrustningBelopp) +
+             KonferensRader.Sum(x => x.KonferensBelopp) +
+             SkidlektionRader.Sum(x => x.SkidlektionBelopp) +
+             (HarAvbeställningsskydd ? 300 : 0);
 
         public decimal SkillnadBelopp =>
             NyTotalBelopp - TidigareTotalBelopp;
@@ -104,11 +105,18 @@ namespace Presentationslager
                     ? "Ökning:"
                     : "Ingen prisförändring";
 
+        public bool HarAvbeställningsskydd { get; }
+
+        public string AvbeställningsskyddText =>
+            HarAvbeställningsskydd
+                ? "Ja, 300 kr"
+                : "Nej";
 
         public ÄndringsbekräftelseViewModel(
             int bokningsNummer,
             string kundText,
             DateTime ändringsdatum,
+            bool harAvbeställningsskydd,
             decimal tidigareTotalBelopp,
             IEnumerable<LogiRad> logiRader,
             IEnumerable<UtrustningRad> utrustningRader,
@@ -118,6 +126,7 @@ namespace Presentationslager
             BokningsNummer = bokningsNummer;
 
             KundText = kundText;
+            HarAvbeställningsskydd = harAvbeställningsskydd;
 
             ÄndringsdatumText =
                 ändringsdatum.ToString("yyyy-MM-dd");
@@ -169,6 +178,9 @@ namespace Presentationslager
                             : 0,
                 Ändringsdatum = ÄndringsdatumText,
 
+                HarAvbeställningsskydd,
+                Avbeställningsskydd = AvbeställningsskyddText,
+
                 TidigareTotalBelopp,
                 Förändring = SkillnadBelopp,
                 FörändringTyp = FörändringRubrik.Replace(":", ""),
@@ -188,6 +200,7 @@ namespace Presentationslager
                 {
                     r.UtrustningNummer,
                     r.UtrustningPaketNummer,
+                    Exemplarnummer = r.ExemplarNummerText,
                     r.StartDatum,
                     r.SlutDatum,
                     Belopp = r.UtrustningBelopp,
@@ -275,6 +288,9 @@ namespace Presentationslager
                             column.Item()
                                 .Text($"Ändringsdatum: {ÄndringsdatumText}");
 
+                            column.Item()
+                                .Text($"Avbeställningsskydd: {AvbeställningsskyddText}");
+
 
                             if (LogiRader.Any())
                             {
@@ -306,9 +322,10 @@ namespace Presentationslager
                                 foreach (UtrustningRad rad in UtrustningRader)
                                 {
                                     column.Item().Text(
-                                        $"{rad.UtrustningDisplayText}\n" +
-                                        $"Period: {rad.StartDatum:yyyy-MM-dd} - {rad.SlutDatum:yyyy-MM-dd}\n" +
-                                        $"Belopp: {rad.UtrustningBelopp:N0} kr");
+                                         $"{rad.UtrustningDisplayText}\n" +
+                                         $"Exemplarnummer: {rad.ExemplarNummerText}\n" +
+                                         $"Period: {rad.StartDatum:yyyy-MM-dd} - {rad.SlutDatum:yyyy-MM-dd}\n" +
+                                         $"Belopp: {rad.UtrustningBelopp:N0} kr");
                                 }
                             }
 

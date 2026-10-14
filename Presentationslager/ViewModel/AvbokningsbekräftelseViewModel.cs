@@ -63,24 +63,34 @@ namespace Presentationslager.ViewModel
 
 
         public string TotalBeloppText =>
-            $"{LogiRader.Sum(x => x.LogiBelopp) +
-               UtrustningRader.Sum(x => x.UtrustningBelopp) +
-               KonferensRader.Sum(x => x.KonferensBelopp) +
-               SkidlektionRader.Sum(x => x.SkidlektionBelopp):N0} kr";
+             $"{LogiRader.Sum(x => x.LogiBelopp) +
+                UtrustningRader.Sum(x => x.UtrustningBelopp) +
+                KonferensRader.Sum(x => x.KonferensBelopp) +
+                SkidlektionRader.Sum(x => x.SkidlektionBelopp) +
+                (HarAvbeställningsskydd ? 300 : 0):N0} kr";
 
         public string KrediteringText =>
             $"-{LogiRader.Sum(x => x.LogiBelopp) +
                UtrustningRader.Sum(x => x.UtrustningBelopp) +
                KonferensRader.Sum(x => x.KonferensBelopp) +
-               SkidlektionRader.Sum(x => x.SkidlektionBelopp):N0} kr";
+               SkidlektionRader.Sum(x => x.SkidlektionBelopp) +
+               (HarAvbeställningsskydd ? 300 : 0):N0} kr";
 
         public string TotaltKvarText => "0 kr";
+
+        public bool HarAvbeställningsskydd { get; }
+
+        public string AvbeställningsskyddText =>
+            HarAvbeställningsskydd
+                ? "Ja, 300 kr"
+                : "Nej";
 
 
         public AvbokningsbekräftelseViewModel(
             int bokningsNummer,
             string kundText,
             DateTime avbokningsdatum,
+            bool harAvbeställningsskydd,
             IEnumerable<LogiRad> logiRader,
             IEnumerable<UtrustningRad> utrustningRader,
             IEnumerable<KonferensRad> konferensRader,
@@ -89,6 +99,7 @@ namespace Presentationslager.ViewModel
             BokningsNummer = bokningsNummer;
             KundText = kundText;
             AvbokningsdatumText = avbokningsdatum.ToString("yyyy-MM-dd");
+            HarAvbeställningsskydd = harAvbeställningsskydd;
 
             LogiRader =
                 new ObservableCollection<LogiRad>(logiRader);
@@ -135,6 +146,10 @@ namespace Presentationslager.ViewModel
                 KundNummer = int.TryParse(KundNummerText, out int kundNummer)
                             ? kundNummer
                             : 0,
+
+                HarAvbeställningsskydd,
+                Avbeställningsskydd = AvbeställningsskyddText,
+
                 Avbokningsdatum = AvbokningsdatumText,
                 Status = "Avbokad",
 
@@ -156,6 +171,7 @@ namespace Presentationslager.ViewModel
                 {
                     r.UtrustningNummer,
                     r.UtrustningPaketNummer,
+                    Exemplarnummer = r.ExemplarNummerText,
                     r.StartDatum,
                     r.SlutDatum,
                     Belopp = r.UtrustningBelopp,
@@ -250,6 +266,9 @@ namespace Presentationslager.ViewModel
                                 .FontSize(14)
                                 .Bold();
 
+                            column.Item()
+                                .Text($"Avbeställningsskydd: {AvbeställningsskyddText}");
+
 
                             if (LogiRader.Any())
                             {
@@ -282,9 +301,10 @@ namespace Presentationslager.ViewModel
                                 {
                                     column.Item().Text(
                                         $"{rad.UtrustningDisplayText}\n" +
+                                        $"Exemplarnummer: {rad.ExemplarNummerText}\n" +
                                         $"Period: {rad.StartDatum:yyyy-MM-dd} - {rad.SlutDatum:yyyy-MM-dd}\n" +
                                         $"Belopp: {rad.UtrustningBelopp:N0} kr");
-                                }
+                                                                    }
                             }
 
 
