@@ -23,11 +23,18 @@
                    Style="{StaticResource HeaderTextStyle}"
                    Margin="0,0,0,20"/>
 
-        <Border Grid.Row="1" Background="White" CornerRadius="5" Padding="15" Margin="0,0,0,15">
+        <Border Grid.Row="1" Background="{StaticResource Snövit}" CornerRadius="5" Padding="15" Margin="0,0,0,15">
             <WrapPanel Orientation="Horizontal">
                 <StackPanel Orientation="Vertical" Margin="0,0,15,10">
                     <TextBlock Text="Rumsnummer:" Margin="0,0,0,5"/>
                     <TextBox Text="{Binding SokRumsNummer, UpdateSourceTrigger=PropertyChanged}" Width="150" Height="30" Padding="5,3,5,3" VerticalContentAlignment="Center"/>
+                </StackPanel>
+
+                <StackPanel Orientation="Vertical" Margin="0,0,15,10">
+                    <TextBlock Text="Status:" Margin="0,0,0,5"/>
+                    <ComboBox ItemsSource="{Binding StatusAlternativ}"
+                     SelectedItem="{Binding SokStatus, UpdateSourceTrigger=PropertyChanged}"                    
+                      Width="140" Height="30" Padding="5,3,5,3" VerticalContentAlignment="Center"/>
                 </StackPanel>
 
                 <StackPanel Orientation="Vertical" Margin="0,0,15,10">
@@ -47,7 +54,7 @@
                       SelectedItem="{Binding ValdKonferensrum}"
                       AutoGenerateColumns="False" 
                       IsReadOnly="True"
-                      Background="White"
+                      Background="{StaticResource Snövit}"
                       RowBackground="White"
                       AlternatingRowBackground="#F9F9F9"
                       Foreground="Black"

@@ -58,6 +58,13 @@ namespace Presentationslager.ViewModel
             set { _valdRumsTyp = value; OnPropertyChanged(); }
         }
 
+        private ObservableCollection<string> _statusAlternativ;
+        public ObservableCollection<string> StatusAlternativ
+        {
+            get { return _statusAlternativ; }
+            set { _statusAlternativ = value; OnPropertyChanged(); }
+        }
+
         public ICommand SokCommand { get; }
         public ICommand RensaCommand { get; }
         public ICommand UppdateraStatusCommand { get; }
@@ -69,7 +76,6 @@ namespace Presentationslager.ViewModel
 
             KonferensLista = new ObservableCollection<Entitetslager.Konferens>();
 
-            // Fast uppsättning val för kapacitetsfiltrering
             RumsTyper = new ObservableCollection<string>
             {
                 "Liten (max 20)",
@@ -80,6 +86,12 @@ namespace Presentationslager.ViewModel
             RensaCommand = new RelayCommand(RensaFalt);
             UppdateraStatusCommand = new RelayCommand(UppdateraStatus, CanUppdateraStatus);
             TillbakaCommand = new RelayCommand(TillbakaTillMeny);
+
+            StatusAlternativ = new ObservableCollection<string>
+           {
+             "Tillgänglig",
+             "Ur bruk"
+            };
 
             LaddaData();
         }

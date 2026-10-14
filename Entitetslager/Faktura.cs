@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
+using System.ComponentModel.DataAnnotations.Schema;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
@@ -25,6 +26,7 @@ namespace Entitetslager
 
 
         // Navigation property
+        [ForeignKey("BokningsNummer")]
         public virtual Bokning bokning { get; set; }
     }
 }

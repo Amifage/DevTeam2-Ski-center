@@ -138,7 +138,7 @@
                     <!-- BOENDE                                -->
                     <!-- ===================================== -->
 
-                    <Border Background="White"
+                    <Border Background="{StaticResource Snövit}"
                             CornerRadius="5"
                             Padding="15"
                             Margin="0,0,0,15">
@@ -340,7 +340,7 @@
                     <!-- UTRUSTNING                            -->
                     <!-- ===================================== -->
 
-                    <Border Background="White"
+                    <Border Background="{StaticResource Snövit}"
                             CornerRadius="5"
                             Padding="15"
                             Margin="0,0,0,15">
@@ -538,7 +538,7 @@
                     <!-- KONFERENS                             -->
                     <!-- ===================================== -->
 
-                    <Border Background="White"
+                    <Border Background="{StaticResource Snövit}"
                             CornerRadius="5"
                             Padding="15"
                             Margin="0,0,0,15">
@@ -702,7 +702,7 @@
                     <!-- SKIDLEKTION                           -->
                     <!-- ===================================== -->
 
-                    <Border Background="White"
+                    <Border Background="{StaticResource Snövit}"
                             CornerRadius="5"
                             Padding="15"
                             Margin="0,0,0,15">
@@ -937,10 +937,11 @@
                             Orientation="Horizontal">
 
 
-                    <Button Content="Avbryt"
+                    <Button Content="Tillbaka"
                             Width="120"
                             Margin="5"
-                            Command="{Binding AvbrytCommand}"/>
+                            Command="{Binding TillbakaCommand}" 
+CommandParameter="{Binding RelativeSource={RelativeSource AncestorType=Window}}" />
 
 
                     <!-- TA BORT HELA BOKNINGEN -->
@@ -984,26 +985,15 @@
                             Command="{Binding SkapaBokningCommand}">
 
                         <Button.Style>
-
-                            <Style TargetType="Button">
-
-                                <Setter Property="Visibility"
-                                        Value="Visible"/>
+                            <Style TargetType="Button" BasedOn="{StaticResource {x:Type Button}}">
+                                <Setter Property="Visibility" Value="Visible"/>
 
                                 <Style.Triggers>
-
-                                    <DataTrigger Binding="{Binding ÄrRedigeringsläge}"
-                                                 Value="True">
-
-                                        <Setter Property="Visibility"
-                                                Value="Collapsed"/>
-
+                                    <DataTrigger Binding="{Binding ÄrRedigeringsläge}" Value="True">
+                                        <Setter Property="Visibility" Value="Collapsed"/>
                                     </DataTrigger>
-
                                 </Style.Triggers>
-
                             </Style>
-
                         </Button.Style>
 
                     </Button>
@@ -1055,7 +1045,7 @@
 
         <Border Grid.Column="1"
                 Width="340"
-                Background="White"
+                Background="{StaticResource Snövit}"
                 CornerRadius="5"
                 Padding="15"
                 Margin="20,0,0,0">

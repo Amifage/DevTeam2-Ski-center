@@ -25,9 +25,7 @@ namespace Presentationslager
 
             _viewModel.BokningSparad += VisaBokningsbekräftelse;
 
-
-            _viewModel.StängFönster +=
-                StängFönster;
+          
 
 
             DataContext = _viewModel;

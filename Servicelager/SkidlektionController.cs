@@ -1,6 +1,4 @@
-﻿using System.Collections.Generic;
-using System.Linq;
-using Datalager;
+﻿using Datalager;
 using Entitetslager;
 
 namespace Servicelager
@@ -11,59 +9,66 @@ namespace Servicelager
 
         public SkidlektionController()
         {
-            
             var dbContext = new SkiContext();
             _unitOfWork = new UnitOfWork(dbContext);
         }
-
-        public IEnumerable<Skidlektion> HämtaAllaSkidlektioner()
+        public IEnumerable<Skidlektion> HämtaAktuellaSkidlektioner()
         {
-           
-            return _unitOfWork.SkidlektionRepository.GetAll();
-            
+            DateTime från = DateTime.Today;
+            DateTime till = från.AddDays(14);
+
+            return _unitOfWork.SkidlektionRepository
+                .Find(s => s.Datum >= från && s.Datum < till)
+                .OrderBy(s => s.Datum)
+                .ThenBy(s => s.StartTid)
+                .ToList();
         }
 
-        //Används i bokning/Sara
+        public IEnumerable<Skidlektion> HämtaSkidlektionerFörDatum(DateTime datum)
+        {
+            DateTime från = datum.Date;
+            DateTime till = från.AddDays(1);
+
+            return _unitOfWork.SkidlektionRepository
+                .Find(s => s.Datum >= från && s.Datum < till)
+                .OrderBy(s => s.StartTid)
+                .ToList();
+        }
+        public IEnumerable<Personal> HämtaInstruktörer()
+        {
+            var anställningsNummer = _unitOfWork.SkidlektionRepository
+                .GetAll()
+                .Where(s => s.AnställningsNummer.HasValue)
+                .Select(s => s.AnställningsNummer!.Value)
+                .Distinct()
+                .ToList();
+
+            return _unitOfWork.PersonalRepository
+                .Find(p => anställningsNummer.Contains(p.AnställningsNummer))
+                .OrderBy(p => p.Förnamn)
+                .ToList();
+        }
+
+        // Används i bokning/Sara
         public int HämtaAntalLedigaPlatser(int skidlektionNummer)
         {
             Skidlektion? skidlektion = _unitOfWork.SkidlektionRepository
-                .GetAll()
-                .FirstOrDefault(s =>
-                    s.SkidlektionNummer == skidlektionNummer);
+                .Find(s => s.SkidlektionNummer == skidlektionNummer)
+                .FirstOrDefault();
 
             if (skidlektion == null)
                 return 0;
 
-            var avbokadeBokningsNummer =
-                _unitOfWork.BokningRepository
-                    .GetAll()
-                    .Where(b => b.Status == "Avbokad")
-                    .Select(b => b.BokningsNummer)
-                    .ToHashSet();
+            int bokadePlatser = HämtaAktivaRader()
+                .Where(r => r.SkidlektionNummer == skidlektionNummer)
+                .Sum(r => r.AntalPersoner);
 
-            int bokadePlatser =
-                _unitOfWork.SkidlektionRadRepository
-                    .GetAll()
-                    .Where(r =>
-                        r.SkidlektionNummer == skidlektionNummer &&
-                        (!r.BokningsNummer.HasValue ||
-                         !avbokadeBokningsNummer.Contains(
-                             r.BokningsNummer.Value)))
-                    .Sum(r => r.AntalPersoner);
-
-            return Math.Max(
-                0,
-                skidlektion.Kapacitet - bokadePlatser);
+            return Math.Max(0, skidlektion.Kapacitet - bokadePlatser);
         }
+
+        // Används i bokning/Sara
         public List<Skidlektion> HämtaTillgängligaSkidlektioner(DateTime datum)
         {
-            var avbokadeBokningsNummer =
-            _unitOfWork.BokningRepository
-                .GetAll()
-                .Where(b => b.Status == "Avbokad")
-                .Select(b => b.BokningsNummer)
-                .ToHashSet();
-
             var skidlektioner = _unitOfWork.SkidlektionRepository
                 .GetAll()
                 .Where(s => s.Datum.Date == datum.Date)
@@ -74,32 +79,43 @@ namespace Servicelager
                 .GetAll()
                 .ToList();
 
-            foreach (Skidlektion skidlektion in skidlektioner)
-            {
-                skidlektion.artikelTyp = artikelTyper.FirstOrDefault(a => a.ArtikelTypNummer == skidlektion.ArtikelTypNummer);
-            }
-
-            var bokadeRader =
-            _unitOfWork.SkidlektionRadRepository
-                .GetAll()
-                .Where(r =>
-                    !r.BokningsNummer.HasValue ||
-                    !avbokadeBokningsNummer.Contains(
-                        r.BokningsNummer.Value))
-                .ToList();
+            var aktivaRader = HämtaAktivaRader();
 
             foreach (Skidlektion skidlektion in skidlektioner)
             {
-                int bokadePlatser = bokadeRader
+                skidlektion.artikelTyp = artikelTyper
+                    .FirstOrDefault(a => a.ArtikelTypNummer == skidlektion.ArtikelTypNummer);
+
+                int bokadePlatser = aktivaRader
                     .Where(r => r.SkidlektionNummer == skidlektion.SkidlektionNummer)
                     .Sum(r => r.AntalPersoner);
 
-                skidlektion.LedigaPlatser =
-                    Math.Max(0, skidlektion.Kapacitet - bokadePlatser);
+                skidlektion.LedigaPlatser = Math.Max(0, skidlektion.Kapacitet - bokadePlatser);
             }
 
             return skidlektioner
                 .Where(s => s.LedigaPlatser > 0)
+                .ToList();
+        }
+
+        private HashSet<int> HämtaAvbokadeBokningsNummer()
+        {
+            return _unitOfWork.BokningRepository
+                .GetAll()
+                .Where(b => b.Status == "Avbokad")
+                .Select(b => b.BokningsNummer)
+                .ToHashSet();
+        }
+
+        
+        private List<SkidlektionRad> HämtaAktivaRader()
+        {
+            var avbokade = HämtaAvbokadeBokningsNummer();
+
+            return _unitOfWork.SkidlektionRadRepository
+                .GetAll()
+                .Where(r => !r.BokningsNummer.HasValue ||
+                            !avbokade.Contains(r.BokningsNummer.Value))
                 .ToList();
         }
     }

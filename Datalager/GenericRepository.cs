@@ -45,6 +45,11 @@ namespace Datalager
             return _dbSet.Where(predicate).ToList();
         }
 
+        public IQueryable<T> GetQueryable()
+        {
+            return _dbSet;
+        }
+
         #endregion
     }
 }

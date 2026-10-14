@@ -65,10 +65,16 @@ namespace Presentationslager.ViewModel
         {
             get { return _sokStatus; }
             set { _sokStatus = value; OnPropertyChanged(); }
+
+
         }
 
-
-        // --- KONSTRUKTOR ---
+        private ObservableCollection<string> _statusAlternativ;
+        public ObservableCollection<string> StatusAlternativ
+        {
+            get { return _statusAlternativ; }
+            set { _statusAlternativ = value; OnPropertyChanged(); }
+        }
 
         public LogiViewModel()
         {
@@ -82,11 +88,14 @@ namespace Presentationslager.ViewModel
             LogiLista = new ObservableCollection<Entitetslager.Logi>();
             ArtikelTyper = new ObservableCollection<string>();
 
+            StatusAlternativ = new ObservableCollection<string>
+           {      
+             "Tillgänglig",
+             "Ur bruk"
+            };
+
             LaddaData();
         }
-
-        // --- METODER ---
-
         
             private void LaddaData()
             {
@@ -106,7 +115,6 @@ namespace Presentationslager.ViewModel
                     }
                 }
 
-                // 2. Ladda in logi-typer för ComboBoxen
                 var typer = logiController.HamtaAllaArtikelTyper(); // Se till att denna metod finns i LogiController
 
                 if (ArtikelTyper == null)
@@ -117,7 +125,6 @@ namespace Presentationslager.ViewModel
 
             if (typer != null)
             {
-                // Anpassad filtrering: Behåll BARA det som är relaterat till Logi
                 var filtreradeTyper = typer
                     .Where(t => t != null && !string.IsNullOrWhiteSpace(t.TypNamn))
                     .Select(t => t.TypNamn)
@@ -157,8 +164,7 @@ namespace Presentationslager.ViewModel
         {
             SokLogiNummer = string.Empty;
             SokStatus = string.Empty;
-            // ValdArtikelTyp = null;
-            LaddaData(); // Ladda om hela listan
+            LaddaData(); 
         }
 
         private bool CanUppdateraStatus(object obj)
@@ -170,7 +176,6 @@ namespace Presentationslager.ViewModel
         {
             if (ValdLogi != null)
             {
-                // Byt status mellan Tillgänglig och Ur bruk
                 if (ValdLogi.Status == "Tillgänglig")
                 {
                     ValdLogi.Status = "Ur bruk";
@@ -180,16 +185,13 @@ namespace Presentationslager.ViewModel
                     ValdLogi.Status = "Tillgänglig";
                 }
 
-                // Spara ändringen till databasen via controllern
                 logiController.UppdateraLogi(ValdLogi);
 
-                // Ge användaren feedback
                 MessageBox.Show($"Status för {ValdLogi.LogiNummer} har ändrats till: {ValdLogi.Status}",
                                 "Status uppdaterad",
                                 MessageBoxButton.OK,
                                 MessageBoxImage.Information);
 
-                // Ladda om listan så att gränssnittet reflekterar ändringen (och om det finns en SenastUppdaterad-tid)
                 LaddaData();
             }
         }

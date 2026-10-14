@@ -22,7 +22,7 @@ namespace Entitetslager
         public bool HarAvbeställningsskydd { get; set; }
 
         public int? KundNummer { get; set; }
-        [ForeignKey(nameof(KundNummer))]
+        [ForeignKey("KundNummer")]
         public virtual Kund kund { get; set; }
 
 
