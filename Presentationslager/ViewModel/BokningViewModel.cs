@@ -50,9 +50,7 @@ namespace Presentationslager.ViewModel
         #region Events
 
         public event Action<string>? VisaMeddelande;
-        public event Action<int, string, DateTime, bool, List<LogiRad>, List<UtrustningRad>, List<KonferensRad>, List<SkidlektionRad>>? BokningSparad;
-        public event Action? StängFönster;
-
+     
         #endregion
 
         #region Collections
@@ -2459,8 +2457,9 @@ namespace Presentationslager.ViewModel
 
             string kundText = $"{ValdKund.VisningsNamn}|{ValdKund.KundNummer}";
 
-            BokningSparad?.Invoke(
-                nyBokning.BokningsNummer, 
+            Bokningsbekräftelse bokningsbekräftelse =
+            new Bokningsbekräftelse(
+                nyBokning.BokningsNummer,
                 kundText,
                 DateTime.Now,
                 HarAvbeställningsskydd,
@@ -2468,6 +2467,10 @@ namespace Presentationslager.ViewModel
                 UtrustningRader.ToList(),
                 KonferensRader.ToList(),
                 SkidlektionRader.ToList());
+
+            bokningsbekräftelse.ShowDialog();
+
+            ÅterställFormulär();
         }
 
         #endregion
