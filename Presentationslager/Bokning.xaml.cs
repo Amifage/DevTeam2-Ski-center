@@ -21,9 +21,5 @@ namespace Presentationslager
             MessageBox.Show(meddelande);
         }
 
-        private void StängFönster()
-        {
-            Close();
-        }
     }
 }

@@ -902,6 +902,48 @@
               IsChecked="{Binding HarAvbeställningsskydd}"
               Margin="5,0,0,15"/>
 
+            <StackPanel Grid.Row="2"
+            Orientation="Horizontal"
+            Margin="5,0,0,15">
+
+                <CheckBox Content="Avbeställningsskydd +300 kr"
+              IsChecked="{Binding HarAvbeställningsskydd}"
+              VerticalAlignment="Top"
+              Margin="0,0,40,0"/>
+
+                <StackPanel>
+                    <CheckBox Content="{Binding RabattText}"
+                  IsChecked="{Binding AnvändRabatt}"
+                  IsEnabled="{Binding KanAnvändaRabatt}"/>
+
+                    <TextBlock Text="Rabatten måste väljas innan boendet läggs till."
+                   FontSize="12"
+                   Foreground="Gray"
+                   Margin="22,2,0,0"/>
+                </StackPanel>
+
+                <StackPanel Width="360">
+
+                    <StackPanel Orientation="Horizontal">
+                        <CheckBox Content="Delbetala"
+                  IsChecked="{Binding Delbetala}"
+                  IsEnabled="{Binding KanDelbetala}"/>
+
+                        <TextBlock Text="{Binding KreditText}"
+                   FontSize="12"
+                   Foreground="Gray"
+                   Margin="25,0,0,0"/>
+                    </StackPanel>
+
+                    <TextBlock Text="{Binding DelbetalningText}"
+               FontSize="12"
+               Foreground="Gray"
+               Margin="22,4,0,0"
+               TextWrapping="Wrap"/>
+
+                </StackPanel>
+
+            </StackPanel>
 
             <!-- ===================================== -->
             <!-- TOTAL OCH KNAPPAR                     -->

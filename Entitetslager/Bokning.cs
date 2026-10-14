@@ -20,6 +20,8 @@ namespace Entitetslager
         public virtual List<SkidlektionRad>? SkidlektionRader { get; set; }
 
         public bool HarAvbeställningsskydd { get; set; }
+        public decimal RabattProcent { get; set; }
+        public bool Delbetala { get; set; }
 
         public int? KundNummer { get; set; }
         [ForeignKey("KundNummer")]

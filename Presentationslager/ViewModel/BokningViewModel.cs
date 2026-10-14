@@ -45,6 +45,9 @@ namespace Presentationslager.ViewModel
 
         private bool _harAvbeställningsskydd;
 
+        private bool _användRabatt;
+        private bool _delbetala;
+
         #endregion
 
         #region Events
@@ -213,8 +216,19 @@ namespace Presentationslager.ViewModel
 
                 _valdKund = value;
                 OnPropertyChanged();
+
+                AnvändRabatt = false;
+                OnPropertyChanged(nameof(ValdKundRabatt));
+                OnPropertyChanged(nameof(KanAnvändaRabatt));
+                OnPropertyChanged(nameof(RabattText));
+
+                Delbetala = false;
+                OnPropertyChanged(nameof(ValdKundKredit));
+                OnPropertyChanged(nameof(KanDelbetala));
+                OnPropertyChanged(nameof(KreditText));
             }
         }
+
 
         #endregion
 
@@ -574,7 +588,15 @@ namespace Presentationslager.ViewModel
                 SlutDatum.Value);
 
             if (pris != null)
+            {
                 _aktuelltLogiPris = pris.PrisBelopp;
+
+                if (AnvändRabatt && ValdKundRabatt > 0)
+                {
+                    _aktuelltLogiPris *=
+                        1 - (ValdKundRabatt / 100m);
+                }
+            }
 
             OnPropertyChanged(nameof(LogiPrisText));
         }
@@ -650,7 +672,9 @@ namespace Presentationslager.ViewModel
             {
                 StartDatum = StartDatum.Value,
                 SlutDatum = SlutDatum.Value,
-                LogiBelopp = pris.PrisBelopp,
+                LogiBelopp = AnvändRabatt
+                            ? pris.PrisBelopp * (1 - ValdKundRabatt / 100m)
+                            : pris.PrisBelopp,
                 AntalPersoner = AntalPersonerValtLogi.Value,
                 LogiNummer = valtFysisktLogi.LogiNummer,
                 LogiDisplayText = ValtLogi?.TypDisplayText ?? ValdLogiArtikelTyp.TypNamn,
@@ -660,7 +684,7 @@ namespace Presentationslager.ViewModel
             LogiRader.Add(logiRad);
 
             OnPropertyChanged(nameof(BoendePlaceringText));
-            OnPropertyChanged(nameof(TotalBeloppText));
+            UppdateraBelopp();
 
             ValdLogiArtikelTyp = null;
             AntalPersonerValtLogi = null;
@@ -678,7 +702,7 @@ namespace Presentationslager.ViewModel
 
             LogiRader.Remove(logiRad);
 
-            OnPropertyChanged(nameof(TotalBeloppText));
+            UppdateraBelopp();
 
             UppdateraTillgängligaLogi();
         }
@@ -1282,7 +1306,7 @@ namespace Presentationslager.ViewModel
             }
 
 
-            OnPropertyChanged(nameof(TotalBeloppText));
+            UppdateraBelopp();
 
 
             // Uppdatera tillgängligheten efter att utrustningen lagts till
@@ -1421,7 +1445,7 @@ namespace Presentationslager.ViewModel
                 UtrustningRader.Add(utrustningRad);
             }
 
-            OnPropertyChanged(nameof(TotalBeloppText));
+            UppdateraBelopp();
 
             UppdateraAntalPaketAlternativ();
             UppdateraTillgängligUtrustning();
@@ -1441,7 +1465,7 @@ namespace Presentationslager.ViewModel
 
             UtrustningRader.Remove(utrustningRad);
 
-            OnPropertyChanged(nameof(TotalBeloppText));
+            UppdateraBelopp();
 
             UppdateraTillgängligUtrustning();
         }
@@ -1687,7 +1711,7 @@ namespace Presentationslager.ViewModel
 
             KonferensRader.Add(konferensRad);
 
-            OnPropertyChanged(nameof(TotalBeloppText));
+            UppdateraBelopp();
 
             UppdateraTillgängligaKonferenser();
 
@@ -1728,7 +1752,7 @@ namespace Presentationslager.ViewModel
 
             KonferensRader.Remove(konferensRad);
 
-            OnPropertyChanged(nameof(TotalBeloppText));
+            UppdateraBelopp();
 
             UppdateraTillgängligaKonferenser();
         }
@@ -1976,7 +2000,7 @@ namespace Presentationslager.ViewModel
 
             SkidlektionRader.Add(skidlektionRad);
 
-            OnPropertyChanged(nameof(TotalBeloppText));
+            UppdateraBelopp();
 
             UppdateraTillgängligaSkidlektioner();
 
@@ -1995,11 +2019,12 @@ namespace Presentationslager.ViewModel
 
             SkidlektionRader.Remove(skidlektionRad);
 
-            OnPropertyChanged(nameof(TotalBeloppText));
+            UppdateraBelopp();
 
             UppdateraTillgängligaSkidlektioner();
         }
         #endregion
+
 
 
         #region Avbeställningsskydd
@@ -2014,11 +2039,120 @@ namespace Presentationslager.ViewModel
                 _harAvbeställningsskydd = value;
 
                 OnPropertyChanged();
-                OnPropertyChanged(nameof(TotalBeloppText));
+                UppdateraBelopp();
             }
         }
         #endregion
 
+        #region Rabatt/kredit
+
+        public decimal ValdKundRabatt
+        {
+            get
+            {
+                if (ValdKund is PrivatKund privatKund)
+                    return privatKund.Rabatt;
+
+                if (ValdKund is FöretagsKund företagsKund)
+                    return företagsKund.Rabatt;
+
+                return 0;
+            }
+        }
+
+        public bool AnvändRabatt
+        {
+            get => _användRabatt;
+            set
+            {
+                if (_användRabatt == value)
+                    return;
+
+                _användRabatt = value;
+                OnPropertyChanged();
+
+                UppdateraLogiPris();
+                UppdateraBelopp();
+            }
+        }
+
+        public bool KanAnvändaRabatt => ValdKundRabatt > 0;
+
+        public string RabattText =>
+                ValdKundRabatt > 0
+                    ? $"Utnyttja rabatt ({ValdKundRabatt:N0} %)"
+                    : "Ingen rabatt tillgänglig";
+
+
+        public decimal ValdKundKredit
+        {
+            get
+            {
+                if (ValdKund is PrivatKund privatKund)
+                    return privatKund.Kredit;
+
+                if (ValdKund is FöretagsKund företagsKund)
+                    return företagsKund.Kredit;
+
+                return 0;
+            }
+        }
+
+        public bool Delbetala
+        {
+            get => _delbetala;
+            set
+            {
+                if (_delbetala == value)
+                    return;
+
+                _delbetala = value;
+                OnPropertyChanged();
+
+                UppdateraBelopp();
+            }
+        }
+
+        private void UppdateraBelopp()
+        {
+            OnPropertyChanged(nameof(TotalBelopp));
+            OnPropertyChanged(nameof(TotalBeloppText));
+            OnPropertyChanged(nameof(LogiBelopp));
+            OnPropertyChanged(nameof(ÖvrigtBelopp));
+            OnPropertyChanged(nameof(FörstaDelbetalning));
+            OnPropertyChanged(nameof(AndraDelbetalning));
+            OnPropertyChanged(nameof(DelbetalningText));
+        }
+
+        public bool KanDelbetala => ValdKundKredit > 0;
+        public string KreditText => $"Kreditgräns: {ValdKundKredit:N0} kr";
+
+        public decimal LogiBelopp =>
+        LogiRader.Sum(x => x.LogiBelopp);
+
+        public decimal ÖvrigtBelopp =>
+            UtrustningRader.Sum(x => x.UtrustningBelopp) +
+            KonferensRader.Sum(x => x.KonferensBelopp) +
+            SkidlektionRader.Sum(x => x.SkidlektionBelopp) +
+            (HarAvbeställningsskydd ? 300m : 0m);
+
+        public decimal FörstaDelbetalning =>
+            Delbetala
+                ? (LogiBelopp * 0.20m) + ÖvrigtBelopp
+                : 0m;
+
+        public decimal AndraDelbetalning =>
+            Delbetala
+                ? LogiBelopp * 0.80m
+                : 0m;
+
+        public string DelbetalningText =>
+          Delbetala
+        ? $"Första faktura: {FörstaDelbetalning:N0} kr | Andra faktura: {AndraDelbetalning:N0} kr"
+        : "";
+
+
+        #endregion
 
         #region Ändra / ta bort bokning
 
@@ -2155,6 +2289,10 @@ namespace Presentationslager.ViewModel
                 .FirstOrDefault(k =>
                     k.KundNummer == fullständigBokning.KundNummer);
 
+            Delbetala = fullständigBokning.Delbetala;
+
+            AnvändRabatt = fullständigBokning.RabattProcent > 0;
+
 
             // Töm nuvarande rader
 
@@ -2208,7 +2346,7 @@ namespace Presentationslager.ViewModel
             }
 
 
-            OnPropertyChanged(nameof(TotalBeloppText));
+            UppdateraBelopp();
         }
 
         private void SparaÄndringar()
@@ -2240,6 +2378,7 @@ namespace Presentationslager.ViewModel
 
                 decimal tidigareTotalBelopp = 0;
 
+               
                 if (gammalBokning != null)
                 {
                     tidigareTotalBelopp =
@@ -2250,14 +2389,43 @@ namespace Presentationslager.ViewModel
                         (gammalBokning.HarAvbeställningsskydd ? 300 : 0);
                 }
 
+                Decimal användRabattProcent = AnvändRabatt ? ValdKundRabatt : 0;
+
+                if (Delbetala && LogiBelopp > ValdKundKredit)
+                {
+                    VisaMeddelande?.Invoke(
+                        $"Bokningen kan inte delbetalas eftersom logibeloppet " +
+                        $"{LogiBelopp:N0} kr överstiger kundens kreditgräns på " +
+                        $"{ValdKundKredit:N0} kr.");
+
+                    return;
+                }
+
+                if (Delbetala && LogiRader.Any())
+                {
+                    DateTime tidigasteLogiStart =
+                        LogiRader.Min(x => x.StartDatum);
+
+                    if (tidigasteLogiStart <= DateTime.Today.AddDays(30))
+                    {
+                        VisaMeddelande?.Invoke(
+                            "Delbetalning kan endast användas när det är minst 30 dagar kvar till boendets startdatum.");
+
+                        return;
+                    }
+                }
+
                 bokningController.SparaÄndringar(
                     ValdBokningFörRedigering.BokningsNummer,
                     ValdKund.KundNummer,
                     HarAvbeställningsskydd,
+                    Delbetala,
+                    AnvändRabatt ? ValdKundRabatt : 0,
                     LogiRader.ToList(),
                     UtrustningRader.ToList(),
                     KonferensRader.ToList(),
                     SkidlektionRader.ToList());
+
 
 
                 Ändringsbekräftelse ändringsbekräftelse =
@@ -2265,7 +2433,10 @@ namespace Presentationslager.ViewModel
                      ValdBokningFörRedigering.BokningsNummer,
                      $"{ValdKund.VisningsNamn}|{ValdKund.KundNummer}",
                      DateTime.Now,
+                     ValdBokningFörRedigering.BokningsDatum,
                      HarAvbeställningsskydd,
+                     Delbetala,
+                     användRabattProcent,
                      tidigareTotalBelopp,
                      LogiRader.ToList(),
                      UtrustningRader.ToList(),
@@ -2357,6 +2528,7 @@ namespace Presentationslager.ViewModel
                 ? $"{ValdKund.VisningsNamn}|{ValdKund.KundNummer}"
                 : "Okänd kund|-";
 
+            decimal användRabattProcent = ValdBokningFörRedigering.RabattProcent;
 
             try
             {
@@ -2367,15 +2539,18 @@ namespace Presentationslager.ViewModel
                     bokningsNummer);
 
                 Avbokningsbekräftelse avbokningsbekräftelse =
-                new Avbokningsbekräftelse(
-                    bokningsNummer,
-                    kundText,
-                    DateTime.Now,
-                    hadeAvbeställningsskydd,
-                    avbokadeLogiRader,
-                    avbokadeUtrustningRader,
-                    avbokadeKonferensRader,
-                    avbokadeSkidlektionRader);
+                 new Avbokningsbekräftelse(
+                     bokningsNummer,
+                     kundText,
+                     DateTime.Now,
+                     ValdBokningFörRedigering.BokningsDatum,
+                     hadeAvbeställningsskydd,
+                     ValdBokningFörRedigering.Delbetala,
+                     ValdBokningFörRedigering.RabattProcent,
+                     avbokadeLogiRader,
+                     avbokadeUtrustningRader,
+                     avbokadeKonferensRader,
+                     avbokadeSkidlektionRader);
 
                 avbokningsbekräftelse.ShowDialog();
 
@@ -2390,7 +2565,7 @@ namespace Presentationslager.ViewModel
                 StartDatum = null;
                 SlutDatum = null;
 
-                OnPropertyChanged(nameof(TotalBeloppText));
+                UppdateraBelopp();
 
                 SökBokningar();
             }
@@ -2416,13 +2591,14 @@ namespace Presentationslager.ViewModel
 
         #region Totalbelopp
 
-        public string TotalBeloppText =>
-            $"{LogiRader.Sum(x => x.LogiBelopp) +
-               UtrustningRader.Sum(x => x.UtrustningBelopp) +
-               KonferensRader.Sum(x => x.KonferensBelopp) +
-               SkidlektionRader.Sum(x => x.SkidlektionBelopp) +
-               (HarAvbeställningsskydd ? 300 : 0):N0} kr";
+        public decimal TotalBelopp =>
+        LogiRader.Sum(x => x.LogiBelopp) +
+        UtrustningRader.Sum(x => x.UtrustningBelopp) +
+        KonferensRader.Sum(x => x.KonferensBelopp) +
+        SkidlektionRader.Sum(x => x.SkidlektionBelopp) +
+        (HarAvbeställningsskydd ? 300m : 0m);
 
+        public string TotalBeloppText => $"{TotalBelopp:N0} kr";
         #endregion
 
         #region Skapa bokning
@@ -2438,12 +2614,38 @@ namespace Presentationslager.ViewModel
             if (LogiRader.Any() && !ValideraDatum())
                 return;
 
+            if (Delbetala && LogiBelopp > ValdKundKredit)
+            {
+                VisaMeddelande?.Invoke(
+                    $"Bokningen kan inte delbetalas eftersom logibeloppet " +
+                    $"{LogiBelopp:N0} kr överstiger kundens kreditgräns på " +
+                    $"{ValdKundKredit:N0} kr.");
+
+                return;
+            }
+
+            if (Delbetala && LogiRader.Any())
+            {
+                DateTime tidigasteLogiStart =
+                    LogiRader.Min(x => x.StartDatum);
+
+                if (tidigasteLogiStart <= DateTime.Today.AddDays(30))
+                {
+                    VisaMeddelande?.Invoke(
+                        "Delbetalning kan endast användas när det är minst 30 dagar kvar till boendets startdatum.");
+
+                    return;
+                }
+            }
+
             Entitetslager.Bokning nyBokning = new Entitetslager.Bokning
             {
                 KundNummer = ValdKund.KundNummer,
                 BokningsDatum = DateTime.Now,
                 Status = "Aktiv",
                 HarAvbeställningsskydd = HarAvbeställningsskydd,
+                Delbetala = Delbetala,
+                RabattProcent = AnvändRabatt ? ValdKundRabatt : 0,
 
 
                 LogiRader = LogiRader.ToList(),
@@ -2457,12 +2659,16 @@ namespace Presentationslager.ViewModel
 
             string kundText = $"{ValdKund.VisningsNamn}|{ValdKund.KundNummer}";
 
+            decimal användRabattProcent = AnvändRabatt ? ValdKundRabatt : 0;
+
             Bokningsbekräftelse bokningsbekräftelse =
             new Bokningsbekräftelse(
                 nyBokning.BokningsNummer,
                 kundText,
                 DateTime.Now,
                 HarAvbeställningsskydd,
+                Delbetala,
+                användRabattProcent,
                 LogiRader.ToList(),
                 UtrustningRader.ToList(),
                 KonferensRader.ToList(),
@@ -2536,6 +2742,8 @@ namespace Presentationslager.ViewModel
             AntalPersonerTotalt = null;
 
             HarAvbeställningsskydd = false;
+            AnvändRabatt = false;
+            Delbetala = false;
 
             ValdBoendeTyp = null;
             ValdLogiArtikelTyp = null;
@@ -2583,8 +2791,8 @@ namespace Presentationslager.ViewModel
             OnPropertyChanged(nameof(KanLäggaTillKonferens));
             OnPropertyChanged(nameof(SkidlektionPrisText));
             OnPropertyChanged(nameof(KanLäggaTillSkidlektion));
-            OnPropertyChanged(nameof(TotalBeloppText));
-            OnPropertyChanged(nameof(TotalBeloppText));
+            UppdateraBelopp();
+
         }
 
         #endregion

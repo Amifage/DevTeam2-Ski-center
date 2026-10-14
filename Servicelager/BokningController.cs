@@ -94,7 +94,6 @@ namespace Servicelager
                 .GetAll()
                 .FirstOrDefault(k => k.KundNummer == bokning.KundNummer);
 
-
             // =========================================
             // HJÄLPDATA
             // =========================================
@@ -595,8 +594,9 @@ namespace Servicelager
                     KundNummer =
                         bokning.KundNummer,
 
-                    HarAvbeställningsskydd = 
-                        bokning.HarAvbeställningsskydd,
+                    HarAvbeställningsskydd = bokning.HarAvbeställningsskydd,
+                    RabattProcent = bokning.RabattProcent,
+                    Delbetala = bokning.Delbetala,
 
                     kund =
                         kund,
@@ -617,7 +617,7 @@ namespace Servicelager
             return resultat;
         }
 
-        public void SparaÄndringar(int bokningsNummer, int? kundNummer, bool harAvbeställningsskydd, List<LogiRad> logiRader, List<UtrustningRad> utrustningRader, List<KonferensRad> konferensRader, List<SkidlektionRad> skidlektionRader)
+        public void SparaÄndringar(int bokningsNummer, int? kundNummer, bool harAvbeställningsskydd, bool delbetala, decimal rabattProcent, List<LogiRad> logiRader, List<UtrustningRad> utrustningRader, List<KonferensRad> konferensRader, List<SkidlektionRad> skidlektionRader)
         {
             using var unitOfWork = new UnitOfWork(new SkiContext());
 
@@ -636,6 +636,10 @@ namespace Servicelager
             bokning.KundNummer = kundNummer;
 
             bokning.HarAvbeställningsskydd = harAvbeställningsskydd;
+
+            bokning.Delbetala = delbetala;
+
+            bokning.RabattProcent = rabattProcent;
 
             unitOfWork.BokningRepository.Update(bokning);
 

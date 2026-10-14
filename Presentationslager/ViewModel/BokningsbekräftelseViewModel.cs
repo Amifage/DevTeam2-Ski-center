@@ -59,11 +59,41 @@ namespace Presentationslager.ViewModel
                             ? "Ja, 300 kr"
                             : "Nej";
 
+        public decimal AnvändRabattProcent { get; }
+
+        public string RabattText =>
+                     AnvändRabattProcent > 0
+                         ? $"{AnvändRabattProcent:N0} % på logi"
+                         : "Ingen";
+
+        public decimal MomsBelopp =>
+                    (LogiRader.Sum(x => x.LogiBelopp) +
+                     UtrustningRader.Sum(x => x.UtrustningBelopp) +
+                     KonferensRader.Sum(x => x.KonferensBelopp) +
+                     SkidlektionRader.Sum(x => x.SkidlektionBelopp) +
+                     (HarAvbeställningsskydd ? 300m : 0m))
+                    * 12m / 112m;
+
+        public string MomsText =>
+            $"{MomsBelopp:N2} kr";
+
+        public string TotalBeloppText =>
+           $"{LogiRader.Sum(x => x.LogiBelopp) +
+              UtrustningRader.Sum(x => x.UtrustningBelopp) +
+              KonferensRader.Sum(x => x.KonferensBelopp) +
+              SkidlektionRader.Sum(x => x.SkidlektionBelopp) +
+              (HarAvbeställningsskydd ? 300 : 0):N0} kr";
+
+        public bool Delbetala { get; }
+
+        public DateTime BokningsDatum { get; }
         public BokningsbekräftelseViewModel(
                  int bokningsNummer,
                  string kundText,
                  DateTime bokningsDatum,
                  bool harAvbeställningsskydd,
+                 bool delbetala,
+                 decimal användRabattProcent,
                  IEnumerable<LogiRad> logiRader,
                  IEnumerable<UtrustningRad> utrustningRader,
                  IEnumerable<KonferensRad> konferensRader,
@@ -73,6 +103,9 @@ namespace Presentationslager.ViewModel
             KundText = kundText;
             BokningsdatumText = bokningsDatum.ToString("yyyy-MM-dd");
             HarAvbeställningsskydd = harAvbeställningsskydd;
+            AnvändRabattProcent = användRabattProcent;
+            Delbetala = delbetala;
+            BokningsDatum = bokningsDatum;
 
             LogiRader = new ObservableCollection<LogiRad>(logiRader);
             UtrustningRader = new ObservableCollection<UtrustningRad>(utrustningRader);
@@ -84,13 +117,6 @@ namespace Presentationslager.ViewModel
 
             StängCommand = new RelayCommand(_ => StängFönster?.Invoke());
         }
-
-        public string TotalBeloppText =>
-            $"{LogiRader.Sum(x => x.LogiBelopp) +
-               UtrustningRader.Sum(x => x.UtrustningBelopp) +
-               KonferensRader.Sum(x => x.KonferensBelopp) +
-               SkidlektionRader.Sum(x => x.SkidlektionBelopp) +
-               (HarAvbeställningsskydd ? 300 : 0):N0} kr";
 
 
         public string HämtaExemplarNummer(UtrustningRad rad)
@@ -110,6 +136,46 @@ namespace Presentationslager.ViewModel
 
             return "-";
         }
+
+        public decimal LogiBelopp =>
+          LogiRader.Sum(x => x.LogiBelopp);
+
+        public decimal ÖvrigtBelopp =>
+            UtrustningRader.Sum(x => x.UtrustningBelopp) +
+            KonferensRader.Sum(x => x.KonferensBelopp) +
+            SkidlektionRader.Sum(x => x.SkidlektionBelopp) +
+            (HarAvbeställningsskydd ? 300m : 0m);
+
+        public decimal FörstaDelbetalning =>
+            Delbetala
+                ? (LogiBelopp * 0.20m) + ÖvrigtBelopp
+                : 0m;
+
+        public decimal AndraDelbetalning =>
+            Delbetala
+                ? LogiBelopp * 0.80m
+                : 0m;
+
+        public string FörstaDelbetalningText =>
+            $"{FörstaDelbetalning:N0} kr";
+
+        public string AndraDelbetalningText =>
+            $"{AndraDelbetalning:N0} kr";
+
+        public DateTime FörstaFörfallodatum =>
+    BokningsDatum.AddDays(30);
+
+        public DateTime? AndraFörfallodatum =>
+            LogiRader.Any()
+                ? LogiRader.Min(x => x.StartDatum).AddDays(-30)
+                : null;
+
+        public string FörstaFörfallodatumText =>
+            FörstaFörfallodatum.ToString("yyyy-MM-dd");
+
+        public string AndraFörfallodatumText =>
+            AndraFörfallodatum?.ToString("yyyy-MM-dd") ?? "-";
+
 
 
 
@@ -137,6 +203,18 @@ namespace Presentationslager.ViewModel
 
                 HarAvbeställningsskydd,
                 Avbeställningsskydd = AvbeställningsskyddText,
+
+                RabattProcent = AnvändRabattProcent,
+                Rabatt = RabattText,
+
+                MomsProcent = 12,
+                MomsBelopp = MomsBelopp,
+
+                Delbetala = Delbetala,
+                FörstaFakturaBelopp = FörstaDelbetalning,
+                FörstaFörfallodatum = FörstaFörfallodatumText,
+                AndraFakturaBelopp = AndraDelbetalning,
+                AndraFörfallodatum = AndraFörfallodatumText,
 
                 Logi = LogiRader.Select(r => new
                 {
@@ -254,6 +332,12 @@ namespace Presentationslager.ViewModel
                             column.Item()
                                    .Text($"Avbeställningsskydd: {AvbeställningsskyddText}");
 
+                            column.Item()
+                                    .Text($"Rabatt: {RabattText}");
+
+                            column.Item()
+                                 .Text($"Varav moms 12 %: {MomsText}");
+
                             // BOENDE
 
                             if (LogiRader.Any())
@@ -348,6 +432,23 @@ namespace Presentationslager.ViewModel
                                 .Text($"Totalt: {TotalBeloppText}")
                                 .FontSize(16)
                                 .Bold();
+
+                            if (Delbetala)
+                            {
+                                column.Item().Text("Delbetalning").Bold();
+
+                                column.Item()
+                                     .Text($"Första faktura (20 % logi + övrigt): {FörstaDelbetalningText}");
+
+                                column.Item()
+                                    .Text($"Förfallodatum: {FörstaFörfallodatumText}");
+
+                                column.Item()
+                                     .Text($"Andra faktura (80 % logi): {AndraDelbetalningText}");
+
+                                column.Item()
+                                    .Text($"Förfallodatum: {AndraFörfallodatumText}");
+                            }
                         });
 
                     page.Footer()

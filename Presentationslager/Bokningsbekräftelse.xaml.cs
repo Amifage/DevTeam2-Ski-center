@@ -13,6 +13,8 @@ namespace Presentationslager
                  string kundText,
                  DateTime bokningsDatum,
                  bool harAvbeställningsskydd,
+                 bool delbetala,
+                 decimal användRabattProcent,
                  List<LogiRad> logiRader,
                  List<UtrustningRad> utrustningRader,
                  List<KonferensRad> konferensRader,
@@ -21,15 +23,17 @@ namespace Presentationslager
             InitializeComponent();
 
             BokningsbekräftelseViewModel viewModel =
-            new BokningsbekräftelseViewModel(
-                bokningsNummer,
-                kundText,
-                bokningsDatum,
-                harAvbeställningsskydd,
-                logiRader,
-                utrustningRader,
-                konferensRader,
-                skidlektionRader);
+                new BokningsbekräftelseViewModel(
+                    bokningsNummer,
+                    kundText,
+                    bokningsDatum,
+                    harAvbeställningsskydd,
+                    delbetala,
+                    användRabattProcent,
+                    logiRader,
+                    utrustningRader,
+                    konferensRader,
+                    skidlektionRader);
 
             viewModel.StängFönster += Close;
 

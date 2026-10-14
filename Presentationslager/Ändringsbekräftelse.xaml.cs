@@ -10,27 +10,33 @@ namespace Presentationslager
         public Ändringsbekräftelse(
                 int bokningsNummer,
                 string kundText,
-                DateTime ändringsdatum,
+                DateTime ändringsDatum,
+                DateTime bokningsDatum,
                 bool harAvbeställningsskydd,
+                bool delbetala,
+                decimal användRabattProcent,
                 decimal tidigareTotalBelopp,
                 List<LogiRad> logiRader,
                 List<UtrustningRad> utrustningRader,
                 List<KonferensRad> konferensRader,
                 List<SkidlektionRad> skidlektionRader)
-        {
+                    {
             InitializeComponent();
 
             ÄndringsbekräftelseViewModel viewModel =
              new ÄndringsbekräftelseViewModel(
-                 bokningsNummer,
-                 kundText,
-                 ändringsdatum,
-                 harAvbeställningsskydd,
-                 tidigareTotalBelopp,
-                 logiRader,
-                 utrustningRader,
-                 konferensRader,
-                 skidlektionRader);
+                bokningsNummer,
+                kundText,
+                ändringsDatum,
+                bokningsDatum,
+                harAvbeställningsskydd,
+                delbetala,
+                användRabattProcent,
+                tidigareTotalBelopp,
+                logiRader,
+                utrustningRader,
+                konferensRader,
+                skidlektionRader);
 
             viewModel.StängFönster += Close;
 

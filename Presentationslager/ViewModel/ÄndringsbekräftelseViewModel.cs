@@ -112,24 +112,46 @@ namespace Presentationslager
                 ? "Ja, 300 kr"
                 : "Nej";
 
+        public decimal AnvändRabattProcent { get; }
+
+        public string RabattText =>
+            AnvändRabattProcent > 0
+                ? $"{AnvändRabattProcent:N0} % på logi"
+                : "Ingen";
+
+        public decimal MomsBelopp =>
+             NyTotalBelopp * 12m / 112m;
+
+        public string MomsText =>
+            $"{MomsBelopp:N2} kr";
+        public bool Delbetala { get; }
+
+        public DateTime BokningsDatum { get; }
+
         public ÄndringsbekräftelseViewModel(
-            int bokningsNummer,
-            string kundText,
-            DateTime ändringsdatum,
-            bool harAvbeställningsskydd,
-            decimal tidigareTotalBelopp,
-            IEnumerable<LogiRad> logiRader,
-            IEnumerable<UtrustningRad> utrustningRader,
-            IEnumerable<KonferensRad> konferensRader,
-            IEnumerable<SkidlektionRad> skidlektionRader)
+                int bokningsNummer,
+                string kundText,
+                DateTime ändringsDatum,
+                DateTime bokningsDatum,
+                bool harAvbeställningsskydd,
+                bool delbetala,
+                decimal användRabattProcent,
+                decimal tidigareTotalBelopp,
+                List<LogiRad> logiRader,
+                List<UtrustningRad> utrustningRader,
+                List<KonferensRad> konferensRader,
+                List<SkidlektionRad> skidlektionRader)
         {
             BokningsNummer = bokningsNummer;
 
             KundText = kundText;
-            HarAvbeställningsskydd = harAvbeställningsskydd;
+            Delbetala = delbetala;
+            AnvändRabattProcent = användRabattProcent;
+            Delbetala = delbetala;
+            BokningsDatum = bokningsDatum;
 
             ÄndringsdatumText =
-                ändringsdatum.ToString("yyyy-MM-dd");
+                ändringsDatum.ToString("yyyy-MM-dd");
 
             TidigareTotalBelopp = tidigareTotalBelopp;
 
@@ -156,6 +178,48 @@ namespace Presentationslager
             StängCommand = new RelayCommand(_ => StängFönster?.Invoke());
         }
 
+
+        public decimal LogiBelopp =>
+            LogiRader.Sum(x => x.LogiBelopp);
+
+        public decimal ÖvrigtBelopp =>
+            UtrustningRader.Sum(x => x.UtrustningBelopp) +
+            KonferensRader.Sum(x => x.KonferensBelopp) +
+            SkidlektionRader.Sum(x => x.SkidlektionBelopp) +
+            (HarAvbeställningsskydd ? 300m : 0m);
+
+        public decimal FörstaDelbetalning =>
+            Delbetala
+                ? (LogiBelopp * 0.20m) + ÖvrigtBelopp
+                : 0m;
+
+        public decimal AndraDelbetalning =>
+            Delbetala
+                ? LogiBelopp * 0.80m
+                : 0m;
+        public string FörstaDelbetalningText =>
+            $"{FörstaDelbetalning:N0} kr";
+
+        public string AndraDelbetalningText =>
+            $"{AndraDelbetalning:N0} kr";
+
+
+
+        public DateTime FörstaFörfallodatum =>
+     BokningsDatum.AddDays(30);
+
+        public DateTime? AndraFörfallodatum =>
+            LogiRader.Any()
+                ? LogiRader.Min(x => x.StartDatum).AddDays(-30)
+                : null;
+
+        public string FörstaFörfallodatumText =>
+            FörstaFörfallodatum.ToString("yyyy-MM-dd");
+
+        public string AndraFörfallodatumText =>
+            AndraFörfallodatum?.ToString("yyyy-MM-dd") ?? "-";
+
+
         private void ExporteraJson()
         {
             SaveFileDialog dialog = new SaveFileDialog
@@ -180,6 +244,18 @@ namespace Presentationslager
 
                 HarAvbeställningsskydd,
                 Avbeställningsskydd = AvbeställningsskyddText,
+
+                RabattProcent = AnvändRabattProcent,
+                Rabatt = RabattText,
+
+                MomsProcent = 12,
+                MomsBelopp = MomsBelopp,
+
+                Delbetala = Delbetala,
+                FörstaFakturaBelopp = FörstaDelbetalning,
+                FörstaFörfallodatum = FörstaFörfallodatumText,
+                AndraFakturaBelopp = AndraDelbetalning,
+                AndraFörfallodatum = AndraFörfallodatumText,
 
                 TidigareTotalBelopp,
                 Förändring = SkillnadBelopp,
@@ -291,6 +367,12 @@ namespace Presentationslager
                             column.Item()
                                 .Text($"Avbeställningsskydd: {AvbeställningsskyddText}");
 
+                            column.Item()
+                                 .Text($"Rabatt: {RabattText}");
+
+                            column.Item()
+                                 .Text($"Varav moms 12 %: {MomsText}");
+
 
                             if (LogiRader.Any())
                             {
@@ -386,6 +468,23 @@ namespace Presentationslager
                                 .Text($"Ny totalsumma: {NyTotalBeloppText}")
                                 .FontSize(16)
                                 .Bold();
+
+                            if (Delbetala)
+                            {
+                                column.Item().Text("Delbetalning").Bold();
+
+                                column.Item()
+                                    .Text($"Första faktura (20 % logi + övrigt): {FörstaDelbetalningText}");
+
+                                column.Item()
+                                    .Text($"Förfallodatum: {FörstaFörfallodatumText}");
+
+                                column.Item()
+                                     .Text($"Andra faktura (80 % logi): {AndraDelbetalningText}");
+
+                                column.Item()
+                                    .Text($"Förfallodatum: {AndraFörfallodatumText}");
+                            }
                         });
 
                     page.Footer()

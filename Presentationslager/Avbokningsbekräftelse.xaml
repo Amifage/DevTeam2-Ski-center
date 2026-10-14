@@ -6,6 +6,10 @@
         Width="800"
         WindowStartupLocation="CenterScreen">
 
+    <Window.Resources>
+        <BooleanToVisibilityConverter x:Key="BooleanToVisibilityConverter"/>
+    </Window.Resources>
+
     <Grid Background="{StaticResource IsBlå}"
           Margin="20">
 
@@ -49,6 +53,11 @@
             <TextBlock Margin="0,0,0,8">
             <Run Text="Avbeställningsskydd: " FontWeight="Bold"/>
             <Run Text="{Binding AvbeställningsskyddText, Mode=OneWay}"/>
+            </TextBlock>
+
+            <TextBlock Margin="0,0,0,8">
+            <Run Text="Rabatt: " FontWeight="Bold"/>
+            <Run Text="{Binding RabattText, Mode=OneWay}"/>
             </TextBlock>
 
         </StackPanel>
@@ -433,7 +442,40 @@
                    FontWeight="Bold"/>
                     </StackPanel>
 
-                </StackPanel>
+                <TextBlock>
+                <Run Text="Varav moms 12 %: " FontWeight="Bold"/>
+                <Run Text="{Binding MomsText, Mode=OneWay}"/>
+                </TextBlock>
+
+                <StackPanel Margin="0,8,0,0"
+            Visibility="{Binding Delbetala, Converter={StaticResource BooleanToVisibilityConverter}}">
+
+                    <TextBlock FontWeight="Bold"
+               Text="Delbetalning"/>
+
+                    <TextBlock>
+        <Run Text="Första faktura (20 % logi + övrigt): " FontWeight="Bold"/>
+        <Run Text="{Binding FörstaDelbetalningText, Mode=OneWay}"/>
+                    </TextBlock>
+
+                    <TextBlock>
+        <Run Text="Förfallodatum: " FontWeight="Bold"/>
+        <Run Text="{Binding FörstaFörfallodatumText, Mode=OneWay}"/>
+                    </TextBlock>
+
+                    <TextBlock Margin="0,4,0,0">
+        <Run Text="Andra faktura (80 % logi):" FontWeight="Bold"/>
+        <Run Text="{Binding AndraDelbetalningText, Mode=OneWay}"/>
+                    </TextBlock>
+
+                    <TextBlock>
+        <Run Text="Förfallodatum: " FontWeight="Bold"/>
+        <Run Text="{Binding AndraFörfallodatumText, Mode=OneWay}"/>
+                    </TextBlock>
+
+            </StackPanel>
+
+            </StackPanel>
 
         </ScrollViewer>
 
