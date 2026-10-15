@@ -579,17 +579,16 @@ namespace Presentationslager.ViewModel
 
             if (ValdLogiArtikelTyp == null || StartDatum == null || SlutDatum == null)
                 return;
-
             PrisController prisController = new PrisController();
 
-            Pris? pris = prisController.HamtaAktuelltPris(
+            decimal? pris = prisController.BeraknaLogiPris(
                 ValdLogiArtikelTyp.ArtikelTypNummer,
                 StartDatum.Value,
                 SlutDatum.Value);
 
-            if (pris != null)
+            if (pris.HasValue)
             {
-                _aktuelltLogiPris = pris.PrisBelopp;
+                _aktuelltLogiPris = pris.Value;
 
                 if (AnvändRabatt && ValdKundRabatt > 0)
                 {
@@ -597,7 +596,6 @@ namespace Presentationslager.ViewModel
                         1 - (ValdKundRabatt / 100m);
                 }
             }
-
             OnPropertyChanged(nameof(LogiPrisText));
         }
 
@@ -640,7 +638,7 @@ namespace Presentationslager.ViewModel
 
             var allaLogi = logiController.HamtaAllaLogi();
             var upptagnaLogi = logiController.HamtaUpptagnaLogi(StartDatum!.Value, SlutDatum!.Value);
-           
+
             IEnumerable<Logi> ledigaLogi = allaLogi
                 .Where(l => l.Status == "Tillgänglig")
                 .Where(l => !upptagnaLogi.Contains(l.LogiNummer))
@@ -663,12 +661,12 @@ namespace Presentationslager.ViewModel
 
             PrisController prisController = new PrisController();
 
-            Pris? pris = prisController.HamtaAktuelltPris(
+            decimal? pris = prisController.BeraknaLogiPris(
                 ValdLogiArtikelTyp.ArtikelTypNummer,
                 StartDatum.Value,
                 SlutDatum.Value);
 
-            if (pris == null)
+            if (!pris.HasValue)
             {
                 VisaMeddelande?.Invoke("Kunde inte hitta något pris för den valda boendetypen.");
                 return;
@@ -679,14 +677,13 @@ namespace Presentationslager.ViewModel
                 StartDatum = StartDatum.Value,
                 SlutDatum = SlutDatum.Value,
                 LogiBelopp = AnvändRabatt
-                            ? pris.PrisBelopp * (1 - ValdKundRabatt / 100m)
-                            : pris.PrisBelopp,
+                            ? pris.Value * (1 - ValdKundRabatt / 100m)
+                            : pris.Value,
                 AntalPersoner = AntalPersonerValtLogi.Value,
                 LogiNummer = valtFysisktLogi.LogiNummer,
                 LogiDisplayText = ValtLogi?.TypDisplayText ?? ValdLogiArtikelTyp.TypNamn,
                 SenastUppdaterad = DateTime.Now
             };
-
             LogiRader.Add(logiRad);
 
             OnPropertyChanged(nameof(BoendePlaceringText));
@@ -1148,6 +1145,7 @@ namespace Presentationslager.ViewModel
             decimal? pris = prisController.BeraknaPrisForPeriod(
                 artikelTypNummer.Value,
                 UtrustningStartDatum.Value,
+
                 UtrustningSlutDatum.Value);
 
             if (!pris.HasValue)
@@ -1160,6 +1158,7 @@ namespace Presentationslager.ViewModel
 
             if (ValdUtrustningTyp == "Utrustningspaket")
             {
+
                 int antalPaket = AntalUtrustningsPaket ?? 1;
                 _aktuelltUtrustningPris = pris.Value * antalPaket;
             }
@@ -1171,7 +1170,6 @@ namespace Presentationslager.ViewModel
                 _aktuelltUtrustningPris =
                     pris.Value * AntalEnskildUtrustning.Value;
             }
-
             OnPropertyChanged(nameof(UtrustningPrisText));
             OnPropertyChanged(nameof(KanLäggaTillUtrustning));
         }
@@ -1400,13 +1398,12 @@ namespace Presentationslager.ViewModel
                  paketIndex < AntalUtrustningsPaket.Value;
                  paketIndex++)
             {
-                int antalPaket = AntalUtrustningsPaket ?? 1;
 
                 UtrustningRad utrustningRad = new UtrustningRad
                 {
                     StartDatum = UtrustningStartDatum.Value,
                     SlutDatum = UtrustningSlutDatum.Value,
-                    UtrustningBelopp = pris.Value * antalPaket,
+                    UtrustningBelopp = pris.Value,
                     UtrustningPaketNummer = ValtUtrustningPaket.UtrustningPaketNummer,
                     UtrustningNummer = null,
                     UtrustningDisplayText = ValtUtrustningPaket.UtrustningPaketNamn,
