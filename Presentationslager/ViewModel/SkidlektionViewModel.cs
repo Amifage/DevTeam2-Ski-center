@@ -1,6 +1,5 @@
 ﻿using System.Collections.ObjectModel;
 using System.ComponentModel;
-using System.Globalization;
 using System.Runtime.CompilerServices;
 using System.Windows;
 using System.Windows.Input;
@@ -12,67 +11,23 @@ namespace Presentationslager.ViewModel
 {
     public class SkidlektionViewModel : INotifyPropertyChanged
     {
-        private static readonly string[] DatumFormat =
+        private readonly SkidlektionController _skidlektionController;
+
+        private ObservableCollection<Entitetslager.Skidlektion> _skidlektionsLista;
+        public ObservableCollection<Entitetslager.Skidlektion> SkidlektionsLista
         {
-            "yyyy-MM-dd", "yyyy/MM/dd", "yyyyMMdd",
-            "d/M/yyyy", "dd.MM.yyyy", "d.M.yyyy"
-        };
-
-        private readonly SkidlektionController _controller;
-
-        private List<Entitetslager.Skidlektion> _alla = new();
-
-        private readonly Dictionary<DateTime, List<Entitetslager.Skidlektion>> _datumCache = new();
-
-        public ObservableCollection<Entitetslager.Skidlektion> VisadeLektioner { get; } = new();
-        public ObservableCollection<Personal> Instruktörer { get; } = new();
-
-        public ObservableCollection<Personal> AllaAnställda { get; } = new();
-
-        private Personal? _valdInstruktör;
-        public Personal? ValdInstruktör
-        {
-            get => _valdInstruktör;
-            set
-            {
-                _valdInstruktör = value;
-                OnPropertyChanged();
-                FiltreraLektioner();
-            }
+            get => _skidlektionsLista;
+            set { _skidlektionsLista = value; OnPropertyChanged(); }
         }
 
-        private string _söktext = string.Empty;
-        public string Söktext
+        private Entitetslager.Skidlektion? _valdSkidlektion;
+        public Entitetslager.Skidlektion? ValdSkidlektion
         {
-            get => _söktext;
+            get => _valdSkidlektion;
             set
             {
-                _söktext = value;
+                _valdSkidlektion = value;
                 OnPropertyChanged();
-                FiltreraLektioner();
-            }
-        }
-
-        private string _infoText = string.Empty;
-        public string InfoText
-        {
-            get => _infoText;
-            private set
-            {
-                _infoText = value;
-                OnPropertyChanged();
-            }
-        }
-
-        private Entitetslager.Skidlektion? _valdLektion;
-        public Entitetslager.Skidlektion? ValdLektion
-        {
-            get => _valdLektion;
-            set
-            {
-                _valdLektion = value;
-                OnPropertyChanged();
-                OnPropertyChanged(nameof(ValdLektionText));
 
                 NyInstruktör = value == null
                     ? null
@@ -80,207 +35,204 @@ namespace Presentationslager.ViewModel
             }
         }
 
+        private string _sokDatum = string.Empty;
+        public string SokDatum
+        {
+            get => _sokDatum;
+            set { _sokDatum = value; OnPropertyChanged(); }
+        }
+
+        private string _sokStatus = string.Empty;
+        public string SokStatus
+        {
+            get => _sokStatus;
+            set { _sokStatus = value; OnPropertyChanged(); }
+        }
+
+        private ObservableCollection<string> _artikelTyper;
+        public ObservableCollection<string> ArtikelTyper
+        {
+            get => _artikelTyper;
+            set { _artikelTyper = value; OnPropertyChanged(); }
+        }
+
+        private string? _valdArtikelTyp;
+        public string? ValdArtikelTyp
+        {
+            get => _valdArtikelTyp;
+            set { _valdArtikelTyp = value; OnPropertyChanged(); }
+        }
+
+        private ObservableCollection<Personal> _instruktörer;
+        public ObservableCollection<Personal> Instruktörer
+        {
+            get => _instruktörer;
+            set { _instruktörer = value; OnPropertyChanged(); }
+        }
+
+        private Personal? _valdInstruktör;
+        public Personal? ValdInstruktör
+        {
+            get => _valdInstruktör;
+            set { _valdInstruktör = value; OnPropertyChanged(); }
+        }
+
+        private ObservableCollection<Personal> _allaAnställda;
+        public ObservableCollection<Personal> AllaAnställda
+        {
+            get => _allaAnställda;
+            set { _allaAnställda = value; OnPropertyChanged(); }
+        }
+
         private Personal? _nyInstruktör;
         public Personal? NyInstruktör
         {
             get => _nyInstruktör;
-            set
-            {
-                _nyInstruktör = value;
-                OnPropertyChanged();
-            }
+            set { _nyInstruktör = value; OnPropertyChanged(); }
         }
 
-        public string ValdLektionText
-        {
-            get
-            {
-                if (ValdLektion == null)
-                    return "Markera en lektion i listan för att byta instruktör.";
-
-                string nuvarande = ValdLektion.Personal != null
-                    ? $"{ValdLektion.Personal.Förnamn} {ValdLektion.Personal.Efternamn}"
-                    : "ingen";
-
-                return $"Lektion {ValdLektion.SkidlektionNummer} – {ValdLektion.Datum:yyyy-MM-dd} " +
-                       $"{ValdLektion.StartTid:hh\\:mm}–{ValdLektion.SlutTid:hh\\:mm} " +
-                       $"(nuvarande instruktör: {nuvarande})";
-            }
-        }
-
-        public ICommand RensaFilterCommand { get; }
+        public ICommand SokCommand { get; }
+        public ICommand RensaCommand { get; }
+        public ICommand UppdateraInstruktörCommand { get; }
         public ICommand TillbakaCommand { get; set; }
-        public ICommand SparaInstruktörCommand { get; } 
 
-        public SkidlektionViewModel(SkidlektionController controller)
+        public SkidlektionViewModel()
         {
-            _controller = controller;
+            _skidlektionController = new SkidlektionController();
 
-            RensaFilterCommand = new RelayCommand(RensaFilter);
+            SkidlektionsLista = new ObservableCollection<Entitetslager.Skidlektion>();
+            ArtikelTyper = new ObservableCollection<string>();
+            Instruktörer = new ObservableCollection<Personal>();
+            AllaAnställda = new ObservableCollection<Personal>();
+
+            SokCommand = new RelayCommand(UtforSokning);
+            RensaCommand = new RelayCommand(RensaFalt);
+            UppdateraInstruktörCommand = new RelayCommand(UppdateraInstruktör, CanUppdateraInstruktör);
             TillbakaCommand = new RelayCommand(TillbakaTillMeny);
-            SparaInstruktörCommand = new RelayCommand(SparaInstruktör, _ => KanSparaInstruktör()); 
+            LaddaData();
+        }
+
+        private void LaddaData()
+        {
+            var lektioner = _skidlektionController.HamtaAktuellaSkidlektioner();
+            SkidlektionsLista.Clear();
+            if (lektioner != null)
+            {
+                foreach (Entitetslager.Skidlektion item in lektioner)
+                {
+                    SkidlektionsLista.Add(item);
+                }
+            }
+
+            var typer = _skidlektionController.HamtaAllaArtikelTyper();
+            ArtikelTyper.Clear();
+            if (typer != null)
+            {
+                var lektionsTyper = typer
+                    .Where(t => t != null && !string.IsNullOrWhiteSpace(t.TypNamn))
+                    .Select(t => t.TypNamn)
+                    .Where(namn => namn.Contains("lektion", StringComparison.OrdinalIgnoreCase));
+
+                foreach (var typ in lektionsTyper)
+                {
+                    ArtikelTyper.Add(typ);
+                }
+            }
+
+            var instruktörer = _skidlektionController.HamtaInstruktorer();
+            Instruktörer.Clear();
+            if (instruktörer != null)
+            {
+                foreach (Personal item in instruktörer)
+                {
+                    Instruktörer.Add(item);
+                }
+            }
+
+            var anställda = _skidlektionController.HamtaAllaAnstallda();
+            AllaAnställda.Clear();
+            if (anställda != null)
+            {
+                foreach (Personal item in anställda)
+                {
+                    AllaAnställda.Add(item);
+                }
+            }
+        }
+
+        private void UtforSokning(object obj)
+        {
+            var resultat = _skidlektionController.SokSkidlektioner(
+                SokDatum,
+                SokStatus,
+                ValdArtikelTyp,
+                ValdInstruktör?.AnställningsNummer
+            );
+
+            SkidlektionsLista.Clear();
+            if (resultat != null)
+            {
+                foreach (Entitetslager.Skidlektion item in resultat)
+                {
+                    SkidlektionsLista.Add(item);
+                }
+            }
+        }
+
+        private void RensaFalt(object obj)
+        {
+            SokDatum = string.Empty;
+            SokStatus = string.Empty;
+            ValdArtikelTyp = null;
+            ValdInstruktör = null;
 
             LaddaData();
         }
 
-        public void LaddaData()
+        private bool CanUppdateraInstruktör(object obj)
         {
-            try
-            {
-                _alla = _controller.HämtaAktuellaSkidlektioner().ToList();
-                _datumCache.Clear();
-
-                AllaAnställda.Clear();
-                foreach (var anställd in _controller.HämtaAllaAnställda())
-                    AllaAnställda.Add(anställd);
-
-                Instruktörer.Clear();
-                foreach (var instruktör in _controller.HämtaInstruktörer())
-                    Instruktörer.Add(instruktör);
-
-                FiltreraLektioner();
-            }
-            catch (Exception ex)
-            {
-                MessageBox.Show("Kunde inte hämta skidlektioner:\n" +
-                                (ex.InnerException?.Message ?? ex.Message));
-            }
+            return ValdSkidlektion != null &&
+                   NyInstruktör != null &&
+                   NyInstruktör.AnställningsNummer != ValdSkidlektion.AnställningsNummer;
         }
 
-        private void FiltreraLektioner()
+        private void UppdateraInstruktör(object obj)
         {
-            IEnumerable<Entitetslager.Skidlektion> resultat;
-            string text = Söktext.Trim();
-            bool ärDatumSökning = TryTolkaDatum(text, out DateTime sökDatum);
+            if (ValdSkidlektion == null || NyInstruktör == null) return;
 
-            if (ärDatumSökning)
+            var vald = ValdSkidlektion;
+            var nyInstruktör = NyInstruktör;
+
+            if (_skidlektionController.HarOverlappandeLektion(vald.SkidlektionNummer, nyInstruktör.AnställningsNummer))
             {
-                resultat = HämtaLektionerFörDatum(sökDatum);
+                MessageBox.Show("Den valda anställda har redan en annan lektion som överlappar i tid.",
+                                "Kan inte byta instruktör", MessageBoxButton.OK, MessageBoxImage.Warning);
+                return;
+            }
+
+            bool lyckades = _skidlektionController.UppdateraInstruktor(vald.SkidlektionNummer, nyInstruktör.AnställningsNummer);
+
+            if (lyckades)
+            {
+                int index = SkidlektionsLista.IndexOf(vald);
+                if (index >= 0)
+                {
+                    SkidlektionsLista[index] = vald;
+                }
+
+                ValdSkidlektion = vald;
+
+                MessageBox.Show($"Instruktör för lektion {vald.SkidlektionNummer} uppdaterades till: {nyInstruktör.Förnamn} {nyInstruktör.Efternamn}",
+                                "Instruktör uppdaterad", MessageBoxButton.OK, MessageBoxImage.Information);
             }
             else
             {
-                resultat = _alla;
-
-                if (!string.IsNullOrWhiteSpace(text))
-                {
-                    string sök = text.ToLower();
-
-                    resultat = resultat.Where(l =>
-                        DatumTexter(l.Datum).Any(d => d.Contains(sök)) ||
-                        (l.artikelTyp?.TypNamn?.ToLower().Contains(sök) ?? false) ||
-                        (l.Status?.ToLower().Contains(sök) ?? false));
-                }
+                MessageBox.Show("Det gick inte att uppdatera instruktören för den valda lektionen.",
+                                "Fel", MessageBoxButton.OK, MessageBoxImage.Error);
             }
-
-            if (ValdInstruktör != null)
-            {
-                resultat = resultat.Where(l =>
-                    l.AnställningsNummer == ValdInstruktör.AnställningsNummer);
-            }
-
-            VisadeLektioner.Clear();
-            foreach (var lektion in resultat)
-                VisadeLektioner.Add(lektion);
-
-            InfoText = ärDatumSökning
-                ? $"Visar {VisadeLektioner.Count} lektioner för {sökDatum:yyyy-MM-dd}"
-                : $"Visar {VisadeLektioner.Count} lektioner (kommande två veckor)";
-        }
-
-        private IEnumerable<Entitetslager.Skidlektion> HämtaLektionerFörDatum(DateTime datum)
-        {
-            datum = datum.Date;
-
-            if (_alla.Any(l => l.Datum.Date == datum))
-                return _alla.Where(l => l.Datum.Date == datum);
-
-            if (_datumCache.TryGetValue(datum, out var cachade))
-                return cachade;
-
-            try
-            {
-                var lektioner = _controller.HämtaSkidlektionerFörDatum(datum).ToList();
-                _datumCache[datum] = lektioner;
-                return lektioner;
-            }
-            catch (Exception ex)
-            {
-                MessageBox.Show("Kunde inte hämta skidlektioner:\n" +
-                                (ex.InnerException?.Message ?? ex.Message));
-                return Enumerable.Empty<Entitetslager.Skidlektion>();
-            }
-        }
-
-        private static bool TryTolkaDatum(string text, out DateTime datum)
-        {
-            return DateTime.TryParseExact(
-                text, DatumFormat, CultureInfo.InvariantCulture,
-                DateTimeStyles.None, out datum);
-        }
-
-        private static IEnumerable<string> DatumTexter(DateTime datum)
-        {
-            var sv = new CultureInfo("sv-SE");
-
-            yield return datum.ToString("yyyy-MM-dd");
-            yield return datum.ToString("dd/MM/yyyy");
-            yield return datum.ToString("d/M");
-            yield return datum.ToString("dddd", sv).ToLower();
-            yield return datum.ToString("MMMM", sv).ToLower();
-        }
-
-        private bool KanSparaInstruktör()
-        {
-            return ValdLektion != null &&
-                   NyInstruktör != null &&
-                   NyInstruktör.AnställningsNummer != ValdLektion.AnställningsNummer;
-        }
-
-        
-        private void SparaInstruktör(object? obj)
-        {
-            if (ValdLektion == null || NyInstruktör == null)
-                return;
-
-            int lektionNummer = ValdLektion.SkidlektionNummer;
-            string namn = $"{NyInstruktör.Förnamn} {NyInstruktör.Efternamn}";
-
-            try
-            {
-                string? fel = _controller.ÄndraInstruktör(lektionNummer, NyInstruktör.AnställningsNummer);
-
-                if (fel != null)
-                {
-                    MessageBox.Show(fel, "Kan inte byta instruktör",
-                                    MessageBoxButton.OK, MessageBoxImage.Warning);
-                    return;
-                }
-
-                FiltreraLektioner();
-
-                MessageBox.Show($"Lektion {lektionNummer} har nu {namn} som instruktör.",
-                                "Sparat", MessageBoxButton.OK, MessageBoxImage.Information);
-            }
-            catch (Exception ex)
-            {
-                MessageBox.Show("Kunde inte spara ändringen:\n" +
-                                (ex.InnerException?.Message ?? ex.Message));
-            }
-        }
-
-        private void RensaFilter(object? obj)
-        {
-            _valdInstruktör = null;
-            _söktext = string.Empty;
-
-            OnPropertyChanged(nameof(ValdInstruktör));
-            OnPropertyChanged(nameof(Söktext));
-
-            FiltreraLektioner();
         }
 
         public event PropertyChangedEventHandler? PropertyChanged;
-
         protected void OnPropertyChanged([CallerMemberName] string? propertyName = null)
         {
             PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(propertyName));
@@ -296,8 +248,5 @@ namespace Presentationslager.ViewModel
                 nuvarandeFonster.Close();
             }
         }
-
-
-
     }
 }

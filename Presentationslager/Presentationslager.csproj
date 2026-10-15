@@ -13,6 +13,7 @@
     <None Remove="Fonts\Poppins-SemiBold.ttf" />
     <None Remove="Logotyp Ski-center.png" />
     <None Remove="Meny-header-2.jpg" />
+    <None Remove="Utrustning-ikon.png" />
   </ItemGroup>
 
   <ItemGroup>
@@ -34,6 +35,7 @@
     </Resource>
     <Resource Include="Logotyp Ski-center.png" />
     <Resource Include="Meny-header-2.jpg" />
+    <Resource Include="Utrustning-ikon.png" />
   </ItemGroup>
 
 </Project>
