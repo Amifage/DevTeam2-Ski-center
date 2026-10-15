@@ -12,7 +12,7 @@ namespace Servicelager
 {
     public class PrisController
     {
-        public List<Pris> HämtaPriserFörArtikelTyp(int artikelTypNummer)
+        public List<Pris> HamtaPriserForArtikelTyp(int artikelTypNummer)
         {
             using var unitOfWork = new UnitOfWork(new SkiContext());
 
@@ -22,9 +22,9 @@ namespace Servicelager
                 .ToList();
         }
 
-        public Pris? HämtaAktuelltPris(int artikelTypNummer, DateTime startDatum, DateTime slutDatum)
+        public Pris? HamtaAktuelltPris(int artikelTypNummer, DateTime startDatum, DateTime slutDatum)
         {
-            var priser = HämtaPriserFörArtikelTyp(artikelTypNummer);
+            var priser = HamtaPriserForArtikelTyp(artikelTypNummer);
 
             int antalDagar = (slutDatum.Date - startDatum.Date).Days;
 
@@ -36,14 +36,14 @@ namespace Servicelager
         }
 
 
-        public decimal? BeräknaPrisFörPeriod(int artikelTypNummer, DateTime startDatum, DateTime slutDatum)
+        public decimal? BeraknaPrisForPeriod(int artikelTypNummer, DateTime startDatum, DateTime slutDatum)
         {
             int antalDagar = (slutDatum.Date - startDatum.Date).Days;
 
             if (antalDagar <= 0)
                 return null;
 
-            List<Pris> priser = HämtaPriserFörArtikelTyp(artikelTypNummer)
+            List<Pris> priser = HamtaPriserForArtikelTyp(artikelTypNummer)
                 .Where(p => p.AntalDagar.HasValue && p.AntalDagar.Value > 0)
                 .ToList();
 
@@ -77,9 +77,7 @@ namespace Servicelager
         }
 
         //Pris för skidlektioner/Sara
-        public Pris? HämtaPrisFörSkidlektion(
-            int artikelTypNummer,
-            DateTime datum)
+        public Pris? HamtaPrisForSkidlektion(int artikelTypNummer, DateTime datum)
         {
             int veckodag = datum.DayOfWeek switch
             {
