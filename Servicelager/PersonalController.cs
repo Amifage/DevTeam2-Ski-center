@@ -12,6 +12,8 @@ namespace Servicelager
             "d/M/yyyy", "dd.MM.yyyy", "d.M.yyyy"
         };
 
+        private static readonly string[] ExkluderadeRoller = { "marknad", "administrat" };
+
         private readonly UnitOfWork _unitOfWork;
 
         public PersonalController()
@@ -113,6 +115,7 @@ namespace Servicelager
         {
             return _unitOfWork.PersonalRepository
                 .GetAll()
+                .Where(ArOrdinarieAnstalld)
                 .OrderBy(p => p.Förnamn)
                 .ThenBy(p => p.Efternamn)
                 .ToList();
@@ -143,7 +146,11 @@ namespace Servicelager
                 .Find(s => s.SkidlektionNummer == skidlektionNummer)
                 .FirstOrDefault();
 
-            if (lektion == null)
+            Personal? nyInstruktor = _unitOfWork.PersonalRepository
+                .Find(p => p.AnställningsNummer == nyttAnstallningsNummer)
+                .FirstOrDefault();
+
+            if (lektion == null || nyInstruktor == null || !ArOrdinarieAnstalld(nyInstruktor))
                 return false;
 
             int? gammaltNummer = lektion.AnställningsNummer;
@@ -162,6 +169,12 @@ namespace Servicelager
                 lektion.SenastUppdaterad = gammalUppdatering;
                 return false;
             }
+        }
+
+        private static bool ArOrdinarieAnstalld(Personal personal)
+        {
+            return personal.Roll == null ||
+                   !ExkluderadeRoller.Any(r => personal.Roll.Contains(r, StringComparison.OrdinalIgnoreCase));
         }
     }
 }

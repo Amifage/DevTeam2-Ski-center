@@ -153,7 +153,6 @@ namespace Presentationslager.ViewModel
 
             var vald = ValdUtrustning;
 
-            // Om statusen är "Trasig" blir ny status "Tillgänglig", annars "Trasig"
             string nyStatus = (vald.Status != null && vald.Status.Equals("Trasig", StringComparison.OrdinalIgnoreCase))
                 ? "Tillgänglig"
                 : "Trasig";
