@@ -323,14 +323,7 @@ namespace Presentationslager.ViewModel
                                     "Information saknas", MessageBoxButton.OK, MessageBoxImage.Warning);
                     return false;
                 }
-            }
-
-            if (!NyTelefon.All(char.IsDigit))
-            {
-                MessageBox.Show("Telefonnumret får endast innehålla siffror.",
-                                "Felaktigt format", MessageBoxButton.OK, MessageBoxImage.Warning);
-                return false;
-            }
+            }        
 
             return true;
         }
