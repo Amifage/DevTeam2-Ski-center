@@ -26,6 +26,7 @@ namespace Presentationslager.ViewModel
         public ICommand RensaFormularCommand { get; set; }
 
 
+
         public KundregisterViewModel()
         {
             _kundController = new KundController();
@@ -41,7 +42,7 @@ namespace Presentationslager.ViewModel
             UppdateraKundCommand = new RelayCommand(UppdateraKund, CanUppdateraKund);
             TaBortKundCommand = new RelayCommand(TaBortKund, CanUppdateraKund);
 
-            NyKredit = 12000;
+            //NyKredit = 12000;
         }
         public string NyEpost { get; set; }
         public string NyTelefon { get; set; }
@@ -355,6 +356,8 @@ namespace Presentationslager.ViewModel
                                 MessageBoxImage.Information);
             }
         }
+
+      
         #endregion  
     }
 }
