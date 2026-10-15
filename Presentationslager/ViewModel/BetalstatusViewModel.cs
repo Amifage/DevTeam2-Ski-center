@@ -22,7 +22,7 @@ namespace Presentationslager.ViewModel
         public ICommand SokCommand { get; set; }
         public ICommand RensaCommand { get; set; }
 
-        public ICommand UppdateraStatusCommand { get; set; }
+        public ICommand UppdateraStatusCommand { get; }
 
         private List<Faktura> _allaFakturor;
 
@@ -66,7 +66,7 @@ namespace Presentationslager.ViewModel
             TillbakaCommand = new RelayCommand(TillbakaTillMeny);
             SokCommand = new RelayCommand(SokFakturor);
             RensaCommand = new RelayCommand(RensaSokning);
-            UppdateraStatusCommand = new RelayCommand(UppdateraStatus);
+            UppdateraStatusCommand = new RelayCommand(UppdateraStatus, CanUppdateraStatus);
 
             LaddaData();
         }
@@ -110,6 +110,7 @@ namespace Presentationslager.ViewModel
             ValdStatus = "Alla";
 
             FakturaLista = new ObservableCollection<Faktura>(_allaFakturor);
+            ValdFaktura = null;
         }
 
         private void TillbakaTillMeny(object obj)
@@ -122,8 +123,14 @@ namespace Presentationslager.ViewModel
                 nuvarandeFonster.Close();
             }
         }
-        private void UppdateraStatus(object obj)
+
+        private bool CanUppdateraStatus(object obj)
         {
+            return ValdFaktura != null;
+        }
+        private void UppdateraStatus(object obj)
+        {           
+
             if (ValdFaktura != null)
             {
                 if (ValdFaktura.Status == "Obetald")
@@ -142,8 +149,8 @@ namespace Presentationslager.ViewModel
                                 MessageBoxButton.OK,
                                 MessageBoxImage.Information);
 
-                SokFakturor(null);
-                
+                LaddaData();
+
             }
             else
             {
@@ -151,7 +158,9 @@ namespace Presentationslager.ViewModel
                                 "Ingen faktura vald",
                                 MessageBoxButton.OK,
                                 MessageBoxImage.Warning);
+               
             }
+            
         }
 
         protected void OnPropertyChanged([CallerMemberName] string name = null)
