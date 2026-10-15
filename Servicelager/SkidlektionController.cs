@@ -1,10 +1,17 @@
-﻿using Datalager;
+﻿using System.Globalization;
+using Datalager;
 using Entitetslager;
 
 namespace Servicelager
 {
     public class SkidlektionController
     {
+        private static readonly string[] DatumFormat =
+        {
+            "yyyy-MM-dd", "yyyy/MM/dd", "yyyyMMdd",
+            "d/M/yyyy", "dd.MM.yyyy", "d.M.yyyy"
+        };
+
         private readonly UnitOfWork _unitOfWork;
 
         public SkidlektionController()
@@ -13,8 +20,7 @@ namespace Servicelager
             _unitOfWork = new UnitOfWork(dbContext);
         }
 
-        // Lektioner de kommande två veckorna (idag + 14 dagar), sorterade på datum och starttid
-        public IEnumerable<Skidlektion> HämtaAktuellaSkidlektioner()
+        public List<Skidlektion> HamtaAktuellaSkidlektioner()
         {
             DateTime från = DateTime.Today;
             DateTime till = från.AddDays(14);
@@ -26,8 +32,7 @@ namespace Servicelager
                 .ToList();
         }
 
-        // Alla lektioner för ett enskilt datum (oavsett hur långt fram det ligger)
-        public IEnumerable<Skidlektion> HämtaSkidlektionerFörDatum(DateTime datum)
+        public List<Skidlektion> HamtaSkidlektionerForDatum(DateTime datum)
         {
             DateTime från = datum.Date;
             DateTime till = från.AddDays(1);
@@ -38,8 +43,58 @@ namespace Servicelager
                 .ToList();
         }
 
-        // Anställda som har minst en skidlektion (används i filtret)
-        public IEnumerable<Personal> HämtaInstruktörer()
+        public List<Skidlektion> SokSkidlektioner(string datum, string status, string artikelTypNamn, int? anstallningsNummer)
+        {
+            List<Skidlektion> resultat;
+            string datumText = datum?.Trim() ?? string.Empty;
+
+            if (DateTime.TryParseExact(datumText, DatumFormat, CultureInfo.InvariantCulture,
+                                       DateTimeStyles.None, out DateTime sokDatum))
+            {
+                resultat = HamtaSkidlektionerForDatum(sokDatum);
+            }
+            else
+            {
+                resultat = HamtaAktuellaSkidlektioner();
+
+                if (datumText != string.Empty)
+                {
+                    resultat = resultat.Where(s =>
+                        s.Datum.ToString("yyyy-MM-dd", CultureInfo.InvariantCulture).Contains(datumText)).ToList();
+                }
+            }
+
+            if (!string.IsNullOrWhiteSpace(status))
+            {
+                resultat = resultat.Where(s => s.Status != null &&
+                    s.Status.IndexOf(status, StringComparison.OrdinalIgnoreCase) >= 0).ToList();
+            }
+
+            if (!string.IsNullOrWhiteSpace(artikelTypNamn))
+            {
+                var matchandeArtikelTypNummer = _unitOfWork.ArtikelTypRepository.GetAll()
+                    .Where(at => at.TypNamn != null && at.TypNamn.Equals(artikelTypNamn, StringComparison.OrdinalIgnoreCase))
+                    .Select(at => at.ArtikelTypNummer)
+                    .ToList();
+
+                resultat = resultat.Where(s => s.ArtikelTypNummer.HasValue &&
+                    matchandeArtikelTypNummer.Contains(s.ArtikelTypNummer.Value)).ToList();
+            }
+
+            if (anstallningsNummer.HasValue)
+            {
+                resultat = resultat.Where(s => s.AnställningsNummer == anstallningsNummer.Value).ToList();
+            }
+
+            return resultat;
+        }
+
+        public List<ArtikelTyp> HamtaAllaArtikelTyper()
+        {
+            return _unitOfWork.ArtikelTypRepository.GetAll().ToList();
+        }
+
+        public List<Personal> HamtaInstruktorer()
         {
             var anställningsNummer = _unitOfWork.SkidlektionRepository
                 .GetAll()
@@ -54,8 +109,7 @@ namespace Servicelager
                 .ToList();
         }
 
-        // NYTT: alla anställda (används i rullistan när man byter instruktör)
-        public IEnumerable<Personal> HämtaAllaAnställda()
+        public List<Personal> HamtaAllaAnstallda()
         {
             return _unitOfWork.PersonalRepository
                 .GetAll()
@@ -64,55 +118,53 @@ namespace Servicelager
                 .ToList();
         }
 
-        // NYTT: byter instruktör på en lektion.
-        // Returnerar null om det gick bra, annars ett felmeddelande att visa för användaren.
-        public string? ÄndraInstruktör(int skidlektionNummer, int nyttAnställningsNummer)
+        public bool HarOverlappandeLektion(int skidlektionNummer, int anstallningsNummer)
         {
             Skidlektion? lektion = _unitOfWork.SkidlektionRepository
                 .Find(s => s.SkidlektionNummer == skidlektionNummer)
                 .FirstOrDefault();
 
             if (lektion == null)
-                return "Lektionen finns inte längre.";
+                return false;
 
-            if (lektion.AnställningsNummer == nyttAnställningsNummer)
-                return "Den anställda har redan den här lektionen.";
-
-            // Kontrollera att den nya instruktören inte har en annan lektion som överlappar i tid
             DateTime dag = lektion.Datum.Date;
             DateTime nästaDag = dag.AddDays(1);
 
-            bool upptagen = _unitOfWork.SkidlektionRepository
-                .Find(s => s.AnställningsNummer == nyttAnställningsNummer &&
+            return _unitOfWork.SkidlektionRepository
+                .Find(s => s.AnställningsNummer == anstallningsNummer &&
                            s.SkidlektionNummer != skidlektionNummer &&
                            s.Datum >= dag && s.Datum < nästaDag)
                 .Any(s => s.StartTid < lektion.SlutTid && s.SlutTid > lektion.StartTid);
+        }
 
-            if (upptagen)
-                return "Den anställda har redan en annan lektion som överlappar i tid.";
+        public bool UppdateraInstruktor(int skidlektionNummer, int nyttAnstallningsNummer)
+        {
+            Skidlektion? lektion = _unitOfWork.SkidlektionRepository
+                .Find(s => s.SkidlektionNummer == skidlektionNummer)
+                .FirstOrDefault();
+
+            if (lektion == null)
+                return false;
 
             int? gammaltNummer = lektion.AnställningsNummer;
             DateTime gammalUppdatering = lektion.SenastUppdaterad;
 
             try
             {
-                // Lektionen är redan spårad av EF, så Update() behövs inte (och skulle markera
-                // även relaterade objekt som ändrade). Det räcker att ändra och spara.
-                lektion.AnställningsNummer = nyttAnställningsNummer;
+                lektion.AnställningsNummer = nyttAnstallningsNummer;
                 lektion.SenastUppdaterad = DateTime.Now;
                 _unitOfWork.Save();
-                return null;
+                return true;
             }
             catch
             {
-                // Ångra ändringen i minnet så att listan inte visar något som inte sparats
                 lektion.AnställningsNummer = gammaltNummer;
                 lektion.SenastUppdaterad = gammalUppdatering;
-                throw;
+                return false;
             }
         }
 
-        // Används i bokning/Sara
+        //Används i bokning/Sara
         public int HämtaAntalLedigaPlatser(int skidlektionNummer)
         {
             Skidlektion? skidlektion = _unitOfWork.SkidlektionRepository
@@ -129,7 +181,7 @@ namespace Servicelager
             return Math.Max(0, skidlektion.Kapacitet - bokadePlatser);
         }
 
-        // Används i bokning/Sara
+        //Används i bokning/Sara
         public List<Skidlektion> HämtaTillgängligaSkidlektioner(DateTime datum)
         {
             var skidlektioner = _unitOfWork.SkidlektionRepository
@@ -161,7 +213,6 @@ namespace Servicelager
                 .ToList();
         }
 
-        // Bokningsnummer för bokningar som är avbokade
         private HashSet<int> HämtaAvbokadeBokningsNummer()
         {
             return _unitOfWork.BokningRepository
@@ -171,7 +222,6 @@ namespace Servicelager
                 .ToHashSet();
         }
 
-        // Lektionsrader som räknas som bokade (ingen bokning kopplad, eller bokningen är inte avbokad)
         private List<SkidlektionRad> HämtaAktivaRader()
         {
             var avbokade = HämtaAvbokadeBokningsNummer();
