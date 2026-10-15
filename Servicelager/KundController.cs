@@ -8,7 +8,7 @@ using Datalager;
 
 namespace Servicelager
 {
-public class KundController
+    public class KundController
     {
         public void SkapaKund (Kund kund) 
         {
@@ -49,7 +49,7 @@ public class KundController
             foreach (var kund in allaKunder)
             {
                 bool harNyligBokning = kund.Bokningar != null &&
-                                       kund.Bokningar.Any(b => b.BokningsDatum >= gransDatum);
+                                        kund.Bokningar.Any(b => b.BokningsDatum >= gransDatum);
 
                 if (harNyligBokning && kund.Rabatt != 8)
                 {
@@ -60,6 +60,57 @@ public class KundController
 
             _unitofwork.Save();
         }
+
+        public void MinskaKredit(int kundNummer, decimal belopp)
+        {
+            using var _unitofwork = new UnitOfWork(new SkiContext());
+
+            Kund? kund = _unitofwork.KundRepository
+                .GetAll()
+                .FirstOrDefault(k => k.KundNummer == kundNummer);
+
+            if (kund == null)
+                return;
+
+            if (kund is PrivatKund privatKund)
+            {
+                privatKund.Kredit -= belopp;
+                _unitofwork.KundRepository.Update(privatKund);
+            }
+            else if (kund is FöretagsKund företagsKund)
+            {
+                företagsKund.Kredit -= belopp;
+                _unitofwork.KundRepository.Update(företagsKund);
+            }
+
+            _unitofwork.Save();
+        }
+
+        public void OkaKredit(int kundNummer, decimal belopp)
+        {
+            using var _unitofwork = new UnitOfWork(new SkiContext());
+
+            Kund? kund = _unitofwork.KundRepository
+                .GetAll()
+                .FirstOrDefault(k => k.KundNummer == kundNummer);
+
+            if (kund == null)
+                return;
+
+            if (kund is PrivatKund privatKund)
+            {
+                privatKund.Kredit += belopp;
+                _unitofwork.KundRepository.Update(privatKund);
+            }
+            else if (kund is FöretagsKund företagsKund)
+            {
+                företagsKund.Kredit += belopp;
+                _unitofwork.KundRepository.Update(företagsKund);
+            }
+
+            _unitofwork.Save();
+        }
+
 
     }
 }
