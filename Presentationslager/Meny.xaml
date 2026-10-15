@@ -26,7 +26,7 @@
 
         <UniformGrid Grid.Row="1" Columns="4" Rows="2" HorizontalAlignment="Center" VerticalAlignment="Center">
 
-            <Button Margin="10" Width="160" Height="100" Command="{Binding ÖppnaBokningCommand}" CommandParameter="{Binding RelativeSource={RelativeSource AncestorType=Window}}">
+            <Button Margin="10" Width="160" Height="100" Command="{Binding OppnaBokningCommand}" CommandParameter="{Binding RelativeSource={RelativeSource AncestorType=Window}}">
                 <StackPanel HorizontalAlignment="Center" VerticalAlignment="Center">
                     <TextBlock Text="📅" FontSize="28" HorizontalAlignment="Center" Margin="0,0,0,5"/>
                     <TextBlock Text="Skapa bokning" HorizontalAlignment="Center"/>
