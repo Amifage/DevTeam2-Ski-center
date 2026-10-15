@@ -121,7 +121,7 @@ namespace Presentationslager.ViewModel
         {
             KundController kundController = new KundController();
 
-            Kunder = new ObservableCollection<Kund>(kundController.HämtaAllaKunder());
+            Kunder = new ObservableCollection<Kund>(kundController.HamtaAllaKunder());
             AntalPersonerAlternativ = new ObservableCollection<int>(Enumerable.Range(1, 50));
 
             #region Logi
@@ -446,8 +446,8 @@ namespace Presentationslager.ViewModel
             LogiController logiController = new LogiController();
             UtrustningController utrustningController = new UtrustningController();
 
-            var allaLogi = logiController.HämtaAllaLogi();
-            var upptagnaLogi = logiController.HämtaUpptagnaLogi(StartDatum.Value, SlutDatum.Value);
+            var allaLogi = logiController.HamtaAllaLogi();
+            var upptagnaLogi = logiController.HamtaUpptagnaLogi(StartDatum.Value, SlutDatum.Value);
 
             IEnumerable<Logi> ledigaLogi = allaLogi
                 .Where(l => !upptagnaLogi.Contains(l.LogiNummer))
@@ -547,7 +547,7 @@ namespace Presentationslager.ViewModel
             LogiController logiController = new LogiController();
 
             Logi? logiAvValdTyp = logiController
-                .HämtaAllaLogi()
+                .HamtaAllaLogi()
                 .FirstOrDefault(l => l.ArtikelTypNummer == ValdLogiArtikelTyp.ArtikelTypNummer);
 
             if (logiAvValdTyp == null)
@@ -633,8 +633,8 @@ namespace Presentationslager.ViewModel
 
             LogiController logiController = new LogiController();
 
-            var allaLogi = logiController.HämtaAllaLogi();
-            var upptagnaLogi = logiController.HämtaUpptagnaLogi(StartDatum!.Value, SlutDatum!.Value);
+            var allaLogi = logiController.HamtaAllaLogi();
+            var upptagnaLogi = logiController.HamtaUpptagnaLogi(StartDatum!.Value, SlutDatum!.Value);
 
             Logi? valtFysisktLogi = allaLogi
                 .Where(l => l.ArtikelTypNummer == ValdLogiArtikelTyp.ArtikelTypNummer)
