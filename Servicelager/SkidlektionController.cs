@@ -1,17 +1,10 @@
-﻿using System.Globalization;
-using Datalager;
+﻿using Datalager;
 using Entitetslager;
 
 namespace Servicelager
 {
     public class SkidlektionController
     {
-        private static readonly string[] DatumFormat =
-        {
-            "yyyy-MM-dd", "yyyy/MM/dd", "yyyyMMdd",
-            "d/M/yyyy", "dd.MM.yyyy", "d.M.yyyy"
-        };
-
         private readonly UnitOfWork _unitOfWork;
 
         public SkidlektionController()
