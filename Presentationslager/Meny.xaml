@@ -11,9 +11,7 @@
             <RowDefinition Height="Auto"/>
         </Grid.RowDefinitions>
 
-        <!-- Header med bild och text -->
         <StackPanel Grid.Row="0" HorizontalAlignment="Center" Margin="0,10,0,30">
-            <!-- Bilden hamnar här ovanför texten och knapparna -->
             <Image Source="Meny-header-2.jpg" 
                    Height="200" 
                    Width="800"
@@ -26,7 +24,6 @@
                        HorizontalAlignment="Center"/>
         </StackPanel>
 
-        <!-- Menyknappar -->
         <UniformGrid Grid.Row="1" Columns="4" Rows="2" HorizontalAlignment="Center" VerticalAlignment="Center">
 
             <Button Margin="10" Width="160" Height="100" Command="{Binding ÖppnaBokningCommand}" CommandParameter="{Binding RelativeSource={RelativeSource AncestorType=Window}}">
@@ -36,28 +33,28 @@
                 </StackPanel>
             </Button>
 
-            <Button Margin="10" Width="160" Height="100" Command="{Binding ÖppnaLogiCommand}" CommandParameter="{Binding RelativeSource={RelativeSource AncestorType=Window}}">
+            <Button Margin="10" Width="160" Height="100" Command="{Binding OppnaLogiCommand}" CommandParameter="{Binding RelativeSource={RelativeSource AncestorType=Window}}">
                 <StackPanel HorizontalAlignment="Center" VerticalAlignment="Center">
                     <TextBlock Text="🛏️" FontSize="28" HorizontalAlignment="Center" Margin="0,0,0,5"/>
                     <TextBlock Text="Logi" HorizontalAlignment="Center"/>
                 </StackPanel>
             </Button>
 
-            <Button Margin="10" Width="160" Height="100" Command="{Binding ÖppnaKonferenscommand}" CommandParameter="{Binding RelativeSource={RelativeSource AncestorType=Window}}" >
+            <Button Margin="10" Width="160" Height="100" Command="{Binding OppnaKonferenscommand}" CommandParameter="{Binding RelativeSource={RelativeSource AncestorType=Window}}" >
                 <StackPanel HorizontalAlignment="Center" VerticalAlignment="Center">
                     <TextBlock Text="💼" FontSize="28" HorizontalAlignment="Center" Margin="0,0,0,5"/>
                     <TextBlock Text="Konferens" HorizontalAlignment="Center"/>
                 </StackPanel>
             </Button>
 
-            <Button Margin="10" Width="160" Height="100" Command="{Binding ÖppnaSkidlektionerCommand}" CommandParameter="{Binding RelativeSource={RelativeSource AncestorType=Window}}">
+            <Button Margin="10" Width="160" Height="100" Command="{Binding OppnaSkidlektionerCommand}" CommandParameter="{Binding RelativeSource={RelativeSource AncestorType=Window}}">
                 <StackPanel HorizontalAlignment="Center" VerticalAlignment="Center">
                     <TextBlock Text="⛷️" FontSize="28" HorizontalAlignment="Center" Margin="0,0,0,5"/>
                     <TextBlock Text="Skidlektion" HorizontalAlignment="Center"/>
                 </StackPanel>
             </Button>
 
-            <Button Margin="10" Width="160" Height="100" Command="{Binding ÖppnaUtrustningCommand}" CommandParameter="{Binding RelativeSource={RelativeSource AncestorType=Window}}" >
+            <Button Margin="10" Width="160" Height="100" Command="{Binding OppnaUtrustningCommand}" CommandParameter="{Binding RelativeSource={RelativeSource AncestorType=Window}}" >
                 <StackPanel HorizontalAlignment="Center" VerticalAlignment="Center">
                     <TextBlock Text="🎿" FontSize="28" HorizontalAlignment="Center" Margin="0,0,0,5"/>
                     <TextBlock Text="Utrustning" HorizontalAlignment="Center"/>
@@ -71,14 +68,14 @@
                 </StackPanel>
             </Button>
 
-            <Button Margin="10" Width="160" Height="100" Command="{Binding ÖppnaKundregisterCommand}" CommandParameter="{Binding RelativeSource={RelativeSource AncestorType=Window}}" >
+            <Button Margin="10" Width="160" Height="100" Command="{Binding OppnaKundregisterCommand}" CommandParameter="{Binding RelativeSource={RelativeSource AncestorType=Window}}" >
                 <StackPanel HorizontalAlignment="Center" VerticalAlignment="Center">
                     <TextBlock Text="👥" FontSize="28" HorizontalAlignment="Center" Margin="0,0,0,5"/>
                     <TextBlock Text="Kundregister" HorizontalAlignment="Center"/>
                 </StackPanel>
             </Button>
 
-            <Button Margin="10" Width="160" Height="100" Command="{Binding ÖppnaBetalstatusCommand}" CommandParameter="{Binding RelativeSource={RelativeSource AncestorType=Window}}">
+            <Button Margin="10" Width="160" Height="100" Command="{Binding OppnaBetalstatusCommand}" CommandParameter="{Binding RelativeSource={RelativeSource AncestorType=Window}}">
                 <StackPanel HorizontalAlignment="Center" VerticalAlignment="Center">
                     <TextBlock Text="💳" FontSize="28" HorizontalAlignment="Center" Margin="0,0,0,5"/>
                     <TextBlock Text="Betalstatus" HorizontalAlignment="Center"/>

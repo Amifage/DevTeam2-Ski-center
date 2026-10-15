@@ -29,24 +29,20 @@ namespace Servicelager
 
         public List<Utrustning> SokUtrustning(string utrustningNummer, string status, string artikelTypNamn)
         {
-            // 1. Hämta alla utrustningar till minnet
             var resultat = _unitOfWork.UtrustningRepository.GetAll().ToList();
 
-            // 2. Sökning i Utrustning på UtrustningNummer
             if (!string.IsNullOrWhiteSpace(utrustningNummer))
             {
                 resultat = resultat.Where(u => u.UtrustningNummer != null &&
                     u.UtrustningNummer.IndexOf(utrustningNummer, StringComparison.OrdinalIgnoreCase) >= 0).ToList();
             }
 
-            // 3. Sökning i Utrustning på Status
             if (!string.IsNullOrWhiteSpace(status))
             {
                 resultat = resultat.Where(u => u.Status != null &&
                     u.Status.IndexOf(status, StringComparison.OrdinalIgnoreCase) >= 0).ToList();
             }
 
-            // 4. Sökning i ArtikelTyp på TypNamn
             if (!string.IsNullOrWhiteSpace(artikelTypNamn))
             {
                 var matchandeArtikelTypNummer = _unitOfWork.ArtikelTypRepository.GetAll()

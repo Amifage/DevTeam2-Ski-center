@@ -29,7 +29,7 @@ namespace Presentationslager.ViewModel
         public KundregisterViewModel()
         {
             _kundController = new KundController();
-            Kunder = new ObservableCollection<Kund>(_kundController.HämtaAllaKunder());
+            Kunder = new ObservableCollection<Kund>(_kundController.HamtaAllaKunder());
 
             FiltreradeKunder = CollectionViewSource.GetDefaultView(Kunder);
             FiltreradeKunder.Filter = FiltreraKundLista;
@@ -54,14 +54,14 @@ namespace Presentationslager.ViewModel
         public string NyttFöretagsnamn { get; set; }
 
         #region Metoder
-        private string _sökText;
-        public string SökText
+        private string _sokText;
+        public string SokText
         {
-            get { return _sökText; }
+            get { return _sokText; }
             set
             {
-                _sökText = value;
-                OnPropertyChanged(nameof(SökText));
+                _sokText = value;
+                OnPropertyChanged(nameof(SokText));
                 FiltreradeKunder?.Refresh();
             }
         }
@@ -90,17 +90,17 @@ namespace Presentationslager.ViewModel
                     typMatchar = kund is FöretagsKund;
 
                 
-                bool sökMatchar = true;
-                if (!string.IsNullOrWhiteSpace(SökText))
+                bool sokMatchar = true;
+                if (!string.IsNullOrWhiteSpace(SokText))
                 {
-                    string sökning = SökText.ToLower();
-                    sökMatchar = (kund.VisningsNamn?.ToLower().Contains(sökning) == true) ||
-                                 (kund.Ort?.ToLower().Contains(sökning) == true) ||
-                                 (kund.Epost?.ToLower().Contains(sökning) == true) ||
-                                 (kund.KundNummer.ToString().Contains(sökning));
+                    string sokning = SokText.ToLower();
+                    sokMatchar = (kund.VisningsNamn?.ToLower().Contains(sokning) == true) ||
+                                 (kund.Ort?.ToLower().Contains(sokning) == true) ||
+                                 (kund.Epost?.ToLower().Contains(sokning) == true) ||
+                                 (kund.KundNummer.ToString().Contains(sokning));
                 }
 
-                return typMatchar && sökMatchar;
+                return typMatchar && sokMatchar;
             }
             return false;
         }
@@ -131,9 +131,7 @@ namespace Presentationslager.ViewModel
                 _valdKundTypIndex = value;
                 OnPropertyChanged(nameof(ValdKundTypIndex));
             }
-        }
-
-        
+        }      
 
         public event PropertyChangedEventHandler? PropertyChanged;
         private void OnPropertyChanged(string propertyName)
@@ -216,7 +214,7 @@ namespace Presentationslager.ViewModel
         private void UppdateraKundLista()
         {
             Kunder.Clear();
-            foreach (var kund in _kundController.HämtaAllaKunder())
+            foreach (var kund in _kundController.HamtaAllaKunder())
             {
                 Kunder.Add(kund);
             }
