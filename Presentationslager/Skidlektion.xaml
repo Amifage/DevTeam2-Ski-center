@@ -21,7 +21,7 @@
                    Margin="0,0,0,20"/>
         <Grid Height="55" Width="80" Margin="-170,-25,0,0" VerticalAlignment="Bottom">
             <Image Source="Skidlektion-ikon.jpg" 
-           Stretch="Uniform"/>
+                Stretch="Uniform" RenderOptions.BitmapScalingMode="HighQuality"/>
         </Grid>
 
         <Border Grid.Row="1" Background="{StaticResource Snövit}" CornerRadius="5" Padding="15" Margin="0,0,0,15">
@@ -89,7 +89,6 @@
                     <DataGridTextColumn Header="Slut" Binding="{Binding SlutTid, StringFormat=\{0:hh\\:mm\}}" Width="70"/>
                     <DataGridTextColumn Header="Status" Binding="{Binding Status}" Width="100"/>
                     <DataGridTextColumn Header="Kapacitet" Binding="{Binding Kapacitet}" Width="80"/>
-                    <DataGridTextColumn Header="Anst.nr" Binding="{Binding Personal.AnställningsNummer}" Width="80"/>
                     <DataGridTextColumn Header="Instruktör" Binding="{Binding Personal.Förnamn}" Width="*"/>
                 </DataGrid.Columns>
             </DataGrid>
