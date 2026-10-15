@@ -39,5 +39,27 @@ public class KundController
             _unitofwork.Save();
         }
 
+        public void UppdateraPrivatkundersRabatt()
+        {
+            using var _unitofwork = new UnitOfWork(new SkiContext());
+
+            var allaKunder = _unitofwork.KundRepository.GetAll().OfType<PrivatKund>().ToList();
+            var gransDatum = DateTime.Now.AddMonths(-12);
+
+            foreach (var kund in allaKunder)
+            {
+                bool harNyligBokning = kund.Bokningar != null &&
+                                       kund.Bokningar.Any(b => b.BokningsDatum >= gransDatum);
+
+                if (harNyligBokning && kund.Rabatt != 8)
+                {
+                    kund.Rabatt = 8;
+                    _unitofwork.KundRepository.Update(kund);
+                }
+            }
+
+            _unitofwork.Save();
+        }
+
     }
 }

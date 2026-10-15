@@ -31,6 +31,7 @@ namespace Presentationslager.ViewModel
             _kundController = new KundController();
             Kunder = new ObservableCollection<Kund>(_kundController.HamtaAllaKunder());
 
+            _kundController.UppdateraPrivatkundersRabatt();
             FiltreradeKunder = CollectionViewSource.GetDefaultView(Kunder);
             FiltreradeKunder.Filter = FiltreraKundLista;
 
