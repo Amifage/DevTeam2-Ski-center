@@ -65,6 +65,8 @@
                     <DataGridTextColumn Header="Anteckning" Binding="{Binding Anteckning}" Width="*"/>
                     <DataGridTextColumn Header="Faktutadatum" Binding="{Binding Fakturadatum, StringFormat=\{0:yyyy-MM-dd\}}" Width="110"/>
                     <DataGridTextColumn Header="Förfallodatum" Binding="{Binding Förfallodatum, StringFormat=\{0:yyyy-MM-dd\}}" Width="110"/>
+                    <DataGridTextColumn Header="Belopp" Binding="{Binding Belopp}" Width="*"/>
+
                 </DataGrid.Columns>
             </DataGrid>
         </Border>
