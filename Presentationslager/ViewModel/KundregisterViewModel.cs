@@ -245,8 +245,7 @@ namespace Presentationslager.ViewModel
                 ValdKundTypIndex = 0;
                 NyttFörnamn = privat.Förnamn;
                 NyttEfternamn = privat.Efternamn;
-                NyRabatt = privat.Rabatt;
-                NyKredit = privat.Kredit;
+              
             }
             else if (ValdKund is FöretagsKund foretag)
             {
@@ -278,8 +277,7 @@ namespace Presentationslager.ViewModel
             {
                 privat.Förnamn = NyttFörnamn;
                 privat.Efternamn = NyttEfternamn;
-                privat.Rabatt = NyRabatt;
-                privat.Kredit = NyKredit;
+            
             }
             else if (ValdKund is FöretagsKund foretag)
             {
