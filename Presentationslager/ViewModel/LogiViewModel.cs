@@ -114,7 +114,7 @@ namespace Presentationslager.ViewModel
                     }
                 }
 
-                var typer = logiController.HamtaLogiMedLogiNummer(); 
+                var typer = logiController.HamtaAllaArtikelTyper(); 
 
                 if (ArtikelTyper == null)
                 {
