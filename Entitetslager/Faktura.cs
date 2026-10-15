@@ -24,6 +24,8 @@ namespace Entitetslager
 
         public string? Anteckning { get; set; }
 
+        public decimal Belopp { get; set; }
+
 
         // Navigation property
         [ForeignKey("BokningsNummer")]
