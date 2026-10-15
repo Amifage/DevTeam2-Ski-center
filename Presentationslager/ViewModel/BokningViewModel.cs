@@ -635,8 +635,14 @@ namespace Presentationslager.ViewModel
 
             var allaLogi = logiController.HamtaAllaLogi();
             var upptagnaLogi = logiController.HamtaUpptagnaLogi(StartDatum!.Value, SlutDatum!.Value);
+           
+            IEnumerable<Logi> ledigaLogi = allaLogi
+                .Where(l => l.Status == "Tillgänglig")
+                .Where(l => !upptagnaLogi.Contains(l.LogiNummer))
+                .Where(l => !LogiRader.Any(r =>
+                    r.LogiNummer == l.LogiNummer));
 
-            Logi? valtFysisktLogi = allaLogi
+            Logi? valtFysisktLogi = ledigaLogi
                 .Where(l => l.ArtikelTypNummer == ValdLogiArtikelTyp.ArtikelTypNummer)
                 .Where(l => !upptagnaLogi.Contains(l.LogiNummer))
                 .Where(l => !LogiRader.Any(r => r.LogiNummer == l.LogiNummer))

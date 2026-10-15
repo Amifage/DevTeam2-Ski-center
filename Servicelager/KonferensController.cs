@@ -43,9 +43,11 @@ namespace Servicelager
                     .ToHashSet();
 
             return _unitOfWork.KonferensRepository
-                .GetAll()
-                .Where(k => !upptagnaKonferensNummer.Contains(k.KonferensNummer))
-                .ToList();
+                    .GetAll()
+                    .Where(k =>
+                        k.Status == "Tillgänglig" &&
+                        !upptagnaKonferensNummer.Contains(k.KonferensNummer))
+                    .ToList();
         }
 
         public List<Konferens> SokKonferens(string? sokNummer, string? sokStatus, string? sokStorlek)

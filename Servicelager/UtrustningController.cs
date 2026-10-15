@@ -156,16 +156,16 @@ namespace Servicelager
             return upptagna;
         }
 
-        public List<Utrustning> HamtaLedigaUtrustningar(
-            DateTime startDatum,
-            DateTime slutDatum)
+        public List<Utrustning> HamtaLedigaUtrustningar(DateTime startDatum, DateTime slutDatum)
         {
             HashSet<string> upptagna =
                 HamtaUpptagnaUtrustningsNummer(startDatum, slutDatum);
 
             return _unitOfWork.UtrustningRepository
                 .GetAll()
-                .Where(u => !upptagna.Contains(u.UtrustningNummer))
+                .Where(u => 
+                u.Status != "Trasig" && 
+                !upptagna.Contains(u.UtrustningNummer))
                 .ToList();
         }
     }
