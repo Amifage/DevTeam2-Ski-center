@@ -1,80 +1,64 @@
 ﻿using Entitetslager;
-using Presentationslager.Command;
-using System;
-using System.Collections.Generic;
-using System.Collections.ObjectModel;
-using System.ComponentModel;
-using System.Linq;
-using System.Runtime.CompilerServices;
-using System.Windows.Input;
 using Microsoft.Win32;
+using Presentationslager.Command;
 using QuestPDF.Fluent;
 using QuestPDF.Helpers;
 using QuestPDF.Infrastructure;
+using System;
+using System.Collections.Generic;
+using System.Collections.ObjectModel;
 using System.IO;
+using System.Linq;
 using System.Text.Json;
+using System.Windows.Input;
 
 namespace Presentationslager
 {
-    public class ÄndringsbekräftelseViewModel : INotifyPropertyChanged
+    public class ÄndringsbekräftelseViewModel
     {
+        public event Action? StängFönster;
         public int BokningsNummer { get; }
-
         public string KundText { get; }
+        public string ÄndringsdatumText { get; }
+        public decimal TidigareTotalBelopp { get; }
+        public bool HarAvbeställningsskydd { get; }
+        public decimal AnvändRabattProcent { get; }
+        public bool Delbetala { get; }
+        public DateTime BokningsDatum { get; }
 
         public string KundNamnText =>
-            KundText.Contains("|")
-                ? KundText.Split('|')[0]
-                : KundText;
+            KundText.Contains("|") ? KundText.Split('|')[0] : KundText;
 
         public string KundNummerText =>
-            KundText.Contains("|")
-                ? KundText.Split('|')[1]
-                : "";
+            KundText.Contains("|") ? KundText.Split('|')[1] : "";
 
-        public string ÄndringsdatumText { get; }
+        public string AvbeställningsskyddText =>
+            HarAvbeställningsskydd ? "Ja, 300 kr" : "Nej";
 
-        public ICommand ExporteraJsonCommand { get; }
-        public ICommand ExporteraPdfCommand { get; }
-        public ICommand StängCommand { get; }
-        public event Action? StängFönster;
+        public string RabattText =>
+            AnvändRabattProcent > 0
+                ? $"{AnvändRabattProcent:N0} % på logi"
+                : "Ingen";
 
         public ObservableCollection<LogiRad> LogiRader { get; }
-
         public ObservableCollection<UtrustningRad> UtrustningRader { get; }
-
         public ObservableCollection<KonferensRad> KonferensRader { get; }
-
         public ObservableCollection<SkidlektionRad> SkidlektionRader { get; }
 
-
-        public bool HarLogi =>
-            LogiRader.Any();
-
-        public bool HarUtrustning =>
-            UtrustningRader.Any();
-
-        public bool HarKonferens =>
-            KonferensRader.Any();
-
-        public bool HarSkidlektion =>
-            SkidlektionRader.Any();
-
-
-        public string TotalBeloppText =>
-            $"{LogiRader.Sum(x => x.LogiBelopp) +
-               UtrustningRader.Sum(x => x.UtrustningBelopp) +
-               KonferensRader.Sum(x => x.KonferensBelopp) +
-               SkidlektionRader.Sum(x => x.SkidlektionBelopp):N0} kr";
-
-        public decimal TidigareTotalBelopp { get; }
+        public bool HarLogi => LogiRader.Any();
+        public bool HarUtrustning => UtrustningRader.Any();
+        public bool HarKonferens => KonferensRader.Any();
+        public bool HarSkidlektion => SkidlektionRader.Any();
 
         public decimal NyTotalBelopp =>
-             LogiRader.Sum(x => x.LogiBelopp) +
-             UtrustningRader.Sum(x => x.UtrustningBelopp) +
-             KonferensRader.Sum(x => x.KonferensBelopp) +
-             SkidlektionRader.Sum(x => x.SkidlektionBelopp) +
-             (HarAvbeställningsskydd ? 300 : 0);
+            LogiRader.Sum(x => x.LogiBelopp) +
+            UtrustningRader.Sum(x => x.UtrustningBelopp) +
+            KonferensRader.Sum(x => x.KonferensBelopp) +
+            SkidlektionRader.Sum(x => x.SkidlektionBelopp) +
+            (HarAvbeställningsskydd ? 300m : 0m);
+
+        public string TotalBeloppText =>
+            $"{NyTotalBelopp:N0} kr";
 
         public decimal SkillnadBelopp =>
             NyTotalBelopp - TidigareTotalBelopp;
@@ -85,18 +69,15 @@ namespace Presentationslager
         public string NyTotalBeloppText =>
             $"{NyTotalBelopp:N0} kr";
 
-        public bool ÄrKreditering =>
-            SkillnadBelopp < 0;
-
-        public bool ÄrÖkning =>
-            SkillnadBelopp > 0;
+        public bool ÄrKreditering => SkillnadBelopp < 0;
+        public bool ÄrÖkning => SkillnadBelopp > 0;
 
         public string SkillnadText =>
-             SkillnadBelopp < 0
-                 ? $"{SkillnadBelopp:N0} kr"
-                 : SkillnadBelopp > 0
-                     ? $"+{SkillnadBelopp:N0} kr"
-                     : "";
+            SkillnadBelopp < 0
+                ? $"{SkillnadBelopp:N0} kr"
+                : SkillnadBelopp > 0
+                    ? $"+{SkillnadBelopp:N0} kr"
+                    : "";
 
         public string FörändringRubrik =>
             SkillnadBelopp < 0
@@ -105,79 +86,11 @@ namespace Presentationslager
                     ? "Ökning:"
                     : "Ingen prisförändring";
 
-        public bool HarAvbeställningsskydd { get; }
-
-        public string AvbeställningsskyddText =>
-            HarAvbeställningsskydd
-                ? "Ja, 300 kr"
-                : "Nej";
-
-        public decimal AnvändRabattProcent { get; }
-
-        public string RabattText =>
-            AnvändRabattProcent > 0
-                ? $"{AnvändRabattProcent:N0} % på logi"
-                : "Ingen";
-
         public decimal MomsBelopp =>
-             NyTotalBelopp * 12m / 112m;
+            NyTotalBelopp * 12m / 112m;
 
         public string MomsText =>
             $"{MomsBelopp:N2} kr";
-        public bool Delbetala { get; }
-
-        public DateTime BokningsDatum { get; }
-
-        public ÄndringsbekräftelseViewModel(
-                int bokningsNummer,
-                string kundText,
-                DateTime ändringsDatum,
-                DateTime bokningsDatum,
-                bool harAvbeställningsskydd,
-                bool delbetala,
-                decimal användRabattProcent,
-                decimal tidigareTotalBelopp,
-                List<LogiRad> logiRader,
-                List<UtrustningRad> utrustningRader,
-                List<KonferensRad> konferensRader,
-                List<SkidlektionRad> skidlektionRader)
-        {
-            BokningsNummer = bokningsNummer;
-
-            KundText = kundText;
-            Delbetala = delbetala;
-            AnvändRabattProcent = användRabattProcent;
-            Delbetala = delbetala;
-            BokningsDatum = bokningsDatum;
-
-            ÄndringsdatumText =
-                ändringsDatum.ToString("yyyy-MM-dd");
-
-            TidigareTotalBelopp = tidigareTotalBelopp;
-
-            LogiRader =
-                new ObservableCollection<LogiRad>(
-                    logiRader);
-
-            UtrustningRader =
-                new ObservableCollection<UtrustningRad>(
-                    utrustningRader);
-
-            KonferensRader =
-                new ObservableCollection<KonferensRad>(
-                    konferensRader);
-
-            SkidlektionRader =
-                new ObservableCollection<SkidlektionRad>(
-                    skidlektionRader);
-
-            ExporteraJsonCommand = new RelayCommand(_ => ExporteraJson());
-
-            ExporteraPdfCommand = new RelayCommand(_ => ExporteraPdf());
-
-            StängCommand = new RelayCommand(_ => StängFönster?.Invoke());
-        }
-
 
         public decimal LogiBelopp =>
             LogiRader.Sum(x => x.LogiBelopp);
@@ -189,24 +102,19 @@ namespace Presentationslager
             (HarAvbeställningsskydd ? 300m : 0m);
 
         public decimal FörstaDelbetalning =>
-            Delbetala
-                ? (LogiBelopp * 0.20m) + ÖvrigtBelopp
-                : 0m;
+            Delbetala ? (LogiBelopp * 0.20m) + ÖvrigtBelopp : 0m;
 
         public decimal AndraDelbetalning =>
-            Delbetala
-                ? LogiBelopp * 0.80m
-                : 0m;
+            Delbetala ? LogiBelopp * 0.80m : 0m;
+
         public string FörstaDelbetalningText =>
             $"{FörstaDelbetalning:N0} kr";
 
         public string AndraDelbetalningText =>
             $"{AndraDelbetalning:N0} kr";
 
-
-
         public DateTime FörstaFörfallodatum =>
-     BokningsDatum.AddDays(30);
+            BokningsDatum.AddDays(30);
 
         public DateTime? AndraFörfallodatum =>
             LogiRader.Any()
@@ -219,6 +127,42 @@ namespace Presentationslager
         public string AndraFörfallodatumText =>
             AndraFörfallodatum?.ToString("yyyy-MM-dd") ?? "-";
 
+        public ICommand ExporteraJsonCommand { get; }
+        public ICommand ExporteraPdfCommand { get; }
+        public ICommand StängCommand { get; }
+
+        public ÄndringsbekräftelseViewModel(
+            int bokningsNummer,
+            string kundText,
+            DateTime ändringsDatum,
+            DateTime bokningsDatum,
+            bool harAvbeställningsskydd,
+            bool delbetala,
+            decimal användRabattProcent,
+            decimal tidigareTotalBelopp,
+            List<LogiRad> logiRader,
+            List<UtrustningRad> utrustningRader,
+            List<KonferensRad> konferensRader,
+            List<SkidlektionRad> skidlektionRader)
+        {
+            BokningsNummer = bokningsNummer;
+            KundText = kundText;
+            ÄndringsdatumText = ändringsDatum.ToString("yyyy-MM-dd");
+            BokningsDatum = bokningsDatum;
+            HarAvbeställningsskydd = harAvbeställningsskydd;
+            Delbetala = delbetala;
+            AnvändRabattProcent = användRabattProcent;
+            TidigareTotalBelopp = tidigareTotalBelopp;
+
+            LogiRader = new ObservableCollection<LogiRad>(logiRader);
+            UtrustningRader = new ObservableCollection<UtrustningRad>(utrustningRader);
+            KonferensRader = new ObservableCollection<KonferensRad>(konferensRader);
+            SkidlektionRader = new ObservableCollection<SkidlektionRad>(skidlektionRader);
+
+            ExporteraJsonCommand = new RelayCommand(_ => ExporteraJson());
+            ExporteraPdfCommand = new RelayCommand(_ => ExporteraPdf());
+            StängCommand = new RelayCommand(_ => StängFönster());
+        }
 
         private void ExporteraJson()
         {
@@ -499,15 +443,5 @@ namespace Presentationslager
             .GeneratePdf(dialog.FileName);
         }
 
-        public event PropertyChangedEventHandler? PropertyChanged;
-
-
-        protected void OnPropertyChanged(
-            [CallerMemberName] string? propertyName = null)
-        {
-            PropertyChanged?.Invoke(
-                this,
-                new PropertyChangedEventArgs(propertyName));
-        }
     }
 }

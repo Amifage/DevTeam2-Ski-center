@@ -7,6 +7,7 @@ namespace Servicelager
     {
 
         public void SkapaBokning(Bokning bokning)
+
         {
             using var unitOfWork = new UnitOfWork(new SkiContext());
 
@@ -16,7 +17,7 @@ namespace Servicelager
         }
 
 
-        public List<Bokning> HämtaAllaBokningar()
+        public List<Bokning> HamtaAllaBokningar()
         {
             using var unitOfWork = new UnitOfWork(new SkiContext());
 
@@ -39,9 +40,9 @@ namespace Servicelager
         }
 
 
-        public List<Bokning> SökBokningar(string? söktext)
+        public List<Bokning> SokBokningar(string? söktext)
         {
-            List<Bokning> bokningar = HämtaAllaBokningar();
+            List<Bokning> bokningar = HamtaAllaBokningar();
 
             if (string.IsNullOrWhiteSpace(söktext))
                 return bokningar;
@@ -74,7 +75,7 @@ namespace Servicelager
                 .ToList();
         }
 
-        public Bokning? HämtaBokningMedRader(int bokningsNummer)
+        public Bokning? HamtaBokningMedRader(int bokningsNummer)
         {
             using var unitOfWork = new UnitOfWork(new SkiContext());
 
@@ -617,7 +618,7 @@ namespace Servicelager
             return resultat;
         }
 
-        public void SparaÄndringar(int bokningsNummer, int? kundNummer, bool harAvbeställningsskydd, bool delbetala, decimal rabattProcent, List<LogiRad> logiRader, List<UtrustningRad> utrustningRader, List<KonferensRad> konferensRader, List<SkidlektionRad> skidlektionRader)
+        public void SparaAndringar(int bokningsNummer, int? kundNummer, bool harAvbeställningsskydd, bool delbetala, decimal rabattProcent, List<LogiRad> logiRader, List<UtrustningRad> utrustningRader, List<KonferensRad> konferensRader, List<SkidlektionRad> skidlektionRader)
         {
             using var unitOfWork = new UnitOfWork(new SkiContext());
 

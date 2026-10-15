@@ -17,7 +17,7 @@ namespace Servicelager
         {
             _unitOfWork = new UnitOfWork(new SkiContext());
         }
-        public List<Logi> HämtaAllaLogi()
+        public List<Logi> HamtaAllaLogi()
         {
             using var unitOfWork = new UnitOfWork(new SkiContext());
 
@@ -27,7 +27,7 @@ namespace Servicelager
         }
 
 
-        public List<string> HämtaUpptagnaLogi(
+        public List<string> HamtaUpptagnaLogi(
              DateTime startDatum,
              DateTime slutDatum)
         {

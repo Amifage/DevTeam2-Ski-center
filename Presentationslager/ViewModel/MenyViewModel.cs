@@ -9,33 +9,33 @@ namespace Presentationslager.ViewModel
     public class MenyViewModel : INotifyPropertyChanged
     {
         public ICommand LoggaUtCommand { get; }
-        public ICommand ÖppnaSkidlektionerCommand { get; }
-        public ICommand ÖppnaBokningCommand {  get; }
-        public ICommand ÖppnaKundregisterCommand { get; }
-        public ICommand ÖppnaUtrustningCommand { get; }
-        public ICommand ÖppnaKonferenscommand {  get; }
+        public ICommand OppnaSkidlektionerCommand { get; }
+        public ICommand OppnaBokningCommand {  get; }
+        public ICommand OppnaKundregisterCommand { get; }
+        public ICommand OppnaUtrustningCommand { get; }
+        public ICommand OppnaKonferenscommand {  get; }
 
-        public ICommand ÖppnaLogiCommand { get; }
-        public ICommand ÖppnaBetalstatusCommand { get; }
+        public ICommand OppnaLogiCommand { get; }
+        public ICommand OppnaBetalstatusCommand { get; }
 
         public event PropertyChangedEventHandler? PropertyChanged;
 
         public MenyViewModel()
         {
             LoggaUtCommand = new RelayCommand(LoggaUt);
-            ÖppnaKundregisterCommand = new RelayCommand(ÖppnaKundregister);
-            ÖppnaUtrustningCommand = new RelayCommand(ÖppnaUtrustning);
-            ÖppnaSkidlektionerCommand = new RelayCommand(ÖppnaSkidlektioner);
-            ÖppnaBokningCommand = new RelayCommand(ÖppnaBokning);
-            ÖppnaKonferenscommand = new RelayCommand(ÖpnnaKonferens);
-            ÖppnaLogiCommand = new RelayCommand(ÖpnnaLogi);
-            ÖppnaBetalstatusCommand = new RelayCommand(ÖppnaBetalstatus);
+            OppnaKundregisterCommand = new RelayCommand(OppnaKundregister);
+            OppnaUtrustningCommand = new RelayCommand(OppnaUtrustning);
+            OppnaSkidlektionerCommand = new RelayCommand(OppnaSkidlektioner);
+            OppnaBokningCommand = new RelayCommand(OppnaBokning);
+            OppnaKonferenscommand = new RelayCommand(OpnnaKonferens);
+            OppnaLogiCommand = new RelayCommand(OppnaLogi);
+            OppnaBetalstatusCommand = new RelayCommand(OppnaBetalstatus);
         }
 
-        public void ÖppnaKundregister(object obj)
+        public void OppnaKundregister(object obj)
         {
-            Kundregister kundregister = new Kundregister();
-            kundregister.Show();
+            Kundregister window = new Kundregister();
+            window.Show();
 
             if (obj is Window nuvarandeFonster)
             {
@@ -43,7 +43,7 @@ namespace Presentationslager.ViewModel
             }
         }
 
-        public void ÖppnaBetalstatus( Object obj ) 
+        public void OppnaBetalstatus( Object obj ) 
         { 
             Betalstatus window = new Betalstatus();
             window.Show();
@@ -54,7 +54,7 @@ namespace Presentationslager.ViewModel
             }
         }
 
-        public void ÖpnnaLogi(Object obj)
+        public void OppnaLogi(Object obj)
         {
             LogiFönster window = new LogiFönster();
             window.Show();
@@ -65,7 +65,7 @@ namespace Presentationslager.ViewModel
             }
         }
 
-        public void ÖpnnaKonferens(Object obj)
+        public void OpnnaKonferens(Object obj)
         {
             KonferensFönster window = new KonferensFönster();
             window.Show();
@@ -76,7 +76,7 @@ namespace Presentationslager.ViewModel
             }
         }
 
-        public void ÖppnaBokning (Object obj)
+        public void OppnaBokning (Object obj)
         {
             Bokning window = new Bokning();
             window.Show();
@@ -87,7 +87,7 @@ namespace Presentationslager.ViewModel
             }
         }
 
-        public void ÖppnaUtrustning(object obj)
+        public void OppnaUtrustning(object obj)
         {
             Utrustning window = new Utrustning();
             window.Show();
@@ -98,7 +98,7 @@ namespace Presentationslager.ViewModel
             }
         }
 
-        public void ÖppnaSkidlektioner(object obj)
+        public void OppnaSkidlektioner(object obj)
         {
             Skidlektion window = new Skidlektion();
             window.Show();
@@ -119,7 +119,6 @@ namespace Presentationslager.ViewModel
                 nuvarandeFonster.Close();
             }
         }
-
 
         protected void OnPropertyChanged([CallerMemberName] string? propertyName = null)
         {

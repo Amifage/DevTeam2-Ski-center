@@ -68,8 +68,6 @@ namespace Presentationslager.ViewModel
         public ObservableCollection<LogiRad> LogiRader { get; }
         public ObservableCollection<string> TillgängligaLogiTypTexter { get; }
 
-
-
         public ObservableCollection<string> UtrustningTyper { get; }
         public ObservableCollection<UtrustningPaket> TillgängligaUtrustningsPaket { get; }
         public ObservableCollection<UtrustningEntitet> TillgängligaEnskildaUtrustningar { get; }
@@ -79,12 +77,9 @@ namespace Presentationslager.ViewModel
         public ObservableCollection<int> AntalEnskildUtrustningAlternativ { get; }
 
 
-
-
         public ObservableCollection<Konferens> TillgängligaKonferenser { get; }
         public ObservableCollection<int> AntalKonferensDeltagareAlternativ { get; }
         public ObservableCollection<KonferensRad> KonferensRader { get; }
-
 
 
         public ObservableCollection<SkidlektionEntitet> TillgängligaSkidlektioner { get; }
@@ -126,7 +121,7 @@ namespace Presentationslager.ViewModel
         {
             KundController kundController = new KundController();
 
-            Kunder = new ObservableCollection<Kund>(kundController.HämtaAllaKunder());
+            Kunder = new ObservableCollection<Kund>(kundController.HamtaAllaKunder());
             AntalPersonerAlternativ = new ObservableCollection<int>(Enumerable.Range(1, 50));
 
             #region Logi
@@ -142,7 +137,7 @@ namespace Presentationslager.ViewModel
             LogiRader = new ObservableCollection<LogiRad>();
             TillgängligaLogiTypTexter = new ObservableCollection<string>();
 
-            LäggTillLogiCommand = new RelayCommand(_ => LäggTillLogi());
+            LäggTillLogiCommand = new RelayCommand(_ => LaggTillLogi());
             TaBortLogiRadCommand = new RelayCommand(parameter => TaBortLogiRad(parameter));
             #endregion
 
@@ -160,7 +155,7 @@ namespace Presentationslager.ViewModel
             UtrustningRader = new ObservableCollection<UtrustningRad>();
             AntalEnskildUtrustningAlternativ = new ObservableCollection<int>();
 
-            LäggTillUtrustningCommand = new RelayCommand(_ => LäggTillUtrustning());
+            LäggTillUtrustningCommand = new RelayCommand(_ => LaggTillUtrustning());
             TaBortUtrustningRadCommand = new RelayCommand(parameter => TaBortUtrustningRad(parameter));
             #endregion
 
@@ -170,7 +165,7 @@ namespace Presentationslager.ViewModel
             AntalKonferensDeltagareAlternativ = new ObservableCollection<int>();
             KonferensRader = new ObservableCollection<KonferensRad>();
 
-            LäggTillKonferensCommand = new RelayCommand(_ => LäggTillKonferens());
+            LäggTillKonferensCommand = new RelayCommand(_ => LaggTillKonferens());
             TaBortKonferensRadCommand = new RelayCommand(parameter => TaBortKonferensRad(parameter));
 
             #endregion
@@ -181,7 +176,7 @@ namespace Presentationslager.ViewModel
             AntalSkidlektionPersonerAlternativ = new ObservableCollection<int>();
             SkidlektionRader = new ObservableCollection<SkidlektionRad>();
 
-            LäggTillSkidlektionCommand = new RelayCommand(_ => LäggTillSkidlektion());
+            LäggTillSkidlektionCommand = new RelayCommand(_ => LaggTillSkidlektion());
             TaBortSkidlektionRadCommand = new RelayCommand(parameter => TaBortSkidlektionRad(parameter));
 
             #endregion
@@ -189,9 +184,9 @@ namespace Presentationslager.ViewModel
             #region Ändra/Ta bort bokning
 
             BokningarFörRedigering = new ObservableCollection<BokningEntitet>();
-            VäxlaRedigeringslägeCommand = new RelayCommand(_ => VäxlaRedigeringsläge());
-            SökBokningCommand = new RelayCommand(_ => SökBokningar());
-            SparaÄndringarCommand = new RelayCommand(_ => SparaÄndringar());
+            VäxlaRedigeringslägeCommand = new RelayCommand(_ => VaxlaRedigeringslage());
+            SökBokningCommand = new RelayCommand(_ => SokBokningar());
+            SparaÄndringarCommand = new RelayCommand(_ => SparaAndringar());
             AvbokaBokningCommand = new RelayCommand(_ => TaBortBokning());
 
             #endregion
@@ -245,7 +240,7 @@ namespace Presentationslager.ViewModel
                 _startDatum = value;
                 OnPropertyChanged();
 
-                UppdateraTillgängligaLogi();
+                UppdateraTillgangligaLogi();
                 UppdateraLogiPris();
                 OnPropertyChanged(nameof(KanVäljaAntalPersonerTotalt));
                 OnPropertyChanged(nameof(KanVäljaBoendeTyp));
@@ -253,7 +248,7 @@ namespace Presentationslager.ViewModel
 
                 if (UtrustningStartDatum == null)
                     UtrustningStartDatum = value;
-                UppdateraTillgängligUtrustning();
+                UppdateraTillgangligUtrustning();
                 UppdateraUtrustningPris();
 
 
@@ -275,7 +270,7 @@ namespace Presentationslager.ViewModel
                 OnPropertyChanged();
 
 
-                UppdateraTillgängligaLogi();
+                UppdateraTillgangligaLogi();
                 UppdateraLogiPris();
                 OnPropertyChanged(nameof(KanVäljaAntalPersonerTotalt));
                 OnPropertyChanged(nameof(KanVäljaBoendeTyp));
@@ -283,7 +278,7 @@ namespace Presentationslager.ViewModel
 
                 if (UtrustningSlutDatum == null)
                     UtrustningSlutDatum = value;
-                UppdateraTillgängligUtrustning();
+                UppdateraTillgangligUtrustning();
                 UppdateraUtrustningPris();
 
                 if (KonferensSlutTid == null)
@@ -309,7 +304,7 @@ namespace Presentationslager.ViewModel
                 OnPropertyChanged();
                 OnPropertyChanged(nameof(BoendePlaceringText));
 
-                UppdateraAntalPersonerFörValtLogi();
+                UppdateraAntalPersonerForValtLogi();
                 UppdateraAntalPaketAlternativ();
             }
         }
@@ -345,7 +340,7 @@ namespace Presentationslager.ViewModel
                 OnPropertyChanged();
 
                 ValdLogiArtikelTyp = null;
-                UppdateraTillgängligaLogi();
+                UppdateraTillgangligaLogi();
             }
         }
 
@@ -361,7 +356,7 @@ namespace Presentationslager.ViewModel
                 OnPropertyChanged();
 
                 UppdateraLogiPris();
-                UppdateraAntalPersonerFörValtLogi();
+                UppdateraAntalPersonerForValtLogi();
             }
         }
 
@@ -427,7 +422,7 @@ namespace Presentationslager.ViewModel
 
         #region Logi - tillgänglighet
 
-        private void UppdateraTillgängligaLogi()
+        private void UppdateraTillgangligaLogi()
         {
             TillgängligaLogi.Clear();
             TillgängligaLogiArtikelTyper.Clear();
@@ -451,8 +446,8 @@ namespace Presentationslager.ViewModel
             LogiController logiController = new LogiController();
             UtrustningController utrustningController = new UtrustningController();
 
-            var allaLogi = logiController.HämtaAllaLogi();
-            var upptagnaLogi = logiController.HämtaUpptagnaLogi(StartDatum.Value, SlutDatum.Value);
+            var allaLogi = logiController.HamtaAllaLogi();
+            var upptagnaLogi = logiController.HamtaUpptagnaLogi(StartDatum.Value, SlutDatum.Value);
 
             IEnumerable<Logi> ledigaLogi = allaLogi
                 .Where(l => !upptagnaLogi.Contains(l.LogiNummer))
@@ -533,7 +528,7 @@ namespace Presentationslager.ViewModel
             }
         }
 
-        private void UppdateraAntalPersonerFörValtLogi()
+        private void UppdateraAntalPersonerForValtLogi()
         {
             AntalPersonerValtLogiAlternativ.Clear();
             OnPropertyChanged(nameof(KanVäljaAntalPersonerValtLogi));
@@ -552,7 +547,7 @@ namespace Presentationslager.ViewModel
             LogiController logiController = new LogiController();
 
             Logi? logiAvValdTyp = logiController
-                .HämtaAllaLogi()
+                .HamtaAllaLogi()
                 .FirstOrDefault(l => l.ArtikelTypNummer == ValdLogiArtikelTyp.ArtikelTypNummer);
 
             if (logiAvValdTyp == null)
@@ -604,7 +599,7 @@ namespace Presentationslager.ViewModel
         #endregion
 
         #region Logi - lägg till/ta bort
-        private void LäggTillLogi()
+        private void LaggTillLogi()
         {
             if (AntalPersonerTotalt == null)
             {
@@ -638,15 +633,15 @@ namespace Presentationslager.ViewModel
 
             LogiController logiController = new LogiController();
 
-            var allaLogi = logiController.HämtaAllaLogi();
-            var upptagnaLogi = logiController.HämtaUpptagnaLogi(StartDatum!.Value, SlutDatum!.Value);
+            var allaLogi = logiController.HamtaAllaLogi();
+            var upptagnaLogi = logiController.HamtaUpptagnaLogi(StartDatum!.Value, SlutDatum!.Value);
 
             Logi? valtFysisktLogi = allaLogi
                 .Where(l => l.ArtikelTypNummer == ValdLogiArtikelTyp.ArtikelTypNummer)
                 .Where(l => !upptagnaLogi.Contains(l.LogiNummer))
                 .Where(l => !LogiRader.Any(r => r.LogiNummer == l.LogiNummer))
-                .OrderBy(l => AvståndTillValdaLogi(l))
-                .ThenBy(l => HämtaLogiNummer(l))
+                .OrderBy(l => AvstandTillValdaLogi(l))
+                .ThenBy(l => HamtaLogiNummer(l))
                 .FirstOrDefault();
 
             if (valtFysisktLogi == null)
@@ -692,7 +687,7 @@ namespace Presentationslager.ViewModel
 
             OnPropertyChanged(nameof(LogiPrisText));
 
-            UppdateraTillgängligaLogi();
+            UppdateraTillgangligaLogi();
         }
 
         private void TaBortLogiRad(object? parameter)
@@ -704,13 +699,13 @@ namespace Presentationslager.ViewModel
 
             UppdateraBelopp();
 
-            UppdateraTillgängligaLogi();
+            UppdateraTillgangligaLogi();
         }
         #endregion
 
         #region Hjälpmetoder Logi
 
-        private int HämtaLogiNummer(Logi logi)
+        private int HamtaLogiNummer(Logi logi)
         {
             if (string.IsNullOrWhiteSpace(logi.LogiNummer))
                 return int.MaxValue;
@@ -724,12 +719,12 @@ namespace Presentationslager.ViewModel
                 : int.MaxValue;
         }
 
-        private int AvståndTillValdaLogi(Logi logi)
+        private int AvstandTillValdaLogi(Logi logi)
         {
             if (!LogiRader.Any())
                 return 0;
 
-            int aktuelltNummer = HämtaLogiNummer(logi);
+            int aktuelltNummer = HamtaLogiNummer(logi);
 
             return LogiRader
                 .Where(r => !string.IsNullOrWhiteSpace(r.LogiNummer))
@@ -765,7 +760,7 @@ namespace Presentationslager.ViewModel
                 _utrustningStartDatum = value;
                 OnPropertyChanged();
 
-                UppdateraTillgängligUtrustning();
+                UppdateraTillgangligUtrustning();
                 UppdateraUtrustningPris();
 
                 OnPropertyChanged(nameof(KanVäljaUtrustningsPaket));
@@ -784,7 +779,7 @@ namespace Presentationslager.ViewModel
                 _utrustningSlutDatum = value;
                 OnPropertyChanged();
 
-                UppdateraTillgängligUtrustning();
+                UppdateraTillgangligUtrustning();
                 UppdateraUtrustningPris();
 
                 OnPropertyChanged(nameof(KanVäljaUtrustningsPaket));
@@ -815,7 +810,7 @@ namespace Presentationslager.ViewModel
                 OnPropertyChanged(nameof(UtrustningPrisText));
                 OnPropertyChanged(nameof(KanLäggaTillUtrustning));
 
-                UppdateraTillgängligUtrustning();
+                UppdateraTillgangligUtrustning();
             }
         }
 
@@ -944,7 +939,7 @@ namespace Presentationslager.ViewModel
 
         #region Utrustning - tillgänglighet
 
-        private void UppdateraTillgängligUtrustning()
+        private void UppdateraTillgangligUtrustning()
         {
             TillgängligaUtrustningsPaket.Clear();
             TillgängligaEnskildaUtrustningar.Clear();
@@ -996,7 +991,7 @@ namespace Presentationslager.ViewModel
             foreach (UtrustningPaket paket in utrustningController.HamtaAllaUtrustningsPaket())
             {
                 int maxAntal =
-                    BeräknaMaxAntalPaket(paket, ledigaUtrustningar, utrustningController);
+                    BeraknaMaxAntalPaket(paket, ledigaUtrustningar, utrustningController);
 
                 if (maxAntal > 0)
                     TillgängligaUtrustningsPaket.Add(paket);
@@ -1005,7 +1000,7 @@ namespace Presentationslager.ViewModel
             OnPropertyChanged(nameof(KanVäljaUtrustningsPaket));
         }
 
-        private int BeräknaMaxAntalPaket(UtrustningPaket paket, List<UtrustningEntitet> ledigaUtrustningar, UtrustningController utrustningController)
+        private int BeraknaMaxAntalPaket(UtrustningPaket paket, List<UtrustningEntitet> ledigaUtrustningar, UtrustningController utrustningController)
         {
             var innehåll =
                 utrustningController.HamtaPaketInnehall(paket.UtrustningPaketNummer);
@@ -1063,7 +1058,7 @@ namespace Presentationslager.ViewModel
                 .ToList();
 
             int maxAntal =
-                BeräknaMaxAntalPaket(
+                BeraknaMaxAntalPaket(
                     ValtUtrustningPaket,
                     ledigaUtrustningar,
                     utrustningController);
@@ -1174,7 +1169,7 @@ namespace Presentationslager.ViewModel
 
         #region Utrustning - lägg till/ta bort
 
-        private void LäggTillUtrustning()
+        private void LaggTillUtrustning()
         {
             if (!ValideraUtrustningsDatum())
                 return;
@@ -1187,15 +1182,15 @@ namespace Presentationslager.ViewModel
 
             if (ValdUtrustningTyp == "Enskild utrustning")
             {
-                LäggTillEnskildUtrustning();
+                LaggTillEnskildUtrustning();
                 return;
             }
 
             if (ValdUtrustningTyp == "Utrustningspaket")
-                LäggTillUtrustningsPaket();
+                LaggTillUtrustningsPaket();
         }
 
-        private void LäggTillEnskildUtrustning()
+        private void LaggTillEnskildUtrustning()
         {
             if (!ValideraUtrustningsDatum())
                 return;
@@ -1310,7 +1305,7 @@ namespace Presentationslager.ViewModel
 
 
             // Uppdatera tillgängligheten efter att utrustningen lagts till
-            UppdateraTillgängligUtrustning();
+            UppdateraTillgangligUtrustning();
 
 
             // Återställ valen
@@ -1325,7 +1320,7 @@ namespace Presentationslager.ViewModel
             OnPropertyChanged(nameof(KanLäggaTillUtrustning));
         }
 
-        private void LäggTillUtrustningsPaket()
+        private void LaggTillUtrustningsPaket()
         {
             if (!ValideraUtrustningsDatum())
                 return;
@@ -1448,7 +1443,7 @@ namespace Presentationslager.ViewModel
             UppdateraBelopp();
 
             UppdateraAntalPaketAlternativ();
-            UppdateraTillgängligUtrustning();
+            UppdateraTillgangligUtrustning();
 
             ValtUtrustningPaket = null;
             AntalUtrustningsPaket = null;
@@ -1467,7 +1462,7 @@ namespace Presentationslager.ViewModel
 
             UppdateraBelopp();
 
-            UppdateraTillgängligUtrustning();
+            UppdateraTillgangligUtrustning();
         }
 
         #endregion
@@ -1493,7 +1488,7 @@ namespace Presentationslager.ViewModel
                 _konferensStartTid = value;
                 OnPropertyChanged();
 
-                UppdateraTillgängligaKonferenser();
+                UppdateraTillgangligaKonferenser();
                 UppdateraKonferensPris();
             }
         }
@@ -1509,7 +1504,7 @@ namespace Presentationslager.ViewModel
                 _konferensSlutTid = value;
                 OnPropertyChanged();
 
-                UppdateraTillgängligaKonferenser();
+                UppdateraTillgangligaKonferenser();
                 UppdateraKonferensPris();
             }
         }
@@ -1572,7 +1567,7 @@ namespace Presentationslager.ViewModel
 
         #region Konferens - tillgänglighet
 
-        private void UppdateraTillgängligaKonferenser()
+        private void UppdateraTillgangligaKonferenser()
         {
             TillgängligaKonferenser.Clear();
 
@@ -1665,7 +1660,7 @@ namespace Presentationslager.ViewModel
 
         #region Konferens - lägg till/ta bort
 
-        private void LäggTillKonferens()
+        private void LaggTillKonferens()
         {
             if (!ValideraKonferensDatum())
                 return;
@@ -1713,7 +1708,7 @@ namespace Presentationslager.ViewModel
 
             UppdateraBelopp();
 
-            UppdateraTillgängligaKonferenser();
+            UppdateraTillgangligaKonferenser();
 
             ValdKonferens = null;
             AntalKonferensDeltagare = null;
@@ -1754,7 +1749,7 @@ namespace Presentationslager.ViewModel
 
             UppdateraBelopp();
 
-            UppdateraTillgängligaKonferenser();
+            UppdateraTillgangligaKonferenser();
         }
         #endregion
 
@@ -1811,7 +1806,7 @@ namespace Presentationslager.ViewModel
                 _skidlektionDatum = value;
                 OnPropertyChanged();
 
-                UppdateraTillgängligaSkidlektioner();
+                UppdateraTillgangligaSkidlektioner();
             }
         }
 
@@ -1845,7 +1840,7 @@ namespace Presentationslager.ViewModel
 
         #region Skidlektion - tillgänglighet
 
-        private void UppdateraTillgängligaSkidlektioner()
+        private void UppdateraTillgangligaSkidlektioner()
         {
             TillgängligaSkidlektioner.Clear();
 
@@ -1935,7 +1930,7 @@ namespace Presentationslager.ViewModel
 
         #region Skidlektion - lägg till/ta bort
 
-        private void LäggTillSkidlektion()
+        private void LaggTillSkidlektion()
         {
             if (ValdSkidlektion == null)
             {
@@ -2002,7 +1997,7 @@ namespace Presentationslager.ViewModel
 
             UppdateraBelopp();
 
-            UppdateraTillgängligaSkidlektioner();
+            UppdateraTillgangligaSkidlektioner();
 
             ValdSkidlektion = null;
             AntalSkidlektionPersoner = null;
@@ -2021,7 +2016,7 @@ namespace Presentationslager.ViewModel
 
             UppdateraBelopp();
 
-            UppdateraTillgängligaSkidlektioner();
+            UppdateraTillgangligaSkidlektioner();
         }
         #endregion
 
@@ -2204,7 +2199,7 @@ namespace Presentationslager.ViewModel
 
                 if (_valdBokningFörRedigering != null)
                 {
-                    LaddaBokningFörRedigering(
+                    LaddaBokningForRedigering(
                         _valdBokningFörRedigering);
                 }
             }
@@ -2220,34 +2215,34 @@ namespace Presentationslager.ViewModel
             ? $"Redigerar bokning {ValdBokningFörRedigering.BokningsNummer}"
             : "Skapa bokning";
 
-        private void VäxlaRedigeringsläge()
+        private void VaxlaRedigeringslage()
         {
             ÄrRedigeringsläge = !ÄrRedigeringsläge;
 
             if (ÄrRedigeringsläge)
             {
                 BokningSökText = null;
-                SökBokningar();
+                SokBokningar();
             }
             else
             {
-                AvslutaRedigeringsläge();
+                AvslutaRedigeringslage();
             }
         }
 
 
-        private void AvslutaRedigeringsläge()
+        private void AvslutaRedigeringslage()
         {
             BokningSökText = null;
             ValdBokningFörRedigering = null;
 
             BokningarFörRedigering.Clear();
 
-            ÅterställFormulär();
+            AterställFormular();
         }
 
 
-        private void SökBokningar()
+        private void SokBokningar()
         {
             BokningarFörRedigering.Clear();
 
@@ -2255,7 +2250,7 @@ namespace Presentationslager.ViewModel
                 new BokningController();
 
             List<BokningEntitet> bokningar =
-                bokningController.SökBokningar(BokningSökText);
+                bokningController.SokBokningar(BokningSökText);
 
             foreach (BokningEntitet bokning in bokningar)
             {
@@ -2264,13 +2259,13 @@ namespace Presentationslager.ViewModel
         }
 
 
-        private void LaddaBokningFörRedigering(BokningEntitet bokning)
+        private void LaddaBokningForRedigering(BokningEntitet bokning)
         {
             BokningController bokningController =
                 new BokningController();
 
             BokningEntitet? fullständigBokning =
-                bokningController.HämtaBokningMedRader(
+                bokningController.HamtaBokningMedRader(
                     bokning.BokningsNummer);
 
             if (fullständigBokning == null)
@@ -2349,7 +2344,7 @@ namespace Presentationslager.ViewModel
             UppdateraBelopp();
         }
 
-        private void SparaÄndringar()
+        private void SparaAndringar()
         {
             if (ValdBokningFörRedigering == null)
             {
@@ -2373,7 +2368,7 @@ namespace Presentationslager.ViewModel
                     new BokningController();
 
                 BokningEntitet? gammalBokning =
-                bokningController.HämtaBokningMedRader(
+                bokningController.HamtaBokningMedRader(
                     ValdBokningFörRedigering.BokningsNummer);
 
                 decimal tidigareTotalBelopp = 0;
@@ -2415,7 +2410,7 @@ namespace Presentationslager.ViewModel
                     }
                 }
 
-                bokningController.SparaÄndringar(
+                bokningController.SparaAndringar(
                     ValdBokningFörRedigering.BokningsNummer,
                     ValdKund.KundNummer,
                     HarAvbeställningsskydd,
@@ -2451,7 +2446,7 @@ namespace Presentationslager.ViewModel
 
 
                 // Uppdatera listan till höger
-                SökBokningar();
+                SokBokningar();
 
 
                 // Ladda om bokningen så att vi får de nya
@@ -2567,7 +2562,7 @@ namespace Presentationslager.ViewModel
 
                 UppdateraBelopp();
 
-                SökBokningar();
+                SokBokningar();
             }
             catch (Exception ex)
             {
@@ -2676,7 +2671,7 @@ namespace Presentationslager.ViewModel
 
             bokningsbekräftelse.ShowDialog();
 
-            ÅterställFormulär();
+            AterställFormular();
         }
 
         #endregion
@@ -2729,7 +2724,7 @@ namespace Presentationslager.ViewModel
 
         #region Återställ formulär
 
-        public void ÅterställFormulär()
+        public void AterställFormular()
         {
             LogiRader.Clear();
             UtrustningRader.Clear();
