@@ -231,5 +231,26 @@ namespace Servicelager
                             !avbokade.Contains(r.BokningsNummer.Value))
                 .ToList();
         }
+
+        public void UppdateraStatusEfterBokning(int skidlektionNummer)
+        {
+            Skidlektion? skidlektion = _unitOfWork.SkidlektionRepository
+                .Find(s => s.SkidlektionNummer == skidlektionNummer)
+                .FirstOrDefault();
+
+            if (skidlektion == null)
+                return;
+
+            int ledigaPlatser = HamtaAntalLedigaPlatser(skidlektionNummer);
+
+            skidlektion.Status = ledigaPlatser == 0
+                ? "Fullbokad"
+                : "Tillgänglig";
+
+            skidlektion.SenastUppdaterad = DateTime.Now;
+
+            _unitOfWork.SkidlektionRepository.Update(skidlektion);
+            _unitOfWork.Save();
+        }
     }
 }

@@ -2410,6 +2410,29 @@ namespace Presentationslager.ViewModel
                     }
                 }
 
+                List<int> berördaSkidlektionNummer = new List<int>();
+
+                BokningEntitet? bokningFöreÄndring =
+                 bokningController.HamtaBokningMedRader(
+                     ValdBokningFörRedigering.BokningsNummer);
+
+                if (bokningFöreÄndring?.SkidlektionRader != null)
+                {
+                    berördaSkidlektionNummer.AddRange(
+                        bokningFöreÄndring.SkidlektionRader
+                            .Where(r => r.SkidlektionNummer.HasValue)
+                            .Select(r => r.SkidlektionNummer!.Value));
+                }
+
+                berördaSkidlektionNummer.AddRange(
+                    SkidlektionRader
+                        .Where(r => r.SkidlektionNummer.HasValue)
+                        .Select(r => r.SkidlektionNummer!.Value));
+
+                berördaSkidlektionNummer = berördaSkidlektionNummer
+                    .Distinct()
+                    .ToList();
+
                 bokningController.SparaAndringar(
                     ValdBokningFörRedigering.BokningsNummer,
                     ValdKund.KundNummer,
@@ -2421,6 +2444,13 @@ namespace Presentationslager.ViewModel
                     KonferensRader.ToList(),
                     SkidlektionRader.ToList());
 
+                SkidlektionController skidlektionController = new SkidlektionController();
+
+                foreach (int skidlektionNummer in berördaSkidlektionNummer)
+                {
+                    skidlektionController.UppdateraStatusEfterBokning(
+                        skidlektionNummer);
+                }
 
 
                 Ändringsbekräftelse ändringsbekräftelse =
@@ -2441,8 +2471,7 @@ namespace Presentationslager.ViewModel
                 ändringsbekräftelse.ShowDialog();
 
 
-                int bokningsNummer =
-                    ValdBokningFörRedigering.BokningsNummer;
+                int bokningsNummer = ValdBokningFörRedigering.BokningsNummer;
 
 
                 // Uppdatera listan till höger
@@ -2527,11 +2556,20 @@ namespace Presentationslager.ViewModel
 
             try
             {
-                BokningController bokningController =
-                    new BokningController();
+                BokningController bokningController = new BokningController();
 
-                bokningController.TaBortBokning(
-                    bokningsNummer);
+                bokningController.TaBortBokning(bokningsNummer);
+
+                SkidlektionController skidlektionController = new SkidlektionController();
+
+                foreach (SkidlektionRad rad in avbokadeSkidlektionRader)
+                {
+                    if (rad.SkidlektionNummer.HasValue)
+                    {
+                        skidlektionController.UppdateraStatusEfterBokning(
+                            rad.SkidlektionNummer.Value);
+                    }
+                }
 
                 Avbokningsbekräftelse avbokningsbekräftelse =
                  new Avbokningsbekräftelse(
@@ -2651,6 +2689,17 @@ namespace Presentationslager.ViewModel
 
             BokningController bokningController = new BokningController();
             bokningController.SkapaBokning(nyBokning);
+
+            SkidlektionController skidlektionController = new SkidlektionController();
+
+            foreach (SkidlektionRad rad in SkidlektionRader)
+            {
+                if (rad.SkidlektionNummer.HasValue)
+                {
+                    skidlektionController.UppdateraStatusEfterBokning(
+                        rad.SkidlektionNummer.Value);
+                }
+            }
 
             string kundText = $"{ValdKund.VisningsNamn}|{ValdKund.KundNummer}";
 
