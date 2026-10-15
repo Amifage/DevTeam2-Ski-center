@@ -42,7 +42,7 @@ namespace Presentationslager.ViewModel
             UppdateraKundCommand = new RelayCommand(UppdateraKund, CanUppdateraKund);
             TaBortKundCommand = new RelayCommand(TaBortKund, CanUppdateraKund);
 
-            //NyKredit = 12000;
+            NyKredit = 12000;
         }
         public string NyEpost { get; set; }
         public string NyTelefon { get; set; }
@@ -246,6 +246,8 @@ namespace Presentationslager.ViewModel
                 ValdKundTypIndex = 0;
                 NyttFörnamn = privat.Förnamn;
                 NyttEfternamn = privat.Efternamn;
+                NyRabatt = privat.Rabatt;
+                NyKredit = privat.Kredit;
               
             }
             else if (ValdKund is FöretagsKund foretag)

@@ -2375,9 +2375,23 @@ namespace Presentationslager.ViewModel
                 BokningController bokningController =
                     new BokningController();
 
-                BokningEntitet? gammalBokning =
-                bokningController.HamtaBokningMedRader(
-                    ValdBokningFörRedigering.BokningsNummer);
+                BokningEntitet? gammalBokning = bokningController.HamtaBokningMedRader(ValdBokningFörRedigering.BokningsNummer);
+
+                decimal gammaltKreditBelopp = 0;
+
+                if (gammalBokning != null && gammalBokning.Delbetala)
+                {
+                    decimal gammaltLogiBelopp =
+                        gammalBokning.LogiRader?.Sum(x => x.LogiBelopp) ?? 0;
+
+                    gammaltKreditBelopp = gammaltLogiBelopp * 0.80m;
+                }
+
+                decimal nyttKreditBelopp =
+                    Delbetala ? AndraDelbetalning : 0;
+
+                decimal kreditSkillnad =
+                    nyttKreditBelopp - gammaltKreditBelopp;
 
                 decimal tidigareTotalBelopp = 0;
 
@@ -2394,12 +2408,12 @@ namespace Presentationslager.ViewModel
 
                 Decimal användRabattProcent = AnvändRabatt ? ValdKundRabatt : 0;
 
-                if (Delbetala && LogiBelopp > ValdKundKredit)
+                if (kreditSkillnad > ValdKundKredit)
                 {
                     VisaMeddelande?.Invoke(
-                        $"Bokningen kan inte delbetalas eftersom logibeloppet " +
-                        $"{LogiBelopp:N0} kr överstiger kundens kreditgräns på " +
-                        $"{ValdKundKredit:N0} kr.");
+                        $"Ändringen kan inte genomföras eftersom ytterligare kredit på " +
+                        $"{kreditSkillnad:N0} kr krävs, men kunden endast har " +
+                        $"{ValdKundKredit:N0} kr tillgänglig kredit.");
 
                     return;
                 }
@@ -2451,6 +2465,21 @@ namespace Presentationslager.ViewModel
                     UtrustningRader.ToList(),
                     KonferensRader.ToList(),
                     SkidlektionRader.ToList());
+
+                KundController kundController = new KundController();
+
+                if (kreditSkillnad > 0)
+                {
+                    kundController.MinskaKredit(
+                        ValdKund.KundNummer,
+                        kreditSkillnad);
+                }
+                else if (kreditSkillnad < 0)
+                {
+                    kundController.OkaKredit(
+                        ValdKund.KundNummer,
+                        Math.Abs(kreditSkillnad));
+                }
 
                 SkidlektionController skidlektionController = new SkidlektionController();
 
@@ -2556,6 +2585,11 @@ namespace Presentationslager.ViewModel
 
             bool hadeAvbeställningsskydd = HarAvbeställningsskydd;
 
+            decimal kreditAttAterstalla =
+                ValdBokningFörRedigering.Delbetala
+                    ? LogiBelopp * 0.80m
+                    : 0m;
+
             string kundText = ValdKund != null
                 ? $"{ValdKund.VisningsNamn}|{ValdKund.KundNummer}"
                 : "Okänd kund|-";
@@ -2567,6 +2601,15 @@ namespace Presentationslager.ViewModel
                 BokningController bokningController = new BokningController();
 
                 bokningController.TaBortBokning(bokningsNummer);
+
+                if (kreditAttAterstalla > 0 && ValdKund != null)
+                {
+                    KundController kundController = new KundController();
+
+                    kundController.OkaKredit(
+                        ValdKund.KundNummer,
+                        kreditAttAterstalla);
+                }
 
                 SkidlektionController skidlektionController = new SkidlektionController();
 
@@ -2655,16 +2698,15 @@ namespace Presentationslager.ViewModel
             if (LogiRader.Any() && !ValideraDatum())
                 return;
 
-            if (Delbetala && LogiBelopp > ValdKundKredit)
+            if (Delbetala && AndraDelbetalning > ValdKundKredit)
             {
                 VisaMeddelande?.Invoke(
-                    $"Bokningen kan inte delbetalas eftersom logibeloppet " +
-                    $"{LogiBelopp:N0} kr överstiger kundens kreditgräns på " +
+                    $"Bokningen kan inte delbetalas eftersom kreditbeloppet " +
+                    $"{AndraDelbetalning:N0} kr överstiger kundens tillgängliga kredit på " +
                     $"{ValdKundKredit:N0} kr.");
 
                 return;
             }
-
             if (Delbetala && LogiRader.Any())
             {
                 DateTime tidigasteLogiStart =
@@ -2697,6 +2739,15 @@ namespace Presentationslager.ViewModel
 
             BokningController bokningController = new BokningController();
             bokningController.SkapaBokning(nyBokning);
+
+            if (Delbetala)
+            {
+                KundController kundController = new KundController();
+
+                kundController.MinskaKredit(
+                    ValdKund.KundNummer,
+                    AndraDelbetalning);
+            }
 
             SkidlektionController skidlektionController = new SkidlektionController();
 
