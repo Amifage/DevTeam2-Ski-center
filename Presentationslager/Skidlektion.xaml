@@ -89,7 +89,6 @@
                     <DataGridTextColumn Header="Slut" Binding="{Binding SlutTid, StringFormat=\{0:hh\\:mm\}}" Width="70"/>
                     <DataGridTextColumn Header="Status" Binding="{Binding Status}" Width="100"/>
                     <DataGridTextColumn Header="Kapacitet" Binding="{Binding Kapacitet}" Width="80"/>
-                    <DataGridTextColumn Header="Anst.nr" Binding="{Binding Personal.AnställningsNummer}" Width="80"/>
                     <DataGridTextColumn Header="Instruktör" Binding="{Binding Personal.Förnamn}" Width="*"/>
                 </DataGrid.Columns>
             </DataGrid>
