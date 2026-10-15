@@ -1,113 +1,116 @@
-﻿using System;
+﻿using Datalager;
+using Entitetslager;
+using System;
 using System.Collections.Generic;
 using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-using Datalager;
-using Entitetslager;
 
 namespace Servicelager
 {
     public class KonferensController
     {
-        //Används i bokning /Sara
+        private readonly UnitOfWork _unitOfWork;
+
+        public KonferensController()
+        {
+            _unitOfWork = new UnitOfWork(new SkiContext());
+        }
+
         public List<Konferens> HamtaAllaKonferenser()
         {
-            using var unitOfWork = new UnitOfWork(new SkiContext());
-
-            return unitOfWork.KonferensRepository
+            return _unitOfWork.KonferensRepository
                 .GetAll()
                 .ToList();
         }
 
-        public List<Konferens> HamtaLedigaKonferenser(
-            DateTime startTid,
-            DateTime slutTid)
+        public List<Konferens> HamtaLedigaKonferenser(DateTime startTid, DateTime slutTid)
         {
-            using var unitOfWork = new UnitOfWork(new SkiContext());
+            HashSet<int> avbokadeBokningsNummer = _unitOfWork.BokningRepository
+                .GetAll()
+                .Where(b => b.Status == "Avbokad")
+                .Select(b => b.BokningsNummer)
+                .ToHashSet();
 
-            var avbokadeBokningsNummer =
-                unitOfWork.BokningRepository
-                    .GetAll()
-                    .Where(b => b.Status == "Avbokad")
-                    .Select(b => b.BokningsNummer)
-                    .ToHashSet();
-
-            var upptagnaKonferensNummer =
-                unitOfWork.KonferensRadRepository
+            HashSet<string> upptagnaKonferensNummer =
+                _unitOfWork.KonferensRadRepository
                     .GetAll()
                     .Where(r =>
                         r.StartTid < slutTid &&
                         r.SlutTid > startTid &&
                         r.KonferensNummer != null &&
                         (!r.BokningsNummer.HasValue ||
-                         !avbokadeBokningsNummer.Contains(
-                             r.BokningsNummer.Value)))
+                         !avbokadeBokningsNummer.Contains(r.BokningsNummer.Value)))
                     .Select(r => r.KonferensNummer!)
                     .ToHashSet();
 
-            return unitOfWork.KonferensRepository
+            return _unitOfWork.KonferensRepository
                 .GetAll()
-                .Where(k =>
-                    !upptagnaKonferensNummer.Contains(
-                        k.KonferensNummer))
+                .Where(k => !upptagnaKonferensNummer.Contains(k.KonferensNummer))
                 .ToList();
         }
 
         public List<Konferens> SokKonferens(string? sokNummer, string? sokStatus, string? sokStorlek)
         {
-            using var unitOfWork = new UnitOfWork(new SkiContext());
-
-            var query = unitOfWork.KonferensRepository.GetAll().AsQueryable();
+            var query = _unitOfWork.KonferensRepository
+                .GetAll()
+                .AsQueryable();
 
             if (!string.IsNullOrWhiteSpace(sokNummer))
             {
-                query = query.Where(k => k.KonferensNummer.Contains(sokNummer));
+                query = query.Where(k =>
+                    k.KonferensNummer.Contains(sokNummer));
             }
 
             if (!string.IsNullOrWhiteSpace(sokStatus))
             {
-                query = query.Where(k => k.Status != null && k.Status.Contains(sokStatus));
+                query = query.Where(k =>
+                    k.Status != null &&
+                    k.Status.Contains(sokStatus));
             }
 
             if (!string.IsNullOrWhiteSpace(sokStorlek))
             {
-                if (sokStorlek.Equals("Liten (max 20)", StringComparison.OrdinalIgnoreCase))
+                if (sokStorlek.Equals(
+                    "Liten (max 20)",
+                    StringComparison.OrdinalIgnoreCase))
                 {
-                    query = query.Where(k => k.KonferensKapacitet <= 20);
+                    query = query.Where(k =>
+                        k.KonferensKapacitet <= 20);
                 }
-                else if (sokStorlek.Equals("Stor (max 30)", StringComparison.OrdinalIgnoreCase))
+                else if (sokStorlek.Equals(
+                    "Stor (max 30)",
+                    StringComparison.OrdinalIgnoreCase))
                 {
-                    query = query.Where(k => k.KonferensKapacitet > 20); // eller k.KonferensKapacitet == 30
+                    query = query.Where(k =>
+                        k.KonferensKapacitet > 20);
                 }
             }
 
             return query.ToList();
         }
+
         public Konferens? HamtaKonferensMedNummer(string konferensNummer)
         {
-            using var _unitofwork = new UnitOfWork(new SkiContext());
-
-            return _unitofwork.KonferensRepository
+            return _unitOfWork.KonferensRepository
                 .GetAll()
-                .FirstOrDefault(k => k.KonferensNummer == konferensNummer);
+                .FirstOrDefault(k =>
+                    k.KonferensNummer == konferensNummer);
         }
 
         public bool UppdateraKonferensStatus(string konferensNummer, string nyStatus)
         {
-            using var _unitofwork = new UnitOfWork(new SkiContext());
+            Konferens? konferens =
+                HamtaKonferensMedNummer(konferensNummer);
 
-            var konferens = HamtaKonferensMedNummer(konferensNummer);
-            if (konferens != null)
-            {
-                konferens.Status = nyStatus;
-                konferens.SenastUppdaterad = DateTime.Now;
-                _unitofwork.KonferensRepository.Update(konferens);
-                _unitofwork.Save();
-                return true;
-            }
-            return false;
+            if (konferens == null)
+                return false;
 
+            konferens.Status = nyStatus;
+            konferens.SenastUppdaterad = DateTime.Now;
+
+            _unitOfWork.KonferensRepository.Update(konferens);
+            _unitOfWork.Save();
+
+            return true;
         }
     }
 }

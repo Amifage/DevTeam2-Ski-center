@@ -16,8 +16,7 @@ namespace Servicelager
 
         public SkidlektionController()
         {
-            var dbContext = new SkiContext();
-            _unitOfWork = new UnitOfWork(dbContext);
+            _unitOfWork = new UnitOfWork(new SkiContext());
         }
 
         public List<Skidlektion> HamtaAktuellaSkidlektioner()
@@ -164,8 +163,9 @@ namespace Servicelager
             }
         }
 
-        //Används i bokning/Sara
-        public int HämtaAntalLedigaPlatser(int skidlektionNummer)
+
+        //Bokning
+        public int HamtaAntalLedigaPlatser(int skidlektionNummer)
         {
             Skidlektion? skidlektion = _unitOfWork.SkidlektionRepository
                 .Find(s => s.SkidlektionNummer == skidlektionNummer)
@@ -174,38 +174,37 @@ namespace Servicelager
             if (skidlektion == null)
                 return 0;
 
-            int bokadePlatser = HämtaAktivaRader()
+            int bokadePlatser = HamtaAktivaRader()
                 .Where(r => r.SkidlektionNummer == skidlektionNummer)
                 .Sum(r => r.AntalPersoner);
 
             return Math.Max(0, skidlektion.Kapacitet - bokadePlatser);
         }
 
-        //Används i bokning/Sara
-        public List<Skidlektion> HämtaTillgängligaSkidlektioner(DateTime datum)
+        public List<Skidlektion> HamtaTillgangligaSkidlektioner(DateTime datum)
         {
-            var skidlektioner = _unitOfWork.SkidlektionRepository
-                .GetAll()
-                .Where(s => s.Datum.Date == datum.Date)
-                .OrderBy(s => s.StartTid)
-                .ToList();
+            List<Skidlektion> skidlektioner =
+                HamtaSkidlektionerForDatum(datum);
 
-            var artikelTyper = _unitOfWork.ArtikelTypRepository
+            List<ArtikelTyp> artikelTyper = _unitOfWork.ArtikelTypRepository
                 .GetAll()
                 .ToList();
 
-            var aktivaRader = HämtaAktivaRader();
+            List<SkidlektionRad> aktivaRader = HamtaAktivaRader();
 
             foreach (Skidlektion skidlektion in skidlektioner)
             {
                 skidlektion.artikelTyp = artikelTyper
-                    .FirstOrDefault(a => a.ArtikelTypNummer == skidlektion.ArtikelTypNummer);
+                    .FirstOrDefault(a =>
+                        a.ArtikelTypNummer == skidlektion.ArtikelTypNummer);
 
                 int bokadePlatser = aktivaRader
-                    .Where(r => r.SkidlektionNummer == skidlektion.SkidlektionNummer)
+                    .Where(r =>
+                        r.SkidlektionNummer == skidlektion.SkidlektionNummer)
                     .Sum(r => r.AntalPersoner);
 
-                skidlektion.LedigaPlatser = Math.Max(0, skidlektion.Kapacitet - bokadePlatser);
+                skidlektion.LedigaPlatser =
+                    Math.Max(0, skidlektion.Kapacitet - bokadePlatser);
             }
 
             return skidlektioner
@@ -213,7 +212,7 @@ namespace Servicelager
                 .ToList();
         }
 
-        private HashSet<int> HämtaAvbokadeBokningsNummer()
+        private HashSet<int> HamtaAvbokadeBokningsNummer()
         {
             return _unitOfWork.BokningRepository
                 .GetAll()
@@ -222,9 +221,9 @@ namespace Servicelager
                 .ToHashSet();
         }
 
-        private List<SkidlektionRad> HämtaAktivaRader()
+        private List<SkidlektionRad> HamtaAktivaRader()
         {
-            var avbokade = HämtaAvbokadeBokningsNummer();
+            var avbokade = HamtaAvbokadeBokningsNummer();
 
             return _unitOfWork.SkidlektionRadRepository
                 .GetAll()

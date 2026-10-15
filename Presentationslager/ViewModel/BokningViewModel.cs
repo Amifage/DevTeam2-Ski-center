@@ -473,7 +473,7 @@ namespace Presentationslager.ViewModel
                 .OrderBy(l => l.ArtikelTypNummer)
                 .ToList();
            
-            var allaArtikelTyper = utrustningController.HamtaAllaArtikelTyper();
+            var allaArtikelTyper = logiController.HamtaAllaArtikelTyper();
 
             foreach (Logi logi in representativaLogi)
             {
@@ -1856,7 +1856,7 @@ namespace Presentationslager.ViewModel
                 new SkidlektionController();
 
             var skidlektioner =
-                skidlektionController.HämtaTillgängligaSkidlektioner(
+                skidlektionController.HamtaTillgangligaSkidlektioner(
                     SkidlektionDatum.Value);
 
             foreach (SkidlektionEntitet skidlektion in skidlektioner)
@@ -1953,7 +1953,7 @@ namespace Presentationslager.ViewModel
                 new SkidlektionController();
 
             int ledigaPlatser =
-                skidlektionController.HämtaAntalLedigaPlatser(
+                skidlektionController.HamtaAntalLedigaPlatser(
                     ValdSkidlektion.SkidlektionNummer);
 
             int redanValdaPersoner = SkidlektionRader
