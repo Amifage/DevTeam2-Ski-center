@@ -23,6 +23,34 @@ namespace Servicelager
             using var _unitofwork = new UnitOfWork(new SkiContext());
             return _unitofwork.KundRepository.GetAll().ToList();
         }
+
+        //SokKunder används i bokning
+        public List<Kund> SokKunder(string? söktext)
+        {
+            List<Kund> kunder = HamtaAllaKunder();
+
+            if (string.IsNullOrWhiteSpace(söktext))
+                return kunder;
+
+            string sökning = söktext.Trim();
+
+            return kunder
+                .Where(k =>
+                    k.KundNummer.ToString()
+                        .Contains(sökning, StringComparison.OrdinalIgnoreCase)
+
+                    ||
+
+                    k.VisningsNamn
+                        .Contains(sökning, StringComparison.OrdinalIgnoreCase)
+
+                    ||
+
+                    k.Epost
+                        .Contains(sökning, StringComparison.OrdinalIgnoreCase))
+                .OrderBy(k => k.VisningsNamn)
+                .ToList();
+        }
         public void UppdateraKund(Kund kund)
         {
             using var _unitofwork = new UnitOfWork(new SkiContext());
@@ -110,7 +138,5 @@ namespace Servicelager
 
             _unitofwork.Save();
         }
-
-
     }
 }

@@ -91,6 +91,9 @@ namespace Presentationslager.ViewModel
 
         #region Commands
 
+        public ICommand SokKunderCommand { get; }
+
+
         public ICommand LäggTillLogiCommand { get; }
         public ICommand TaBortLogiRadCommand { get; }
 
@@ -124,7 +127,8 @@ namespace Presentationslager.ViewModel
         {
             KundController kundController = new KundController();
 
-            Kunder = new ObservableCollection<Kund>(kundController.HamtaAllaKunder());
+            Kunder = new ObservableCollection<Kund>();
+
             AntalPersonerAlternativ = new ObservableCollection<int>(Enumerable.Range(1, 50));
 
             #region Logi
@@ -194,7 +198,7 @@ namespace Presentationslager.ViewModel
 
             #endregion
 
-
+            SokKunderCommand = new RelayCommand(_ => SokKunder());
             RegistreraNyKundCommand = new RelayCommand(OppnaKundregister);
             UppdateraKunderCommand = new RelayCommand(_ => LaddaOmKunder());
             SkapaBokningCommand = new RelayCommand(_ => SkapaBokning());
@@ -326,6 +330,56 @@ namespace Presentationslager.ViewModel
                 _antalPersonerValtLogi = value;
                 OnPropertyChanged();
             }
+        }
+
+        #endregion
+
+        #region Sök kund till bokning
+
+        private string _kundSokText = string.Empty;
+        public string KundSokText
+        {
+            get => _kundSokText;
+            set
+            {
+                _kundSokText = value;
+                ValdKund = null;
+                OnPropertyChanged();
+            }
+        }
+        private void SokKunder()
+        {
+            ValdKund = null;
+
+            KundController kundController = new KundController();
+
+            var kunder = kundController.SokKunder(KundSokText);
+
+            Kunder.Clear();
+
+            foreach (Kund kund in kunder)
+            {
+                Kunder.Add(kund);
+            }
+        }
+
+        public void LaddaOmKunder()
+        {
+            ValdKund = null;
+
+            if (string.IsNullOrWhiteSpace(KundSokText))
+            {
+                Kunder.Clear();
+                return;
+            }
+
+            SokKunder();
+        }
+
+        private void OppnaKundregister(object obj)
+        {
+            Kundregister kundFönster = new Kundregister();
+            kundFönster.Show();
         }
 
         #endregion
@@ -2836,7 +2890,10 @@ namespace Presentationslager.ViewModel
             KonferensRader.Clear();
             SkidlektionRader.Clear();
 
+            KundSokText = string.Empty;
+            Kunder.Clear();
             ValdKund = null;
+
             StartDatum = null;
             SlutDatum = null;
             AntalPersonerTotalt = null;
@@ -2911,27 +2968,8 @@ namespace Presentationslager.ViewModel
         }
 
         #endregion
-       
 
-        public void LaddaOmKunder()
-        {
-            KundController kundController = new KundController();
 
-            var hämtaKunderFrånDatabas = kundController.HamtaAllaKunder();
-
-            Kunder.Clear();
-            foreach (var kund in hämtaKunderFrånDatabas)
-            {
-                Kunder.Add(kund);
-            }
-         
-        }
-
-        private void OppnaKundregister(object obj)
-        {
-            Kundregister kundFönster = new Kundregister();
-            kundFönster.Show();
-        }
 
         private void TillbakaTillMeny(object obj)
         {

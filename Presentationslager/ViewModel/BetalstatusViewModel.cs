@@ -128,39 +128,109 @@ namespace Presentationslager.ViewModel
         {
             return ValdFaktura != null;
         }
-        private void UppdateraStatus(object obj)
-        {           
 
-            if (ValdFaktura != null)
+        //private void UppdateraStatus(object obj)
+        //{           
+
+        //    if (ValdFaktura != null)
+        //    {
+        //        if (ValdFaktura.Status == "Obetald")
+        //        {
+        //            ValdFaktura.Status = "Betald";
+        //        }
+        //        else
+        //        {
+        //            ValdFaktura.Status = "Obetald";
+        //        }
+
+        //        fakturaController.UppdateraFaktura(ValdFaktura);
+
+        //        MessageBox.Show($"Status för faktura {ValdFaktura.FakturaNummer} har ändrats till: {ValdFaktura.Status}",
+        //                        "Status uppdaterad",
+        //                        MessageBoxButton.OK,
+        //                        MessageBoxImage.Information);
+
+        //        LaddaData();
+
+        //    }
+        //    else
+        //    {
+        //        MessageBox.Show("Vänligen markera en faktura i listan först.",
+        //                        "Ingen faktura vald",
+        //                        MessageBoxButton.OK,
+        //                        MessageBoxImage.Warning);
+
+        //    }
+
+        //}
+
+        private void UppdateraStatus(object obj) //Denna tillåter bara obetald --> betald
+        {
+            if (ValdFaktura == null)
             {
-                if (ValdFaktura.Status == "Obetald")
-                {
-                    ValdFaktura.Status = "Betald";
-                }
-                else
-                {
-                    ValdFaktura.Status = "Obetald";
-                }
+                MessageBox.Show(
+                    "Vänligen markera en faktura i listan först.",
+                    "Ingen faktura vald",
+                    MessageBoxButton.OK,
+                    MessageBoxImage.Warning);
 
-                fakturaController.UppdateraFaktura(ValdFaktura);
-
-                MessageBox.Show($"Status för faktura {ValdFaktura.FakturaNummer} har ändrats till: {ValdFaktura.Status}",
-                                "Status uppdaterad",
-                                MessageBoxButton.OK,
-                                MessageBoxImage.Information);
-
-                LaddaData();
-
+                return;
             }
-            else
+
+            if (ValdFaktura.Status == "Betald")
             {
-                MessageBox.Show("Vänligen markera en faktura i listan först.",
-                                "Ingen faktura vald",
-                                MessageBoxButton.OK,
-                                MessageBoxImage.Warning);
-               
+                MessageBox.Show(
+                    "Fakturan är redan betald.",
+                    "Ingen ändring",
+                    MessageBoxButton.OK,
+                    MessageBoxImage.Information);
+
+                return;
             }
-            
+
+            BokningController bokningController = new BokningController();
+            Entitetslager.Bokning? bokning =
+                bokningController.HamtaBokningMedRader(
+                    ValdFaktura.BokningsNummer);
+
+            decimal kreditAttAterstalla = 0;
+
+            if (bokning != null && bokning.Delbetala)
+            {
+                decimal logiBelopp =
+                    bokning.LogiRader?.Sum(r => r.LogiBelopp) ?? 0;
+
+                if (ValdFaktura.Anteckning == "Första delbetalningen")
+                {
+                    kreditAttAterstalla = logiBelopp * 0.20m;
+                }
+                else if (ValdFaktura.Anteckning == "Andra delbetalningen")
+                {
+                    kreditAttAterstalla = logiBelopp * 0.80m;
+                }
+            }
+
+            ValdFaktura.Status = "Betald";
+            fakturaController.UppdateraFaktura(ValdFaktura);
+
+            if (kreditAttAterstalla > 0 &&
+                bokning != null &&
+                bokning.KundNummer.HasValue)
+            {
+                KundController kundController = new KundController();
+
+                kundController.OkaKredit(
+                    bokning.KundNummer.Value,
+                    kreditAttAterstalla);
+            }
+
+            MessageBox.Show(
+                $"Status för faktura {ValdFaktura.FakturaNummer} har ändrats till: Betald",
+                "Status uppdaterad",
+                MessageBoxButton.OK,
+                MessageBoxImage.Information);
+
+            LaddaData();
         }
 
         protected void OnPropertyChanged([CallerMemberName] string name = null)

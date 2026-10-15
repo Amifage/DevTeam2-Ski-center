@@ -97,24 +97,57 @@
                            Margin="5"/>
 
 
-                <ComboBox Grid.Column="1"
-                          Height="30"
-                          Margin="5"
-                          ItemsSource="{Binding Kunder}"
-                          SelectedItem="{Binding ValdKund, Mode=TwoWay}"
-                          DisplayMemberPath="DisplayText"/>
-                <Button Grid.Column="2"
-                            Content="⟳"
-                            Width="34"
-                            Height="34"
-                            FontSize="24"
-                            Margin="2,5,5,5"
-                            Padding="0"
-                            Background="{StaticResource FjällBlå}"
-                            BorderBrush="LightGray"
-                            BorderThickness="1"
-                            ToolTip="Uppdatera kundlista"
-                            Command="{Binding UppdateraKunderCommand}"/>
+                <StackPanel Grid.Column="1"
+                            Grid.ColumnSpan="2"
+                            Margin="5">
+
+                    <StackPanel Orientation="Horizontal">
+
+                        <TextBox Width="220"
+                                 Height="30"
+                                 Text="{Binding KundSokText, UpdateSourceTrigger=PropertyChanged}"/>
+
+                        <Button Content="Sök"
+                                Width="70"
+                                Height="30"
+                                Margin="5,0,0,0"
+                                Command="{Binding SokKunderCommand}"/>
+
+                    </StackPanel>
+
+                    <ListBox Height="50"
+                             Margin="0,5,0,0"
+                             ItemsSource="{Binding Kunder}"
+                             SelectedItem="{Binding ValdKund, Mode=TwoWay}"
+                             DisplayMemberPath="DisplayText">
+                    
+                    <ListBox.Style>
+                            <Style TargetType="ListBox">
+                                <Setter Property="Visibility" Value="Collapsed"/>
+                                <Style.Triggers>
+                                    <DataTrigger Binding="{Binding ValdKund}" Value="{x:Null}">
+                                        <Setter Property="Visibility" Value="Visible"/>
+                                    </DataTrigger>
+                                </Style.Triggers>
+                            </Style>
+                        </ListBox.Style>
+                    </ListBox>
+
+                    <TextBlock Margin="0,5,0,0"
+                               FontWeight="Bold"
+                               Text="{Binding ValdKund.DisplayText}">       
+                        <TextBlock.Style>
+                            <Style TargetType="TextBlock">
+                                <Setter Property="Visibility" Value="Visible"/>
+                                <Style.Triggers>
+                                    <DataTrigger Binding="{Binding ValdKund}" Value="{x:Null}">
+                                        <Setter Property="Visibility" Value="Collapsed"/>
+                                    </DataTrigger>
+                                </Style.Triggers>
+                            </Style>
+                        </TextBlock.Style>
+                    </TextBlock>
+                </StackPanel>
 
 
                 <TextBlock Grid.Column="3"
@@ -477,25 +510,25 @@
                                     <TextBlock Text="Boka som:"/>
 
                                     <ComboBox Height="30"
-          Margin="0,5,0,10"
-          ItemsSource="{Binding UtrustningTyper}"
-          SelectedItem="{Binding ValdUtrustningTyp, Mode=TwoWay}"
-          IsEnabled="{Binding KanVäljaUtrustningTyp}"/>
+                                              Margin="0,5,0,10"
+                                              ItemsSource="{Binding UtrustningTyper}"
+                                              SelectedItem="{Binding ValdUtrustningTyp, Mode=TwoWay}"
+                                              IsEnabled="{Binding KanVäljaUtrustningTyp}"/>
 
 
                                     <!-- UTRUSTNINGSPAKET -->
 
                                     <StackPanel Visibility="{Binding VisarUtrustningsPaket,
-            Converter={StaticResource BooleanToVisibilityConverter}}">
+                                                Converter={StaticResource BooleanToVisibilityConverter}}">
 
                                         <TextBlock Text="Utrustningspaket:"/>
 
                                         <ComboBox Height="30"
-              Margin="0,5,0,10"
-              ItemsSource="{Binding TillgängligaUtrustningsPaket}"
-              SelectedItem="{Binding ValtUtrustningPaket, Mode=TwoWay}"
-              DisplayMemberPath="UtrustningPaketNamn"
-              IsEnabled="{Binding KanVäljaUtrustningsPaket}"/>
+                                                  Margin="0,5,0,10"
+                                                  ItemsSource="{Binding TillgängligaUtrustningsPaket}"
+                                                  SelectedItem="{Binding ValtUtrustningPaket, Mode=TwoWay}"
+                                                  DisplayMemberPath="UtrustningPaketNamn"
+                                                  IsEnabled="{Binding KanVäljaUtrustningsPaket}"/>
 
 
                                         <TextBlock Text="Antal paket:"/>
@@ -1007,7 +1040,7 @@
                             Width="120"
                             Margin="5"
                             Command="{Binding TillbakaCommand}" 
-CommandParameter="{Binding RelativeSource={RelativeSource AncestorType=Window}}" />
+                            CommandParameter="{Binding RelativeSource={RelativeSource AncestorType=Window}}" />
 
 
                     <!-- TA BORT HELA BOKNINGEN -->
@@ -1210,26 +1243,26 @@ CommandParameter="{Binding RelativeSource={RelativeSource AncestorType=Window}}"
                     </Grid.RowDefinitions>
 
                     <TextBlock Grid.Row="0"
-               Text="Bokningar"
-               FontWeight="SemiBold"
-               Margin="0,0,0,8"/>
+                               Text="Bokningar"
+                               FontWeight="SemiBold"
+                               Margin="0,0,0,8"/>
 
                     <ListBox Grid.Row="1"
-             ItemsSource="{Binding BokningarFörRedigering}"
-             SelectedItem="{Binding ValdBokningFörRedigering, Mode=TwoWay}"
-             HorizontalContentAlignment="Stretch"
-             ScrollViewer.VerticalScrollBarVisibility="Auto">
+                             ItemsSource="{Binding BokningarFörRedigering}"
+                             SelectedItem="{Binding ValdBokningFörRedigering, Mode=TwoWay}"
+                             HorizontalContentAlignment="Stretch"
+                             ScrollViewer.VerticalScrollBarVisibility="Auto">
 
                         <ListBox.ItemTemplate>
                             <DataTemplate>
 
                                 <Border BorderBrush="LightGray"
-                        BorderThickness="0,0,0,1"
-                        Padding="6">
+                                        BorderThickness="0,0,0,1"
+                                        Padding="6">
 
                                     <TextBlock Text="{Binding BokningDisplayText}"
-                               FontWeight="SemiBold"
-                               TextWrapping="Wrap"/>
+                                               FontWeight="SemiBold"
+                                               TextWrapping="Wrap"/>
 
                                 </Border>
 
