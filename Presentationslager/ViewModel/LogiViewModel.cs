@@ -114,7 +114,7 @@ namespace Presentationslager.ViewModel
                     }
                 }
 
-                var typer = logiController.HamtaAllaArtikelTyper(); // Se till att denna metod finns i LogiController
+                var typer = logiController.HamtaLogiMedLogiNummer(); 
 
                 if (ArtikelTyper == null)
                 {
@@ -156,7 +156,6 @@ namespace Presentationslager.ViewModel
                 }
             }
         }
-
         private void RensaFalt(object obj)
         {
             SokLogiNummer = string.Empty;

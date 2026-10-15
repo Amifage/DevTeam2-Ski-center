@@ -28,7 +28,7 @@ namespace Entitetslager
 
 
         [NotMapped]
-        public string? LogiDisplayText { get; set; } //Chats påhitt, denna gör så vi kan använda display text i Logi i Bokning /Sara
+        public string? LogiDisplayText { get; set; } 
 
     }
 }
