@@ -112,7 +112,7 @@ namespace Presentationslager.ViewModel
             LaddaData();
         }
 
-        private void LaddaData()
+        public void LaddaData()
         {
             var lektioner = _personalController.HamtaAktuellaSkidlektioner();
             SkidlektionsLista.Clear();
