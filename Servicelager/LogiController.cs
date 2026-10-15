@@ -73,13 +73,6 @@ namespace Servicelager
             return resultat;
         }
 
-        public Logi HamtaLogiMedLogiNummer(string logiNummer)
-        {
-            return _unitOfWork.LogiRepository
-                .Find(l => l.LogiNummer == logiNummer)
-                .FirstOrDefault();
-        }
-
         public List<ArtikelTyp> HamtaAllaArtikelTyper()
         {
             return _unitOfWork.ArtikelTypRepository.GetAll().ToList();
