@@ -16,7 +16,7 @@ namespace Datalager
         {
             _dbSet = dbSet;
         }
-
+          
 
         #region Generella metoder
 
