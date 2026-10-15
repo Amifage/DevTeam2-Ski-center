@@ -38,7 +38,7 @@
                 </StackPanel>
                 <Grid Height="90" Width="100" Margin="25,-25,0,0" VerticalAlignment="Bottom">
                     <Image Source="Betalstatus-ikon.png" 
-                        Stretch="Uniform"/>
+                        Stretch="Uniform" RenderOptions.BitmapScalingMode="HighQuality"/>
                 </Grid>
 
 
