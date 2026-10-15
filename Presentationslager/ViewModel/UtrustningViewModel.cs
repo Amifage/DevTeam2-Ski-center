@@ -153,9 +153,10 @@ namespace Presentationslager.ViewModel
 
             var vald = ValdUtrustning;
 
-            string nyStatus = (vald.Status != null && vald.Status.Equals("Tillgänglig", StringComparison.OrdinalIgnoreCase))
-                ? "Trasig"
-                : "Tillgänglig";
+            // Om statusen är "Trasig" blir ny status "Tillgänglig", annars "Trasig"
+            string nyStatus = (vald.Status != null && vald.Status.Equals("Trasig", StringComparison.OrdinalIgnoreCase))
+                ? "Tillgänglig"
+                : "Trasig";
 
             bool lyckades = _utrustningController.UppdateraUtrustningsStatus(vald.UtrustningNummer, nyStatus);
 
