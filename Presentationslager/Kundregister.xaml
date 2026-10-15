@@ -64,6 +64,11 @@
                     <StackPanel>
                         <TextBlock Text="Kunduppgifter"  Style="{StaticResource HeaderTextStyle}" Margin="0,0,0,15" />
 
+                        <Grid Height="80" Width="100" Margin="150,-65,0,0" VerticalAlignment="Bottom">
+                            <Image Source="Kundregister-ikon.png" 
+                                Stretch="Uniform" RenderOptions.BitmapScalingMode="HighQuality"/>
+                        </Grid>
+
                         <TextBlock Text="Välj kundtyp:" FontWeight="Bold" Margin="0,0,0,5"/>
                         <ComboBox SelectedIndex="{Binding ValdKundTypIndex}" Margin="0,0,0,15" Padding="5">
                             <ComboBoxItem Content="Privatkund" />
