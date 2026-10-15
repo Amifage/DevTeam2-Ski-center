@@ -43,6 +43,12 @@
                     <Button Content="Sök" Command="{Binding SokCommand}" Width="90" Height="30" Margin="0,0,10,0"/>
                     <Button Content="Rensa" Command="{Binding RensaCommand}" Width="90" Height="30"/>
                 </StackPanel>
+                <Grid Height="90" Width="120" Margin="25,-25,0,0" VerticalAlignment="Bottom">
+                    <Image Source="Logi-ikon.png" 
+                            Stretch="Uniform"/>
+                </Grid>
+
+
             </WrapPanel>
         </Border>
 

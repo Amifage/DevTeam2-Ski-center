@@ -41,7 +41,7 @@
 
                 <StackPanel Orientation="Vertical" Margin="0,0,15,10">
                     <TextBlock Text="Instruktör:" Margin="0,0,0,5"/>
-                    <ComboBox ItemsSource="{Binding Instruktörer}" SelectedItem="{Binding ValdInstruktör}" Width="200" Height="30" VerticalContentAlignment="Center">
+                    <ComboBox ItemsSource="{Binding Instruktorer}" SelectedItem="{Binding ValdInstruktor}" Width="200" Height="30" VerticalContentAlignment="Center">
                         <ComboBox.ItemTemplate>
                             <DataTemplate>
                                 <StackPanel Orientation="Horizontal">
@@ -92,7 +92,7 @@
 
         <StackPanel Grid.Row="3" Orientation="Horizontal" HorizontalAlignment="Right" Margin="0,10,0,0">
             <TextBlock Text="Ny instruktör:" VerticalAlignment="Center" Margin="0,0,10,0"/>
-            <ComboBox ItemsSource="{Binding AllaAnställda}" SelectedItem="{Binding NyInstruktör}"
+            <ComboBox ItemsSource="{Binding AllaAnstallda}" SelectedItem="{Binding NyInstruktor}"
                       Width="220" Height="35" VerticalContentAlignment="Center" Margin="0,0,10,0">
                 <ComboBox.ItemTemplate>
                     <DataTemplate>
@@ -109,7 +109,7 @@
                     </DataTemplate>
                 </ComboBox.ItemTemplate>
             </ComboBox>
-            <Button Content="Uppdatera instruktör" Command="{Binding UppdateraInstruktörCommand}" Width="150" Height="35" Margin="0,0,10,0"/>
+            <Button Content="Uppdatera instruktör" Command="{Binding UppdateraInstruktorCommand}" Width="150" Height="35" Margin="0,0,10,0"/>
             <Button Content="Tillbaka"
                     Command="{Binding TillbakaCommand}"
                     CommandParameter="{Binding RelativeSource={RelativeSource AncestorType=Window}}"

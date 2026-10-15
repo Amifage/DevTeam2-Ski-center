@@ -11,7 +11,7 @@ namespace Presentationslager.ViewModel
 {
     public class SkidlektionViewModel : INotifyPropertyChanged
     {
-        private readonly SkidlektionController _skidlektionController;
+        private readonly PersonalController _personalController;
 
         private ObservableCollection<Entitetslager.Skidlektion> _skidlektionsLista;
         public ObservableCollection<Entitetslager.Skidlektion> SkidlektionsLista
@@ -29,9 +29,9 @@ namespace Presentationslager.ViewModel
                 _valdSkidlektion = value;
                 OnPropertyChanged();
 
-                NyInstruktör = value == null
+                NyInstruktor = value == null
                     ? null
-                    : AllaAnställda.FirstOrDefault(p => p.AnställningsNummer == value.AnställningsNummer);
+                    : AllaAnstallda.FirstOrDefault(p => p.AnställningsNummer == value.AnställningsNummer);
             }
         }
 
@@ -63,58 +63,58 @@ namespace Presentationslager.ViewModel
             set { _valdArtikelTyp = value; OnPropertyChanged(); }
         }
 
-        private ObservableCollection<Personal> _instruktörer;
-        public ObservableCollection<Personal> Instruktörer
+        private ObservableCollection<Personal> _instruktorer;
+        public ObservableCollection<Personal> Instruktorer
         {
-            get => _instruktörer;
-            set { _instruktörer = value; OnPropertyChanged(); }
+            get => _instruktorer;
+            set { _instruktorer = value; OnPropertyChanged(); }
         }
 
-        private Personal? _valdInstruktör;
-        public Personal? ValdInstruktör
+        private Personal? _valdInstruktor;
+        public Personal? ValdInstruktor
         {
-            get => _valdInstruktör;
-            set { _valdInstruktör = value; OnPropertyChanged(); }
+            get => _valdInstruktor;
+            set { _valdInstruktor = value; OnPropertyChanged(); }
         }
 
-        private ObservableCollection<Personal> _allaAnställda;
-        public ObservableCollection<Personal> AllaAnställda
+        private ObservableCollection<Personal> _allaAnstallda;
+        public ObservableCollection<Personal> AllaAnstallda
         {
-            get => _allaAnställda;
-            set { _allaAnställda = value; OnPropertyChanged(); }
+            get => _allaAnstallda;
+            set { _allaAnstallda = value; OnPropertyChanged(); }
         }
 
-        private Personal? _nyInstruktör;
-        public Personal? NyInstruktör
+        private Personal? _nyInstruktor;
+        public Personal? NyInstruktor
         {
-            get => _nyInstruktör;
-            set { _nyInstruktör = value; OnPropertyChanged(); }
+            get => _nyInstruktor;
+            set { _nyInstruktor = value; OnPropertyChanged(); }
         }
 
         public ICommand SokCommand { get; }
         public ICommand RensaCommand { get; }
-        public ICommand UppdateraInstruktörCommand { get; }
+        public ICommand UppdateraInstruktorCommand { get; }
         public ICommand TillbakaCommand { get; set; }
 
         public SkidlektionViewModel()
         {
-            _skidlektionController = new SkidlektionController();
+            _personalController = new PersonalController();
 
             SkidlektionsLista = new ObservableCollection<Entitetslager.Skidlektion>();
             ArtikelTyper = new ObservableCollection<string>();
-            Instruktörer = new ObservableCollection<Personal>();
-            AllaAnställda = new ObservableCollection<Personal>();
+            Instruktorer = new ObservableCollection<Personal>();
+            AllaAnstallda = new ObservableCollection<Personal>();
 
             SokCommand = new RelayCommand(UtforSokning);
             RensaCommand = new RelayCommand(RensaFalt);
-            UppdateraInstruktörCommand = new RelayCommand(UppdateraInstruktör, CanUppdateraInstruktör);
+            UppdateraInstruktorCommand = new RelayCommand(UppdateraInstruktor, CanUppdateraInstruktor);
             TillbakaCommand = new RelayCommand(TillbakaTillMeny);
             LaddaData();
         }
 
         private void LaddaData()
         {
-            var lektioner = _skidlektionController.HamtaAktuellaSkidlektioner();
+            var lektioner = _personalController.HamtaAktuellaSkidlektioner();
             SkidlektionsLista.Clear();
             if (lektioner != null)
             {
@@ -124,7 +124,7 @@ namespace Presentationslager.ViewModel
                 }
             }
 
-            var typer = _skidlektionController.HamtaAllaArtikelTyper();
+            var typer = _personalController.HamtaAllaArtikelTyper();
             ArtikelTyper.Clear();
             if (typer != null)
             {
@@ -139,34 +139,34 @@ namespace Presentationslager.ViewModel
                 }
             }
 
-            var instruktörer = _skidlektionController.HamtaInstruktorer();
-            Instruktörer.Clear();
-            if (instruktörer != null)
+            var instruktorer = _personalController.HamtaInstruktorer();
+            Instruktorer.Clear();
+            if (instruktorer != null)
             {
-                foreach (Personal item in instruktörer)
+                foreach (Personal item in instruktorer)
                 {
-                    Instruktörer.Add(item);
+                    Instruktorer.Add(item);
                 }
             }
 
-            var anställda = _skidlektionController.HamtaAllaAnstallda();
-            AllaAnställda.Clear();
-            if (anställda != null)
+            var anstallda = _personalController.HamtaAllaAnstallda();
+            AllaAnstallda.Clear();
+            if (anstallda != null)
             {
-                foreach (Personal item in anställda)
+                foreach (Personal item in anstallda)
                 {
-                    AllaAnställda.Add(item);
+                    AllaAnstallda.Add(item);
                 }
             }
         }
 
         private void UtforSokning(object obj)
         {
-            var resultat = _skidlektionController.SokSkidlektioner(
+            var resultat = _personalController.SokSkidlektioner(
                 SokDatum,
                 SokStatus,
                 ValdArtikelTyp,
-                ValdInstruktör?.AnställningsNummer
+                ValdInstruktor?.AnställningsNummer
             );
 
             SkidlektionsLista.Clear();
@@ -184,33 +184,33 @@ namespace Presentationslager.ViewModel
             SokDatum = string.Empty;
             SokStatus = string.Empty;
             ValdArtikelTyp = null;
-            ValdInstruktör = null;
+            ValdInstruktor = null;
 
             LaddaData();
         }
 
-        private bool CanUppdateraInstruktör(object obj)
+        private bool CanUppdateraInstruktor(object obj)
         {
             return ValdSkidlektion != null &&
-                   NyInstruktör != null &&
-                   NyInstruktör.AnställningsNummer != ValdSkidlektion.AnställningsNummer;
+                   NyInstruktor != null &&
+                   NyInstruktor.AnställningsNummer != ValdSkidlektion.AnställningsNummer;
         }
 
-        private void UppdateraInstruktör(object obj)
+        private void UppdateraInstruktor(object obj)
         {
-            if (ValdSkidlektion == null || NyInstruktör == null) return;
+            if (ValdSkidlektion == null || NyInstruktor == null) return;
 
             var vald = ValdSkidlektion;
-            var nyInstruktör = NyInstruktör;
+            var nyInstruktor = NyInstruktor;
 
-            if (_skidlektionController.HarOverlappandeLektion(vald.SkidlektionNummer, nyInstruktör.AnställningsNummer))
+            if (_personalController.HarOverlappandeLektion(vald.SkidlektionNummer, nyInstruktor.AnställningsNummer))
             {
                 MessageBox.Show("Den valda anställda har redan en annan lektion som överlappar i tid.",
                                 "Kan inte byta instruktör", MessageBoxButton.OK, MessageBoxImage.Warning);
                 return;
             }
 
-            bool lyckades = _skidlektionController.UppdateraInstruktor(vald.SkidlektionNummer, nyInstruktör.AnställningsNummer);
+            bool lyckades = _personalController.UppdateraInstruktor(vald.SkidlektionNummer, nyInstruktor.AnställningsNummer);
 
             if (lyckades)
             {
@@ -222,7 +222,7 @@ namespace Presentationslager.ViewModel
 
                 ValdSkidlektion = vald;
 
-                MessageBox.Show($"Instruktör för lektion {vald.SkidlektionNummer} uppdaterades till: {nyInstruktör.Förnamn} {nyInstruktör.Efternamn}",
+                MessageBox.Show($"Instruktör för lektion {vald.SkidlektionNummer} uppdaterades till: {nyInstruktor.Förnamn} {nyInstruktor.Efternamn}",
                                 "Instruktör uppdaterad", MessageBoxButton.OK, MessageBoxImage.Information);
             }
             else
