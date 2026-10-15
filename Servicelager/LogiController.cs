@@ -3,8 +3,6 @@ using Entitetslager;
 using System;
 using System.Collections.Generic;
 using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 
 namespace Servicelager
 {
@@ -12,44 +10,34 @@ namespace Servicelager
     {
         private readonly UnitOfWork _unitOfWork;
 
-
         public LogiController()
         {
             _unitOfWork = new UnitOfWork(new SkiContext());
         }
+
         public List<Logi> HamtaAllaLogi()
         {
-            using var unitOfWork = new UnitOfWork(new SkiContext());
-
-            return unitOfWork.LogiRepository
+            return _unitOfWork.LogiRepository
                 .GetAll()
                 .ToList();
         }
 
-
-        public List<string> HamtaUpptagnaLogi(
-             DateTime startDatum,
-             DateTime slutDatum)
+        public List<string> HamtaUpptagnaLogi(DateTime startDatum, DateTime slutDatum)
         {
-            using var unitOfWork =
-                new UnitOfWork(new SkiContext());
+            var avbokadeBokningsNummer = _unitOfWork.BokningRepository
+                .GetAll()
+                .Where(b => b.Status == "Avbokad")
+                .Select(b => b.BokningsNummer)
+                .ToHashSet();
 
-            var avbokadeBokningsNummer =
-                unitOfWork.BokningRepository
-                    .GetAll()
-                    .Where(b => b.Status == "Avbokad")
-                    .Select(b => b.BokningsNummer)
-                    .ToHashSet();
-
-            return unitOfWork.LogiRadRepository
+            return _unitOfWork.LogiRadRepository
                 .GetAll()
                 .Where(r =>
                     r.LogiNummer != null &&
                     r.StartDatum < slutDatum &&
                     r.SlutDatum > startDatum &&
                     (!r.BokningsNummer.HasValue ||
-                     !avbokadeBokningsNummer.Contains(
-                         r.BokningsNummer.Value)))
+                     !avbokadeBokningsNummer.Contains(r.BokningsNummer.Value)))
                 .Select(r => r.LogiNummer!)
                 .Distinct()
                 .ToList();
@@ -85,7 +73,7 @@ namespace Servicelager
             return resultat;
         }
 
-        public Logi HamtaLogiMedArtikelTypNummer(string logiNummer)
+        public Logi HamtaLogiMedLogiNummer(string logiNummer)
         {
             return _unitOfWork.LogiRepository
                 .Find(l => l.LogiNummer == logiNummer)

@@ -96,7 +96,7 @@ namespace Servicelager
         }
 
 
-        //För bokning /Sara
+        //Bokning
         public List<UtrustningPaketInnehåll> HamtaPaketInnehall(int utrustningPaketNummer)
         {
             return _unitOfWork.UtrustningPaketInnehållRepository
@@ -105,7 +105,7 @@ namespace Servicelager
                 .ToList();
         }
 
-        public HashSet<string> HamtaUpptagnaUtrustningsNummer(
+        private HashSet<string> HamtaUpptagnaUtrustningsNummer(
             DateTime startDatum,
             DateTime slutDatum)
         {

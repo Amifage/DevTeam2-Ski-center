@@ -473,7 +473,7 @@ namespace Presentationslager.ViewModel
                 .OrderBy(l => l.ArtikelTypNummer)
                 .ToList();
            
-            var allaArtikelTyper = utrustningController.HamtaAllaArtikelTyper();
+            var allaArtikelTyper = logiController.HamtaAllaArtikelTyper();
 
             foreach (Logi logi in representativaLogi)
             {
@@ -577,7 +577,7 @@ namespace Presentationslager.ViewModel
 
             PrisController prisController = new PrisController();
 
-            Pris? pris = prisController.HämtaAktuelltPris(
+            Pris? pris = prisController.HamtaAktuelltPris(
                 ValdLogiArtikelTyp.ArtikelTypNummer,
                 StartDatum.Value,
                 SlutDatum.Value);
@@ -652,7 +652,7 @@ namespace Presentationslager.ViewModel
 
             PrisController prisController = new PrisController();
 
-            Pris? pris = prisController.HämtaAktuelltPris(
+            Pris? pris = prisController.HamtaAktuelltPris(
                 ValdLogiArtikelTyp.ArtikelTypNummer,
                 StartDatum.Value,
                 SlutDatum.Value);
@@ -1134,7 +1134,7 @@ namespace Presentationslager.ViewModel
 
             PrisController prisController = new PrisController();
 
-            decimal? pris = prisController.BeräknaPrisFörPeriod(
+            decimal? pris = prisController.BeraknaPrisForPeriod(
                 artikelTypNummer.Value,
                 UtrustningStartDatum.Value,
                 UtrustningSlutDatum.Value);
@@ -1252,7 +1252,7 @@ namespace Presentationslager.ViewModel
                 new PrisController();
 
             decimal? pris =
-                prisController.BeräknaPrisFörPeriod(
+                prisController.BeraknaPrisForPeriod(
                     ValdUtrustningArtikelTyp.ArtikelTypNummer,
                     UtrustningStartDatum.Value,
                     UtrustningSlutDatum.Value);
@@ -1348,7 +1348,7 @@ namespace Presentationslager.ViewModel
 
             PrisController prisController = new PrisController();
 
-            decimal? pris = prisController.BeräknaPrisFörPeriod(
+            decimal? pris = prisController.BeraknaPrisForPeriod(
                 ValtUtrustningPaket.ArtikelTypNummer.Value,
                 UtrustningStartDatum.Value,
                 UtrustningSlutDatum.Value);
@@ -1642,7 +1642,7 @@ namespace Presentationslager.ViewModel
 
             PrisController prisController = new PrisController();
 
-            Pris? pris = prisController.HämtaAktuelltPris(
+            Pris? pris = prisController.HamtaAktuelltPris(
                 ValdKonferens.ArtikelTypNummer.Value,
                 KonferensStartTid.Value,
                 KonferensSlutTid.Value);
@@ -1856,7 +1856,7 @@ namespace Presentationslager.ViewModel
                 new SkidlektionController();
 
             var skidlektioner =
-                skidlektionController.HämtaTillgängligaSkidlektioner(
+                skidlektionController.HamtaTillgangligaSkidlektioner(
                     SkidlektionDatum.Value);
 
             foreach (SkidlektionEntitet skidlektion in skidlektioner)
@@ -1912,7 +1912,7 @@ namespace Presentationslager.ViewModel
 
             PrisController prisController = new PrisController();
 
-            Pris? pris = prisController.HämtaPrisFörSkidlektion(
+            Pris? pris = prisController.HamtaPrisForSkidlektion(
                         ValdSkidlektion.ArtikelTypNummer.Value,
                         ValdSkidlektion.Datum);
 
@@ -1953,7 +1953,7 @@ namespace Presentationslager.ViewModel
                 new SkidlektionController();
 
             int ledigaPlatser =
-                skidlektionController.HämtaAntalLedigaPlatser(
+                skidlektionController.HamtaAntalLedigaPlatser(
                     ValdSkidlektion.SkidlektionNummer);
 
             int redanValdaPersoner = SkidlektionRader
