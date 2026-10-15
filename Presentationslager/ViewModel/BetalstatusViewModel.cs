@@ -74,7 +74,7 @@ namespace Presentationslager.ViewModel
         private void LaddaData()
         {
             
-            _allaFakturor = fakturaController.HämtaAllaFakturor();
+            _allaFakturor = fakturaController.HamtaAllaFakturor();
 
             if (_allaFakturor != null)
             {
@@ -122,7 +122,6 @@ namespace Presentationslager.ViewModel
                 nuvarandeFonster.Close();
             }
         }
-
         private void UppdateraStatus(object obj)
         {
             if (ValdFaktura != null)

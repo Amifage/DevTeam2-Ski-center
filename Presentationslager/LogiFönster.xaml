@@ -20,7 +20,6 @@
                Style="{StaticResource HeaderTextStyle}"
                Margin="0,0,0,20"/>
 
-        <!-- Sök- och filtreringssektion i vitt kort -->
         <Border Grid.Row="1" Background="{StaticResource Snövit}" CornerRadius="5" Padding="15" Margin="0,0,0,15">
             <WrapPanel Orientation="Horizontal">
                 <StackPanel Orientation="Vertical" Margin="0,0,15,10">
@@ -47,7 +46,7 @@
             </WrapPanel>
         </Border>
 
-        <Border Grid.Row="2" Background="White" CornerRadius="5" Padding="10" Margin="0,0,0,15">
+        <Border Grid.Row="2" Background="{StaticResource Snövit}" CornerRadius="5" Padding="10" Margin="0,0,0,15">
             <DataGrid ItemsSource="{Binding LogiLista}" 
                   SelectedItem="{Binding ValdLogi}"
                   AutoGenerateColumns="False" 

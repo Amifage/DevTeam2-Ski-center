@@ -45,7 +45,7 @@
               AutoGenerateColumns="False" 
               IsReadOnly="True"
               Background="{StaticResource Snövit}"
-              RowBackground="White"
+              RowBackground="{StaticResource Snövit}"
               AlternatingRowBackground="#F9F9F9"
               Foreground="Black"
               GridLinesVisibility="Horizontal"
@@ -59,7 +59,6 @@
                     <DataGridTextColumn Header="Anteckning" Binding="{Binding Anteckning}" Width="*"/>
                     <DataGridTextColumn Header="Faktutadatum" Binding="{Binding Fakturadatum, StringFormat=\{0:yyyy-MM-dd\}}" Width="110"/>
                     <DataGridTextColumn Header="Förfallodatum" Binding="{Binding Förfallodatum, StringFormat=\{0:yyyy-MM-dd\}}" Width="110"/>
-
                 </DataGrid.Columns>
             </DataGrid>
         </Border>

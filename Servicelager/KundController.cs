@@ -18,7 +18,7 @@ public class KundController
             _unitofwork.Save();
         }
 
-        public List<Kund> HämtaAllaKunder()
+        public List<Kund> HamtaAllaKunder()
         {
             using var _unitofwork = new UnitOfWork(new SkiContext());
             return _unitofwork.KundRepository.GetAll().ToList();

@@ -19,7 +19,7 @@ namespace Servicelager
 
         }
 
-        public List<Faktura> HämtaAllaFakturor()
+        public List<Faktura> HamtaAllaFakturor()
         {
             using var _unitofwork = new UnitOfWork(new SkiContext());
             return _unitofwork.FakturaRepository.GetQueryable() 
@@ -33,9 +33,6 @@ namespace Servicelager
             _unitOfWork.FakturaRepository.Update(faktura);
             _unitOfWork.Save();
         }
-
-      
-
 
     }
 }

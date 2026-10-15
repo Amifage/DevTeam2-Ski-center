@@ -1,6 +1,6 @@
 ﻿using Presentationslager.Command;
 using Servicelager;
-using Entitetslager; // Antar att din Logi-klass ligger här
+using Entitetslager; 
 using System;
 using System.Collections.ObjectModel;
 using System.ComponentModel;
@@ -66,7 +66,6 @@ namespace Presentationslager.ViewModel
             get { return _sokStatus; }
             set { _sokStatus = value; OnPropertyChanged(); }
 
-
         }
 
         private ObservableCollection<string> _statusAlternativ;
@@ -99,7 +98,7 @@ namespace Presentationslager.ViewModel
         
             private void LaddaData()
             {
-                var allLogi = logiController.HämtaAllaLogi(); 
+                var allLogi = logiController.HamtaAllaLogi(); 
 
                 if (LogiLista == null)
                 {
@@ -131,8 +130,7 @@ namespace Presentationslager.ViewModel
                     .Where(namn =>
                         namn.Contains("LGH.I", StringComparison.OrdinalIgnoreCase) ||
                         namn.Contains("LGH.II", StringComparison.OrdinalIgnoreCase) ||
-                        namn.Contains("Camp", StringComparison.OrdinalIgnoreCase) );
-                          
+                        namn.Contains("Camp", StringComparison.OrdinalIgnoreCase) );                        
 
                     foreach (var typ in filtreradeTyper)
                     {
@@ -140,7 +138,6 @@ namespace Presentationslager.ViewModel
                     }
                 }
             }
-
 
         private void UtforSokning(object obj)
         {
