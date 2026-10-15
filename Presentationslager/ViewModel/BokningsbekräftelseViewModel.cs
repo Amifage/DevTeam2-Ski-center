@@ -176,9 +176,6 @@ namespace Presentationslager.ViewModel
         public string AndraFörfallodatumText =>
             AndraFörfallodatum?.ToString("yyyy-MM-dd") ?? "-";
 
-
-
-
         private void ExporteraJson()
         {
             SaveFileDialog dialog = new SaveFileDialog
