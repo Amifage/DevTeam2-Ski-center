@@ -16,7 +16,7 @@
     <None Remove="Kundregister-ikon.png" />
     <None Remove="Logi-ikon.png" />
     <None Remove="Logotyp Ski-center.png" />
-    <None Remove="Meny-header-2.jpg" />
+    <None Remove="Meny-header.jpg" />
     <None Remove="Skidlektion-ikon.jpg" />
     <None Remove="Utrustning-ikon.png" />
   </ItemGroup>
@@ -43,7 +43,7 @@
     <Resource Include="Kundregister-ikon.png" />
     <Resource Include="Logi-ikon.png" />
     <Resource Include="Logotyp Ski-center.png" />
-    <Resource Include="Meny-header-2.jpg" />
+    <Resource Include="Meny-header.jpg" />
     <Resource Include="Skidlektion-ikon.jpg" />
     <Resource Include="Utrustning-ikon.png" />
   </ItemGroup>
