@@ -11,6 +11,8 @@
   <ItemGroup>
     <None Remove="Fonts\OpenSans-Medium.ttf" />
     <None Remove="Fonts\Poppins-SemiBold.ttf" />
+    <None Remove="Konferens-ikon.png" />
+    <None Remove="Logi-ikon.png" />
     <None Remove="Logotyp Ski-center.png" />
     <None Remove="Meny-header-2.jpg" />
     <None Remove="Utrustning-ikon.png" />
@@ -33,6 +35,8 @@
     <Resource Include="Fonts\Poppins-SemiBold.ttf">
       <CopyToOutputDirectory>Never</CopyToOutputDirectory>
     </Resource>
+    <Resource Include="Konferens-ikon.png" />
+    <Resource Include="Logi-ikon.png" />
     <Resource Include="Logotyp Ski-center.png" />
     <Resource Include="Meny-header-2.jpg" />
     <Resource Include="Utrustning-ikon.png" />
