@@ -496,9 +496,10 @@
             Margin="0,0,10,0"
             Command="{Binding ExporteraJsonCommand}"/>
 
+
             <Button Content="Stäng"
-            Width="120"
-            Command="{Binding StängCommand}"/>
+                    Width="120"
+                    Command="{Binding StängCommand}"/>
 
         </StackPanel>
 
