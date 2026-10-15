@@ -27,6 +27,8 @@ namespace Presentationslager.ViewModel
         public ObservableCollection<Entitetslager.Skidlektion> VisadeLektioner { get; } = new();
         public ObservableCollection<Personal> Instruktörer { get; } = new();
 
+        public ObservableCollection<Personal> AllaAnställda { get; } = new();
+
         private Personal? _valdInstruktör;
         public Personal? ValdInstruktör
         {
@@ -62,8 +64,53 @@ namespace Presentationslager.ViewModel
             }
         }
 
+        private Entitetslager.Skidlektion? _valdLektion;
+        public Entitetslager.Skidlektion? ValdLektion
+        {
+            get => _valdLektion;
+            set
+            {
+                _valdLektion = value;
+                OnPropertyChanged();
+                OnPropertyChanged(nameof(ValdLektionText));
+
+                NyInstruktör = value == null
+                    ? null
+                    : AllaAnställda.FirstOrDefault(p => p.AnställningsNummer == value.AnställningsNummer);
+            }
+        }
+
+        private Personal? _nyInstruktör;
+        public Personal? NyInstruktör
+        {
+            get => _nyInstruktör;
+            set
+            {
+                _nyInstruktör = value;
+                OnPropertyChanged();
+            }
+        }
+
+        public string ValdLektionText
+        {
+            get
+            {
+                if (ValdLektion == null)
+                    return "Markera en lektion i listan för att byta instruktör.";
+
+                string nuvarande = ValdLektion.Personal != null
+                    ? $"{ValdLektion.Personal.Förnamn} {ValdLektion.Personal.Efternamn}"
+                    : "ingen";
+
+                return $"Lektion {ValdLektion.SkidlektionNummer} – {ValdLektion.Datum:yyyy-MM-dd} " +
+                       $"{ValdLektion.StartTid:hh\\:mm}–{ValdLektion.SlutTid:hh\\:mm} " +
+                       $"(nuvarande instruktör: {nuvarande})";
+            }
+        }
+
         public ICommand RensaFilterCommand { get; }
         public ICommand TillbakaCommand { get; set; }
+        public ICommand SparaInstruktörCommand { get; } 
 
         public SkidlektionViewModel(SkidlektionController controller)
         {
@@ -71,6 +118,7 @@ namespace Presentationslager.ViewModel
 
             RensaFilterCommand = new RelayCommand(RensaFilter);
             TillbakaCommand = new RelayCommand(TillbakaTillMeny);
+            SparaInstruktörCommand = new RelayCommand(SparaInstruktör, _ => KanSparaInstruktör()); 
 
             LaddaData();
         }
@@ -81,6 +129,10 @@ namespace Presentationslager.ViewModel
             {
                 _alla = _controller.HämtaAktuellaSkidlektioner().ToList();
                 _datumCache.Clear();
+
+                AllaAnställda.Clear();
+                foreach (var anställd in _controller.HämtaAllaAnställda())
+                    AllaAnställda.Add(anställd);
 
                 Instruktörer.Clear();
                 foreach (var instruktör in _controller.HämtaInstruktörer())
@@ -175,6 +227,45 @@ namespace Presentationslager.ViewModel
             yield return datum.ToString("d/M");
             yield return datum.ToString("dddd", sv).ToLower();
             yield return datum.ToString("MMMM", sv).ToLower();
+        }
+
+        private bool KanSparaInstruktör()
+        {
+            return ValdLektion != null &&
+                   NyInstruktör != null &&
+                   NyInstruktör.AnställningsNummer != ValdLektion.AnställningsNummer;
+        }
+
+        
+        private void SparaInstruktör(object? obj)
+        {
+            if (ValdLektion == null || NyInstruktör == null)
+                return;
+
+            int lektionNummer = ValdLektion.SkidlektionNummer;
+            string namn = $"{NyInstruktör.Förnamn} {NyInstruktör.Efternamn}";
+
+            try
+            {
+                string? fel = _controller.ÄndraInstruktör(lektionNummer, NyInstruktör.AnställningsNummer);
+
+                if (fel != null)
+                {
+                    MessageBox.Show(fel, "Kan inte byta instruktör",
+                                    MessageBoxButton.OK, MessageBoxImage.Warning);
+                    return;
+                }
+
+                FiltreraLektioner();
+
+                MessageBox.Show($"Lektion {lektionNummer} har nu {namn} som instruktör.",
+                                "Sparat", MessageBoxButton.OK, MessageBoxImage.Information);
+            }
+            catch (Exception ex)
+            {
+                MessageBox.Show("Kunde inte spara ändringen:\n" +
+                                (ex.InnerException?.Message ?? ex.Message));
+            }
         }
 
         private void RensaFilter(object? obj)
