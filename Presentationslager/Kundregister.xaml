@@ -19,9 +19,7 @@
 
             <StackPanel Grid.Row="0" Orientation="Horizontal" Margin="0,0,0,10">
                 <TextBlock Text="Sök:" VerticalAlignment="Center" Margin="0,0,5,0" FontWeight="SemiBold" Foreground="#333"/>
-                <TextBox Text="{Binding SökText, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" Width="130" Padding="5" Margin="0,0,2,0" />
-
-                <Button Content="✕" Command="{Binding RensaSokningCommand}" ToolTip="Rensa sökfältet" Width="25" Height="26" Margin="0,0,15,0" Background="{StaticResource Snövit}" BorderThickness="0" Cursor="Hand" />
+                <TextBox Text="{Binding SokText, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" Width="130" Padding="5" Margin="0,0,2,0" />
 
                 <TextBlock Text="Visa:" VerticalAlignment="Center" Margin="0,0,5,0" FontWeight="SemiBold" Foreground="#333"/>
                 <ComboBox SelectedIndex="{Binding ValdFilterTypIndex}" Width="140" Padding="5" Margin="0,0,15,0">
