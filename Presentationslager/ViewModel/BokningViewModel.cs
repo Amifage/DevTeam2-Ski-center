@@ -112,6 +112,8 @@ namespace Presentationslager.ViewModel
         public ICommand AvbokaBokningCommand { get; }
         public ICommand SökBokningCommand { get; }
         public ICommand SparaÄndringarCommand { get; }
+        public ICommand RegistreraNyKundCommand { get; }
+        public ICommand UppdateraKunderCommand { get; }
 
         #endregion
 
@@ -191,6 +193,9 @@ namespace Presentationslager.ViewModel
 
             #endregion
 
+
+            RegistreraNyKundCommand = new RelayCommand(OppnaKundregister);
+            UppdateraKunderCommand = new RelayCommand(_ => LaddaOmKunder());
             SkapaBokningCommand = new RelayCommand(_ => SkapaBokning());
             TillbakaCommand = new RelayCommand(TillbakaTillMeny);
         }
@@ -2892,6 +2897,27 @@ namespace Presentationslager.ViewModel
         #endregion
 
 
+        public void LaddaOmKunder()
+        {
+            KundController kundController = new KundController();
+
+            var hämtaKunderFrånDatabas = kundController.HamtaAllaKunder();
+
+            Kunder.Clear();
+            foreach (var kund in hämtaKunderFrånDatabas)
+            {
+                Kunder.Add(kund);
+            }
+
+            
+        }
+
+        private void OppnaKundregister(object obj)
+        {
+            Kundregister kundFönster = new Kundregister();
+            kundFönster.Show();
+        }
+
         private void TillbakaTillMeny(object obj)
         {
             Meny menyFonster = new Meny();
@@ -2902,5 +2928,6 @@ namespace Presentationslager.ViewModel
                 nuvarandeFonster.Close();
             }
         }
+        
     }
 }
