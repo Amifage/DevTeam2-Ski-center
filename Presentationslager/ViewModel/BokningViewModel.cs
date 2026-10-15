@@ -2381,17 +2381,13 @@ namespace Presentationslager.ViewModel
 
                 if (gammalBokning != null && gammalBokning.Delbetala)
                 {
-                    decimal gammaltLogiBelopp =
+                    gammaltKreditBelopp =
                         gammalBokning.LogiRader?.Sum(x => x.LogiBelopp) ?? 0;
-
-                    gammaltKreditBelopp = gammaltLogiBelopp * 0.80m;
                 }
 
-                decimal nyttKreditBelopp =
-                    Delbetala ? AndraDelbetalning : 0;
+                decimal nyttKreditBelopp = Delbetala ? LogiBelopp : 0;
 
-                decimal kreditSkillnad =
-                    nyttKreditBelopp - gammaltKreditBelopp;
+                decimal kreditSkillnad = nyttKreditBelopp - gammaltKreditBelopp;
 
                 decimal tidigareTotalBelopp = 0;
 
@@ -2587,7 +2583,7 @@ namespace Presentationslager.ViewModel
 
             decimal kreditAttAterstalla =
                 ValdBokningFörRedigering.Delbetala
-                    ? LogiBelopp * 0.80m
+                    ? LogiBelopp
                     : 0m;
 
             string kundText = ValdKund != null
@@ -2746,7 +2742,7 @@ namespace Presentationslager.ViewModel
 
                 kundController.MinskaKredit(
                     ValdKund.KundNummer,
-                    AndraDelbetalning);
+                    LogiBelopp);
             }
 
             SkidlektionController skidlektionController = new SkidlektionController();
