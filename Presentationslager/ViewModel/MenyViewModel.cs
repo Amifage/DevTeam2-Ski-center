@@ -17,6 +17,7 @@ namespace Presentationslager.ViewModel
 
         public ICommand OppnaLogiCommand { get; }
         public ICommand OppnaBetalstatusCommand { get; }
+        public ICommand OppnaStatistikCommand { get; }
 
         public event PropertyChangedEventHandler? PropertyChanged;
 
@@ -30,6 +31,7 @@ namespace Presentationslager.ViewModel
             OppnaKonferenscommand = new RelayCommand(OpnnaKonferens);
             OppnaLogiCommand = new RelayCommand(OppnaLogi);
             OppnaBetalstatusCommand = new RelayCommand(OppnaBetalstatus);
+            OppnaStatistikCommand = new RelayCommand(OppnaStatistik);
         }
 
         public void OppnaKundregister(object obj)
@@ -112,6 +114,16 @@ namespace Presentationslager.ViewModel
         private void LoggaUt(object obj)
         {
             Startsida window = new Startsida();
+            window.Show();
+
+            if (obj is Window nuvarandeFonster)
+            {
+                nuvarandeFonster.Close();
+            }
+        }
+        public void OppnaStatistik(object obj)
+        {
+            Statistik window = new Statistik();
             window.Show();
 
             if (obj is Window nuvarandeFonster)
