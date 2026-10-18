@@ -43,6 +43,7 @@
 
                 <TextBlock Text="Email" FontWeight="SemiBold" Margin="0,0,0,5"/>
                 <TextBox x:Name="txtEmailInlogg" 
+                         Text="{Binding Epost, UpdateSourceTrigger=PropertyChanged}"
                          Height="40" 
                          Padding="10,0" 
                          Margin="0,0,0,15" 
@@ -62,7 +63,8 @@
                 <Button Content="Logga in" 
                         FontWeight="Bold" 
                         FontSize="15"
-                        Command="{Binding OpenMenuCommand}" 
+                        Command="{Binding LoggaInCommand}"
+                        IsDefault="True"
                         CommandParameter="{Binding RelativeSource={RelativeSource AncestorType=Window}}"
                         HorizontalAlignment="Stretch" 
                         Height="40" 

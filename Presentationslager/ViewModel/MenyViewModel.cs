@@ -3,6 +3,7 @@ using System.ComponentModel;
 using System.Runtime.CompilerServices;
 using System.Windows;
 using System.Windows.Input;
+using Servicelager;
 
 namespace Presentationslager.ViewModel
 {
@@ -113,6 +114,8 @@ namespace Presentationslager.ViewModel
 
         private void LoggaUt(object obj)
         {
+            InloggningController.LoggaUt();
+
             Startsida window = new Startsida();
             window.Show();
 
@@ -131,6 +134,8 @@ namespace Presentationslager.ViewModel
                 nuvarandeFonster.Close();
             }
         }
+
+
 
         protected void OnPropertyChanged([CallerMemberName] string? propertyName = null)
         {
