@@ -9,12 +9,21 @@
   </PropertyGroup>
 
   <ItemGroup>
+    <None Remove="Betalstatus-ikon.png" />
     <None Remove="Fonts\OpenSans-Medium.ttf" />
     <None Remove="Fonts\Poppins-SemiBold.ttf" />
+    <None Remove="Konferens-ikon.png" />
+    <None Remove="Kundregister-ikon.png" />
+    <None Remove="Logi-ikon.png" />
+    <None Remove="Logotyp Ski-center.png" />
+    <None Remove="Meny-header.jpg" />
+    <None Remove="Skidlektion-ikon.jpg" />
+    <None Remove="Utrustning-ikon.png" />
   </ItemGroup>
 
   <ItemGroup>
     <PackageReference Include="Microsoft.EntityFrameworkCore" Version="8.0.31" />
+    <PackageReference Include="QuestPDF" Version="2026.9.1" />
   </ItemGroup>
 
   <ItemGroup>
@@ -23,12 +32,20 @@
   </ItemGroup>
 
   <ItemGroup>
+    <Resource Include="Betalstatus-ikon.png" />
     <Resource Include="Fonts\OpenSans-Medium.ttf">
       <CopyToOutputDirectory>Never</CopyToOutputDirectory>
     </Resource>
     <Resource Include="Fonts\Poppins-SemiBold.ttf">
       <CopyToOutputDirectory>Never</CopyToOutputDirectory>
     </Resource>
+    <Resource Include="Konferens-ikon.png" />
+    <Resource Include="Kundregister-ikon.png" />
+    <Resource Include="Logi-ikon.png" />
+    <Resource Include="Logotyp Ski-center.png" />
+    <Resource Include="Meny-header.jpg" />
+    <Resource Include="Skidlektion-ikon.jpg" />
+    <Resource Include="Utrustning-ikon.png" />
   </ItemGroup>
 
 </Project>

@@ -1,0 +1,508 @@
+﻿<Window x:Class="Presentationslager.Avbokningsbekräftelse"
+        xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        Title="Avbokningsbekräftelse"
+        Height="750"
+        Width="800"
+        WindowStartupLocation="CenterScreen">
+
+    <Window.Resources>
+        <BooleanToVisibilityConverter x:Key="BooleanToVisibilityConverter"/>
+    </Window.Resources>
+
+    <Grid Background="{StaticResource IsBlå}"
+          Margin="20">
+
+        <Grid.RowDefinitions>
+            <RowDefinition Height="Auto"/>
+            <RowDefinition Height="*"/>
+            <RowDefinition Height="Auto"/>
+        </Grid.RowDefinitions>
+
+        <!-- RUBRIK -->
+
+        <StackPanel Grid.Row="0"
+                    Margin="0,0,0,20">
+
+            <TextBlock Text="Bokningen har avbokats"
+                       Style="{StaticResource HeaderTextStyle}"/>
+
+            <TextBlock Margin="0,10,0,0"
+                       FontWeight="Bold">
+                <Run Text="Bokningsnummer: "/>
+                <Run Text="{Binding BokningsNummer, Mode=OneWay}"/>
+            </TextBlock>
+
+            <StackPanel Margin="0,15,0,0">
+                <TextBlock>
+                <Run Text="Kund: " FontWeight="Bold"/>
+                <Run Text="{Binding KundNamnText, Mode=OneWay}"/>
+                        </TextBlock>
+
+                        <TextBlock>
+                <Run Text="Kundnummer: " FontWeight="Bold"/>
+                <Run Text="{Binding KundNummerText, Mode=OneWay}"/>
+                </TextBlock>
+            </StackPanel>
+
+            <TextBlock Margin="0,0,0,8">
+            <Run Text="Avbokningsdatum: " FontWeight="Bold"/>
+            <Run Text="{Binding AvbokningsdatumText, Mode=OneWay}"/>    
+            </TextBlock>
+
+            <TextBlock Margin="0,0,0,8">
+            <Run Text="Avbeställningsskydd: " FontWeight="Bold"/>
+            <Run Text="{Binding AvbeställningsskyddText, Mode=OneWay}"/>
+            </TextBlock>
+
+            <TextBlock Margin="0,0,0,8">
+            <Run Text="Rabatt: " FontWeight="Bold"/>
+            <Run Text="{Binding RabattText, Mode=OneWay}"/>
+            </TextBlock>
+
+        </StackPanel>
+
+        <!-- INNEHÅLL -->
+
+        <ScrollViewer Grid.Row="1"
+                      VerticalScrollBarVisibility="Auto">
+
+            <StackPanel>
+
+                <TextBlock Text="Följande har avbokats:"
+                           FontSize="18"
+                           FontWeight="SemiBold"
+                           Margin="0,0,0,10"/>
+
+                <!-- BOENDE -->
+
+                <StackPanel>
+                    <StackPanel.Style>
+                        <Style TargetType="StackPanel">
+                            <Setter Property="Visibility"
+                                    Value="Collapsed"/>
+
+                            <Style.Triggers>
+                                <DataTrigger Binding="{Binding HarLogi}"
+                                             Value="True">
+                                    <Setter Property="Visibility"
+                                            Value="Visible"/>
+                                </DataTrigger>
+                            </Style.Triggers>
+                        </Style>
+                    </StackPanel.Style>
+
+                    <TextBlock Text="Boende"
+                               FontSize="18"
+                               FontWeight="SemiBold"
+                               Margin="0,10,0,8"/>
+
+                    <ItemsControl ItemsSource="{Binding LogiRader}">
+                        <ItemsControl.ItemTemplate>
+                            <DataTemplate>
+
+                                <Border Background="{StaticResource Snövit}"
+                                        BorderBrush="LightGray"
+                                        BorderThickness="1"
+                                        CornerRadius="4"
+                                        Padding="10"
+                                        Margin="0,0,0,5">
+
+                                    <Grid>
+                                        <Grid.ColumnDefinitions>
+                                            <ColumnDefinition Width="*"/>
+                                            <ColumnDefinition Width="Auto"/>
+                                        </Grid.ColumnDefinitions>
+
+                                        <StackPanel>
+
+                                            <TextBlock Text="{Binding LogiDisplayText}"
+                                                       FontWeight="Bold"/>
+
+                                            <TextBlock>
+                                                <Run Text="Antal personer: "/>
+                                                <Run Text="{Binding AntalPersoner}"/>
+                                            </TextBlock>
+
+                                            <TextBlock>
+                                                <Run Text="Period: "/>
+
+                                                <Run Text="{Binding StartDatum,
+                                                    StringFormat={}{0:yyyy-MM-dd}}"/>
+
+                                                <Run Text=" - "/>
+
+                                                <Run Text="{Binding SlutDatum,
+                                                    StringFormat={}{0:yyyy-MM-dd}}"/>
+                                            </TextBlock>
+
+                                        </StackPanel>
+
+                                        <TextBlock Grid.Column="1"
+                                                   Text="{Binding LogiBelopp,
+                                                   StringFormat={}{0:N0} kr}"
+                                                   FontWeight="Bold"
+                                                   VerticalAlignment="Center"
+                                                   Margin="20,0,0,0"/>
+
+                                    </Grid>
+
+                                </Border>
+
+                            </DataTemplate>
+                        </ItemsControl.ItemTemplate>
+                    </ItemsControl>
+
+                </StackPanel>
+
+                <!-- UTRUSTNING -->
+
+                <StackPanel>
+                    <StackPanel.Style>
+                        <Style TargetType="StackPanel">
+                            <Setter Property="Visibility"
+                                    Value="Collapsed"/>
+
+                            <Style.Triggers>
+                                <DataTrigger Binding="{Binding HarUtrustning}"
+                                             Value="True">
+                                    <Setter Property="Visibility"
+                                            Value="Visible"/>
+                                </DataTrigger>
+                            </Style.Triggers>
+                        </Style>
+                    </StackPanel.Style>
+
+                    <TextBlock Text="Utrustning"
+                               FontSize="18"
+                               FontWeight="SemiBold"
+                               Margin="0,10,0,8"/>
+
+                    <ItemsControl ItemsSource="{Binding UtrustningRader}">
+                        <ItemsControl.ItemTemplate>
+                            <DataTemplate>
+
+                                <Border Background="{StaticResource Snövit}"
+                                        BorderBrush="LightGray"
+                                        BorderThickness="1"
+                                        CornerRadius="4"
+                                        Padding="10"
+                                        Margin="0,0,0,5">
+
+                                    <Grid>
+                                        <Grid.ColumnDefinitions>
+                                            <ColumnDefinition Width="*"/>
+                                            <ColumnDefinition Width="Auto"/>
+                                        </Grid.ColumnDefinitions>
+
+                                        <StackPanel>
+
+                                            <TextBlock Text="{Binding UtrustningDisplayText}"
+                                                       FontWeight="Bold"/>
+
+                                            <TextBlock>
+                                            <Run Text="Exemplarnummer: " FontWeight="Bold"/>
+                                            <Run Text="{Binding ExemplarNummerText, Mode=OneWay}"/>
+                                            </TextBlock>
+                                            
+                                            
+                                            <TextBlock>
+                                                <Run Text="Period: "/>
+
+                                                <Run Text="{Binding StartDatum,
+                                                    StringFormat={}{0:yyyy-MM-dd}}"/>
+
+                                                <Run Text=" - "/>
+
+                                                <Run Text="{Binding SlutDatum,
+                                                    StringFormat={}{0:yyyy-MM-dd}}"/>
+                                            </TextBlock>
+
+                                        </StackPanel>
+
+                                        <TextBlock Grid.Column="1"
+                                                   Text="{Binding UtrustningBelopp,
+                                                   StringFormat={}{0:N0} kr}"
+                                                   FontWeight="Bold"
+                                                   VerticalAlignment="Center"
+                                                   Margin="20,0,0,0"/>
+
+                                    </Grid>
+
+                                </Border>
+
+                            </DataTemplate>
+                        </ItemsControl.ItemTemplate>
+                    </ItemsControl>
+
+                </StackPanel>
+
+                <!-- KONFERENS -->
+
+                <StackPanel>
+                    <StackPanel.Style>
+                        <Style TargetType="StackPanel">
+                            <Setter Property="Visibility"
+                                    Value="Collapsed"/>
+
+                            <Style.Triggers>
+                                <DataTrigger Binding="{Binding HarKonferens}"
+                                             Value="True">
+                                    <Setter Property="Visibility"
+                                            Value="Visible"/>
+                                </DataTrigger>
+                            </Style.Triggers>
+                        </Style>
+                    </StackPanel.Style>
+
+                    <TextBlock Text="Konferens"
+                               FontSize="18"
+                               FontWeight="SemiBold"
+                               Margin="0,10,0,8"/>
+
+                    <ItemsControl ItemsSource="{Binding KonferensRader}">
+                        <ItemsControl.ItemTemplate>
+                            <DataTemplate>
+
+                                <Border Background="{StaticResource Snövit}"
+                                        BorderBrush="LightGray"
+                                        BorderThickness="1"
+                                        CornerRadius="4"
+                                        Padding="10"
+                                        Margin="0,0,0,5">
+
+                                    <Grid>
+                                        <Grid.ColumnDefinitions>
+                                            <ColumnDefinition Width="*"/>
+                                            <ColumnDefinition Width="Auto"/>
+                                        </Grid.ColumnDefinitions>
+
+                                        <StackPanel>
+
+                                            <TextBlock Text="{Binding KonferensNummer}"
+                                                       FontWeight="Bold"/>
+
+                                            <TextBlock>
+                                                <Run Text="Antal deltagare: "/>
+                                                <Run Text="{Binding AntalPersoner}"/>
+                                            </TextBlock>
+
+                                            <TextBlock>
+                                                <Run Text="Period: "/>
+
+                                                <Run Text="{Binding StartTid,
+                                                    StringFormat={}{0:yyyy-MM-dd HH:mm}}"/>
+
+                                                <Run Text=" - "/>
+
+                                                <Run Text="{Binding SlutTid,
+                                                    StringFormat={}{0:yyyy-MM-dd HH:mm}}"/>
+                                            </TextBlock>
+
+                                        </StackPanel>
+
+                                        <TextBlock Grid.Column="1"
+                                                   Text="{Binding KonferensBelopp,
+                                                   StringFormat={}{0:N0} kr}"
+                                                   FontWeight="Bold"
+                                                   VerticalAlignment="Center"
+                                                   Margin="20,0,0,0"/>
+
+                                    </Grid>
+
+                                </Border>
+
+                            </DataTemplate>
+                        </ItemsControl.ItemTemplate>
+                    </ItemsControl>
+
+                </StackPanel>
+
+                <!-- SKIDLEKTION -->
+
+                <StackPanel>
+                    <StackPanel.Style>
+                        <Style TargetType="StackPanel">
+                            <Setter Property="Visibility"
+                                    Value="Collapsed"/>
+
+                            <Style.Triggers>
+                                <DataTrigger Binding="{Binding HarSkidlektion}"
+                                             Value="True">
+                                    <Setter Property="Visibility"
+                                            Value="Visible"/>
+                                </DataTrigger>
+                            </Style.Triggers>
+                        </Style>
+                    </StackPanel.Style>
+
+                    <TextBlock Text="Skidlektion"
+                               FontSize="18"
+                               FontWeight="SemiBold"
+                               Margin="0,10,0,8"/>
+
+                    <ItemsControl ItemsSource="{Binding SkidlektionRader}">
+                        <ItemsControl.ItemTemplate>
+                            <DataTemplate>
+
+                                <Border Background="{StaticResource Snövit}"
+                                        BorderBrush="LightGray"
+                                        BorderThickness="1"
+                                        CornerRadius="4"
+                                        Padding="10"
+                                        Margin="0,0,0,5">
+
+                                    <Grid>
+                                        <Grid.ColumnDefinitions>
+                                            <ColumnDefinition Width="*"/>
+                                            <ColumnDefinition Width="Auto"/>
+                                        </Grid.ColumnDefinitions>
+
+                                        <StackPanel>
+
+                                            <TextBlock Text="{Binding SkidlektionDisplayText}"
+                                                       FontWeight="Bold"/>
+
+                                            <TextBlock>
+                                                <Run Text="Antal personer: "/>
+                                                <Run Text="{Binding AntalPersoner}"/>
+                                            </TextBlock>
+
+                                            <TextBlock>
+                                                <Run Text="Datum: "/>
+
+                                                <Run Text="{Binding Datum,
+                                                    StringFormat={}{0:yyyy-MM-dd}}"/>
+                                            </TextBlock>
+
+                                        </StackPanel>
+
+                                        <TextBlock Grid.Column="1"
+                                                   Text="{Binding SkidlektionBelopp,
+                                                   StringFormat={}{0:N0} kr}"
+                                                   FontWeight="Bold"
+                                                   VerticalAlignment="Center"
+                                                   Margin="20,0,0,0"/>
+
+                                    </Grid>
+
+                                </Border>
+
+                            </DataTemplate>
+                        </ItemsControl.ItemTemplate>
+                    </ItemsControl>
+
+                </StackPanel>
+
+                <Separator Margin="0,15,0,15"/>
+
+                <!-- TIDIGARE TOTALSUMMA -->
+
+                    <StackPanel Orientation="Horizontal"
+                HorizontalAlignment="Right"
+                Margin="0,0,0,5">
+
+                        <TextBlock Text="Tidigare totalsumma:"
+                   FontSize="18"
+                   FontWeight="Bold"
+                   Margin="0,0,10,0"/>
+
+                        <TextBlock Text="{Binding TotalBeloppText, Mode=OneWay}"
+                   FontSize="18"
+                   FontWeight="Bold"/>
+                    </StackPanel>
+
+
+                    <StackPanel Orientation="Horizontal"
+                HorizontalAlignment="Right"
+                Margin="0,0,0,5">
+
+                        <TextBlock Text="Kreditering:"
+                   FontSize="18"
+                   Margin="0,0,10,0"/>
+
+                        <TextBlock Text="{Binding KrediteringText, Mode=OneWay}"
+                   FontSize="18"/>
+                    </StackPanel>
+
+
+                    <Separator Margin="0,5,0,8"/>
+
+
+                    <StackPanel Orientation="Horizontal"
+                HorizontalAlignment="Right">
+
+                        <TextBlock Text="Totalt kvar:"
+                   FontSize="20"
+                   FontWeight="Bold"
+                   Margin="0,0,10,0"/>
+
+                        <TextBlock Text="{Binding TotaltKvarText, Mode=OneWay}"
+                   FontSize="20"
+                   FontWeight="Bold"/>
+                    </StackPanel>
+
+                <TextBlock>
+                <Run Text="Varav moms 12 %: " FontWeight="Bold"/>
+                <Run Text="{Binding MomsText, Mode=OneWay}"/>
+                </TextBlock>
+
+                <StackPanel Margin="0,8,0,0"
+            Visibility="{Binding Delbetala, Converter={StaticResource BooleanToVisibilityConverter}}">
+
+                    <TextBlock FontWeight="Bold"
+               Text="Delbetalning"/>
+
+                    <TextBlock>
+        <Run Text="Första faktura (20 % logi + övrigt): " FontWeight="Bold"/>
+        <Run Text="{Binding FörstaDelbetalningText, Mode=OneWay}"/>
+                    </TextBlock>
+
+                    <TextBlock>
+        <Run Text="Förfallodatum: " FontWeight="Bold"/>
+        <Run Text="{Binding FörstaFörfallodatumText, Mode=OneWay}"/>
+                    </TextBlock>
+
+                    <TextBlock Margin="0,4,0,0">
+        <Run Text="Andra faktura (80 % logi):" FontWeight="Bold"/>
+        <Run Text="{Binding AndraDelbetalningText, Mode=OneWay}"/>
+                    </TextBlock>
+
+                    <TextBlock>
+        <Run Text="Förfallodatum: " FontWeight="Bold"/>
+        <Run Text="{Binding AndraFörfallodatumText, Mode=OneWay}"/>
+                    </TextBlock>
+
+            </StackPanel>
+
+            </StackPanel>
+
+        </ScrollViewer>
+
+        <!-- STÄNG -->
+
+        <StackPanel Grid.Row="2"
+            Orientation="Horizontal"
+            HorizontalAlignment="Right"
+            Margin="0,20,0,0">
+
+            <Button Content="Exportera PDF"
+            Width="145"
+            Margin="0,0,10,0"
+            Command="{Binding ExporteraPdfCommand}"/>
+
+            <Button Content="Exportera JSON"
+            Width="145"
+            Margin="0,0,10,0"
+            Command="{Binding ExporteraJsonCommand}"/>
+
+
+            <Button Content="Stäng"
+                    Width="120"
+                    Command="{Binding StängCommand}"/>
+
+        </StackPanel>
+
+    </Grid>
+
+</Window>

@@ -23,7 +23,6 @@ namespace Entitetslager
         [ForeignKey(nameof(ArtikelTypNummer))]
         public virtual ArtikelTyp ArtikelTyp { get; set; }
 
-
         [ForeignKey(nameof(PrisRegelNummer))]
         public virtual PrisRegel PrisRegel { get; set; }
     }

@@ -1,648 +1,1292 @@
 ﻿<Window x:Class="Presentationslager.Bokning"
         xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
         xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
-        Title="Skapa bokning"
+        Title="Bokning"
         Height="800"
-        Width="1000"
+        Width="1300"
+        MinWidth="1000"
         WindowStartupLocation="CenterScreen">
 
     <Grid Background="{StaticResource IsBlå}"
           Margin="20">
 
-        <Grid.RowDefinitions>
-            <RowDefinition Height="Auto"/>
-            <RowDefinition Height="Auto"/>
-            <RowDefinition Height="*"/>
-            <RowDefinition Height="Auto"/>
-        </Grid.RowDefinitions>
+        <Grid.ColumnDefinitions>
+            <ColumnDefinition Width="*"/>
+            <ColumnDefinition Width="Auto"/>
+        </Grid.ColumnDefinitions>
 
 
-        <!-- RUBRIK -->
+        <!-- ================================================= -->
+        <!-- VÄNSTER SIDA - BOKNINGSFORMULÄR                    -->
+        <!-- ================================================= -->
 
-        <TextBlock Grid.Row="0"
-                   Text="Skapa bokning"
-                   Style="{StaticResource HeaderTextStyle}"
-                   Margin="0,0,0,20"/>
+        <Grid Grid.Column="0">
 
+            <Grid.RowDefinitions>
+                <RowDefinition Height="Auto"/>
+                <RowDefinition Height="Auto"/>
+                <RowDefinition Height="Auto"/>
+                <RowDefinition Height="*"/>
+                <RowDefinition Height="Auto"/>
+            </Grid.RowDefinitions>
 
-        <!-- KUND OCH DATUM -->
 
-        <Grid Grid.Row="1"
-              Margin="0,0,0,20">
+            <!-- ===================================== -->
+            <!-- RUBRIK                                -->
+            <!-- ===================================== -->
 
-            <Grid.ColumnDefinitions>
+            <Grid Grid.Row="0"
+                  Margin="0,0,0,20">
 
-                <ColumnDefinition Width="Auto"/>
-                <ColumnDefinition Width="250"/>
+                <Grid.ColumnDefinitions>
+                    <ColumnDefinition Width="*"/>
+                    <ColumnDefinition Width="Auto"/>
+                </Grid.ColumnDefinitions>
 
-                <ColumnDefinition Width="40"/>
+                <TextBlock Text="{Binding BokningsRubrik}"
+                           Style="{StaticResource HeaderTextStyle}"/>
 
-                <ColumnDefinition Width="Auto"/>
-                <ColumnDefinition Width="150"/>
+                <StackPanel Grid.Column="1"
+                            Orientation="Horizontal">
 
-                <ColumnDefinition Width="20"/>
+                    <Button Content="Registrera ny kund"
+                            Width="150"
+                            Height="35"
+                            Background="#FF68D068"
+                            Margin="0,0,10,0"
+                            Command="{Binding RegistreraNyKundCommand}"/>
 
-                <ColumnDefinition Width="Auto"/>
-                <ColumnDefinition Width="150"/>
+                    <Button Content="Ändra / ta bort bokning"
+                            Width="190"
+                            Height="35"
+                            Background="#FFD66570"
+                            Command="{Binding VäxlaRedigeringslägeCommand}"/>
 
-            </Grid.ColumnDefinitions>
+                </StackPanel>
 
+            </Grid>
 
-            <TextBlock Text="Kund:"
-                       VerticalAlignment="Center"
-                       Margin="5"/>
 
+            <!-- ===================================== -->
+            <!-- KUND OCH DATUM                       -->
+            <!-- ===================================== -->
 
-            <ComboBox Grid.Column="1"
-                      Height="30"
-                      Margin="5"
-                      ItemsSource="{Binding Kunder}"
-                      SelectedItem="{Binding ValdKund, Mode=TwoWay}"
-                      DisplayMemberPath="DisplayText"/>
+            <Grid Grid.Row="1"
+                  Margin="0,0,0,20">
 
+                <Grid.ColumnDefinitions>
 
-            <TextBlock Grid.Column="3"
-                       Text="Från:"
-                       VerticalAlignment="Center"
-                       Margin="5"/>
+                    <ColumnDefinition Width="Auto"/>
+                    <ColumnDefinition Width="250"/>
+                    <ColumnDefinition Width="Auto"/>
+                    <ColumnDefinition Width="40"/>
 
+                    <ColumnDefinition Width="Auto"/>
+                    <ColumnDefinition Width="50"/>
 
-            <DatePicker Grid.Column="4"
-                        Height="30"
-                        Margin="5"
-                        SelectedDate="{Binding StartDatum, Mode=TwoWay}"/>
+                    <ColumnDefinition Width="Auto"/>
 
+                    <ColumnDefinition Width="Auto"/>
+                    <ColumnDefinition Width="150"/>
 
-            <TextBlock Grid.Column="6"
-                       Text="Till:"
-                       VerticalAlignment="Center"
-                       Margin="5"/>
+                </Grid.ColumnDefinitions>
 
 
-            <DatePicker Grid.Column="7"
-                        Height="30"
-                        Margin="5"
-                        SelectedDate="{Binding SlutDatum, Mode=TwoWay}"/>
+                <TextBlock Text="Kund:"
+                           VerticalAlignment="Center"
+                           Margin="5"/>
 
-        </Grid>
 
+                <StackPanel Grid.Column="1"
+                            Grid.ColumnSpan="2"
+                            Margin="5">
 
-        <!-- ALLA BOKNINGSDELAR -->
+                    <StackPanel Orientation="Horizontal">
 
-        <ScrollViewer Grid.Row="2"
-                      VerticalScrollBarVisibility="Auto">
+                        <TextBox Width="220"
+                                 Height="30"
+                                 Text="{Binding KundSokText, UpdateSourceTrigger=PropertyChanged}"/>
 
-            <StackPanel>
-
-
-                <!-- ===================================== -->
-                <!-- BOENDE                                -->
-                <!-- ===================================== -->
-
-                <Border Background="White"
-                        CornerRadius="5"
-                        Padding="15"
-                        Margin="0,0,0,15">
-
-                    <StackPanel>
-
-
-                        <TextBlock Text="Boende"
-                                   FontSize="20"
-                                   FontWeight="SemiBold"
-                                   Margin="0,0,0,10"/>
-
-
-                        <!-- VALDA BOENDEN -->
-
-                        <ItemsControl ItemsSource="{Binding LogiRader}"
-                                      Margin="0,0,0,10">
-
-                            <ItemsControl.ItemTemplate>
-
-                                <DataTemplate>
-
-                                    <Border BorderBrush="LightGray"
-                                            BorderThickness="1"
-                                            CornerRadius="4"
-                                            Padding="10"
-                                            Margin="0,0,0,5">
-
-                                        <Grid>
-
-                                            <Grid.ColumnDefinitions>
-
-                                                <ColumnDefinition Width="*"/>
-
-                                                <ColumnDefinition Width="Auto"/>
-
-                                            </Grid.ColumnDefinitions>
-
-
-                                            <StackPanel>
-
-                                                <TextBlock Text="{Binding LogiDisplayText}"
-                                                           FontWeight="Bold"/>
-
-
-                                                <TextBlock>
-
-                                                    <Run Text="Antal personer: "/>
-
-                                                    <Run Text="{Binding AntalPersoner}"/>
-
-                                                </TextBlock>
-
-
-                                                <TextBlock>
-
-                                                    <Run Text="Period: "/>
-
-                                                    <Run Text="{Binding StartDatum,
-                                                        StringFormat={}{0:yyyy-MM-dd}}"/>
-
-                                                    <Run Text=" - "/>
-
-                                                    <Run Text="{Binding SlutDatum,
-                                                        StringFormat={}{0:yyyy-MM-dd}}"/>
-
-                                                </TextBlock>
-
-                                            </StackPanel>
-
-
-                                            <TextBlock Grid.Column="1"
-                                                       Text="{Binding LogiBelopp,
-                                                       StringFormat={}{0:N0} kr}"
-                                                       FontWeight="Bold"
-                                                       VerticalAlignment="Center"
-                                                       Margin="20,0,0,0"/>
-
-                                        </Grid>
-
-                                    </Border>
-
-                                </DataTemplate>
-
-                            </ItemsControl.ItemTemplate>
-
-                        </ItemsControl>
-
-
-                        <!-- LÄGG TILL BOENDE -->
-
-                        <Expander Header="+ Lägg till boende">
-
-                            <StackPanel Margin="10">
-
-
-                                <TextBlock Text="Antal personer:"/>
-
-
-                                <ComboBox Height="30"
-                                          Margin="0,5,0,10"
-                                          ItemsSource="{Binding AntalPersonerAlternativ}"
-                                          SelectedItem="{Binding AntalPersonerTotalt,
-                                          Mode=TwoWay}"/>
-
-
-                                <TextBlock Text="{Binding BoendePlaceringText}"
-                                           Margin="0,0,0,10"
-                                           FontWeight="SemiBold"/>
-
-
-                                <TextBlock Text="Boendetyp:"/>
-
-
-                                <ComboBox Height="30"
-                                          Margin="0,5,0,10"
-                                          ItemsSource="{Binding BoendeTyper}"
-                                          SelectedItem="{Binding ValdBoendeTyp,
-                                          Mode=TwoWay}"/>
-
-
-                                <TextBlock Text="Boende:"/>
-
-
-                                <ComboBox Height="30"
-                                          Margin="0,5,0,10"
-                                          ItemsSource="{Binding TillgängligaLogi}"
-                                          SelectedItem="{Binding ValtLogi, Mode=TwoWay}"
-                                          DisplayMemberPath="TypDisplayText" 
-                                          IsEnabled="{Binding FinnsTillgängligaLogi}" />
-
-                                <TextBlock Text="Inga boenden är tillgängliga för vald period."
-                                           Foreground="DarkRed"
-                                           FontStyle="Italic"
-                                           Margin="0,0,0,10">
-
-                                    <TextBlock.Style>
-                                        <Style TargetType="TextBlock">
-                                            <Setter Property="Visibility" Value="Collapsed"/>
-
-                                            <Style.Triggers>
-                                                <DataTrigger Binding="{Binding VisaIngaTillgängligaLogi}"
-                                                                Value="True">
-                                                    <Setter Property="Visibility" Value="Visible"/>
-                                                </DataTrigger>
-                                            </Style.Triggers>
-                                        </Style>
-                                    </TextBlock.Style>
-
-                                </TextBlock>
-
-
-
-                                <TextBlock Text="Antal personer i detta boende:"/>
-
-
-                                <ComboBox Height="30"
-                                          Margin="0,5,0,10"
-                                          ItemsSource="{Binding AntalPersonerValtLogiAlternativ}"
-                                          SelectedItem="{Binding AntalPersonerValtLogi,
-                                          Mode=TwoWay}"/>
-
-
-                                <TextBlock Text="Pris:"
-                                           Margin="0,0,0,5"/>
-
-
-                                <TextBlock Text="{Binding LogiPrisText}"
-                                           FontWeight="Bold"
-                                           Margin="0,0,0,10"/>
-
-
-                                <Button Content="Lägg till"
-                                        Width="120"
-                                        HorizontalAlignment="Left"
-                                        Command="{Binding LäggTillLogiCommand}"/>
-
-                            </StackPanel>
-
-                        </Expander>
+                        <Button Content="Sök"
+                                Width="70"
+                                Height="30"
+                                Margin="5,0,0,0"
+                                Command="{Binding SokKunderCommand}"/>
 
                     </StackPanel>
 
-                </Border>
+                    <ListBox Height="50"
+                             Margin="0,5,0,0"
+                             ItemsSource="{Binding Kunder}"
+                             SelectedItem="{Binding ValdKund, Mode=TwoWay}"
+                             DisplayMemberPath="DisplayText">
+                    
+                    <ListBox.Style>
+                            <Style TargetType="ListBox">
+                                <Setter Property="Visibility" Value="Collapsed"/>
+                                <Style.Triggers>
+                                    <DataTrigger Binding="{Binding ValdKund}" Value="{x:Null}">
+                                        <Setter Property="Visibility" Value="Visible"/>
+                                    </DataTrigger>
+                                </Style.Triggers>
+                            </Style>
+                        </ListBox.Style>
+                    </ListBox>
+
+                    <TextBlock Margin="0,5,0,0"
+                               FontWeight="Bold"
+                               Text="{Binding ValdKund.DisplayText}">       
+                        <TextBlock.Style>
+                            <Style TargetType="TextBlock">
+                                <Setter Property="Visibility" Value="Visible"/>
+                                <Style.Triggers>
+                                    <DataTrigger Binding="{Binding ValdKund}" Value="{x:Null}">
+                                        <Setter Property="Visibility" Value="Collapsed"/>
+                                    </DataTrigger>
+                                </Style.Triggers>
+                            </Style>
+                        </TextBlock.Style>
+                    </TextBlock>
+                </StackPanel>
 
 
-                <!-- ===================================== -->
-                <!-- UTRUSTNING                            -->
-                <!-- ===================================== -->
-
-                <!-- UTRUSTNING -->
-                <Border Background="White"
-        CornerRadius="5"
-        Padding="15"
-        Margin="0,0,0,15">
-
-                    <Border.Resources>
-                        <BooleanToVisibilityConverter x:Key="BooleanToVisibilityConverter"/>
-                    </Border.Resources>
-
-                    <StackPanel>
-
-                        <TextBlock Text="Utrustning"
-                   FontSize="20"
-                   FontWeight="SemiBold"
-                   Margin="0,0,0,10"/>
-
-                        <!-- Vald utrustning -->
-                        <ItemsControl ItemsSource="{Binding UtrustningRader}"
-                      Margin="0,0,0,10">
-
-                            <ItemsControl.ItemTemplate>
-                                <DataTemplate>
-
-                                    <Border BorderBrush="LightGray"
-                            BorderThickness="1"
-                            CornerRadius="4"
-                            Padding="10"
-                            Margin="0,0,0,5">
-
-                                        <Grid>
-
-                                            <Grid.ColumnDefinitions>
-                                                <ColumnDefinition Width="*"/>
-                                                <ColumnDefinition Width="Auto"/>
-                                            </Grid.ColumnDefinitions>
-
-                                            <StackPanel>
-
-                                                <TextBlock Text="{Binding UtrustningDisplayText}"
-                                           FontWeight="Bold"/>
-
-                                                <TextBlock>
-                                    <Run Text="Period: "/>
-                                    <Run Text="{Binding StartDatum, StringFormat={}{0:yyyy-MM-dd}}"/>
-                                    <Run Text=" - "/>
-                                    <Run Text="{Binding SlutDatum, StringFormat={}{0:yyyy-MM-dd}}"/>
-                                                </TextBlock>
-
-                                            </StackPanel>
-
-                                            <TextBlock Grid.Column="1"
-                                       Text="{Binding UtrustningBelopp, StringFormat={}{0:N0} kr}"
-                                       FontWeight="Bold"
-                                       VerticalAlignment="Center"
-                                       Margin="20,0,0,0"/>
-
-                                        </Grid>
-
-                                    </Border>
-
-                                </DataTemplate>
-                            </ItemsControl.ItemTemplate>
-
-                        </ItemsControl>
+                <TextBlock Grid.Column="3"
+                           Text="Från:"
+                           VerticalAlignment="Center"
+                           Margin="5"/>
 
 
-                        <Expander Header="+ Lägg till utrustning">
-
-                            <StackPanel Margin="10">
-
-                                <TextBlock Text="Utrustning från:"/>
-                                <DatePicker SelectedDate="{Binding UtrustningStartDatum, Mode=TwoWay}"
-                                            Margin="0,5,0,10"/>
-
-                                <TextBlock Text="Utrustning till:"/>
-                                <DatePicker SelectedDate="{Binding UtrustningSlutDatum, Mode=TwoWay}"
-                                            Margin="0,5,0,10"/>
-
-                                <TextBlock Text="Boka som:"/>
-
-                                <ComboBox Height="30"
-                          Margin="0,5,0,10"
-                          ItemsSource="{Binding UtrustningTyper}"
-                          SelectedItem="{Binding ValdUtrustningTyp, Mode=TwoWay}"/>
+                <DatePicker Grid.Column="4"
+                            Height="30"
+                            Margin="5"
+                            SelectedDate="{Binding StartDatum, Mode=TwoWay}"/>
 
 
-                                <!-- Utrustningspaket -->
-                                <StackPanel Visibility="{Binding VisarUtrustningsPaket,
-                    Converter={StaticResource BooleanToVisibilityConverter}}">
-
-                                    <TextBlock Text="Utrustningspaket:"/>
-
-                                    <ComboBox Height="30"
-                              Margin="0,5,0,10"
-                              ItemsSource="{Binding TillgängligaUtrustningsPaket}"
-                              SelectedItem="{Binding ValtUtrustningPaket, Mode=TwoWay}"
-                              DisplayMemberPath="UtrustningPaketNamn"/>
-
-                                    <TextBlock Text="Antal paket:"/>
-
-                                    <ComboBox Height="30"
-                              Margin="0,5,0,10"
-                              ItemsSource="{Binding AntalUtrustningsPaketAlternativ}"
-                              SelectedItem="{Binding AntalUtrustningsPaket, Mode=TwoWay}"/>
-
-                                </StackPanel>
+                <TextBlock Grid.Column="6"
+                           Text="Till:"
+                           Padding="1"
+                           VerticalAlignment="Center"
+                           Margin="5"/>
 
 
-                                <!-- Enskild utrustning -->
-                                <StackPanel Visibility="{Binding VisarEnskildUtrustning,
-                    Converter={StaticResource BooleanToVisibilityConverter}}">
+                <DatePicker Grid.Column="7"
+                            Height="30"
+                            Margin="5"
+                            SelectedDate="{Binding SlutDatum, Mode=TwoWay}"/>
 
-                                    <TextBlock Text="Enskild utrustning:"/>
+            </Grid>
+
+
+            
+          
+            
+            
+            <!-- ===================================== -->
+            <!-- ALLA BOKNINGSDELAR                    -->
+            <!-- ===================================== -->
+
+            <ScrollViewer Grid.Row="3"
+                          VerticalScrollBarVisibility="Auto">
+
+                <StackPanel>
+
+
+                    <!-- ===================================== -->
+                    <!-- BOENDE                                -->
+                    <!-- ===================================== -->
+
+                    <Border Background="{StaticResource Snövit}"
+                            CornerRadius="5"
+                            Padding="15"
+                            Margin="0,0,0,15">
+
+                        <StackPanel>
+
+
+                            <TextBlock Text="Boende"
+                                       FontSize="20"
+                                       FontWeight="SemiBold"
+                                       Margin="0,0,0,10"/>
+
+
+                            <!-- VALDA BOENDEN -->
+
+                            <ItemsControl ItemsSource="{Binding LogiRader}"
+                                          Margin="0,0,0,10">
+
+                                <ItemsControl.ItemTemplate>
+
+                                    <DataTemplate>
+
+                                        <Border BorderBrush="LightGray"
+                                                BorderThickness="1"
+                                                CornerRadius="4"
+                                                Padding="10"
+                                                Margin="0,0,0,5">
+
+                                            <Grid>
+
+                                                <Grid.ColumnDefinitions>
+                                                    <ColumnDefinition Width="*"/>
+                                                    <ColumnDefinition Width="Auto"/>
+                                                    <ColumnDefinition Width="Auto"/>
+                                                </Grid.ColumnDefinitions>
+
+
+                                                <StackPanel>
+
+                                                    <TextBlock Text="{Binding LogiDisplayText}"
+                                                               FontWeight="Bold"/>
+
+
+                                                    <TextBlock>
+                                                        <Run Text="Antal personer: "/>
+                                                        <Run Text="{Binding AntalPersoner}"/>
+                                                    </TextBlock>
+
+
+                                                    <TextBlock>
+                                                        <Run Text="Period: "/>
+
+                                                        <Run Text="{Binding StartDatum,
+                                                            StringFormat={}{0:yyyy-MM-dd}}"/>
+
+                                                        <Run Text=" - "/>
+
+                                                        <Run Text="{Binding SlutDatum,
+                                                            StringFormat={}{0:yyyy-MM-dd}}"/>
+                                                    </TextBlock>
+
+                                                </StackPanel>
+
+
+                                                <TextBlock Grid.Column="1"
+                                                           Text="{Binding LogiBelopp,
+                                                           StringFormat={}{0:N0} kr}"
+                                                           FontWeight="Bold"
+                                                           VerticalAlignment="Center"
+                                                           Margin="20,0,0,0"/>
+
+
+                                                <Button Grid.Column="2"
+                                                        Content="Ta bort"
+                                                        Margin="10,0,0,0"
+                                                        Padding="10,4"
+                                                        VerticalAlignment="Center"
+                                                        Command="{Binding DataContext.TaBortLogiRadCommand,
+                                                        RelativeSource={RelativeSource AncestorType=Window}}"
+                                                        CommandParameter="{Binding}"/>
+
+                                            </Grid>
+
+                                        </Border>
+
+                                    </DataTemplate>
+
+                                </ItemsControl.ItemTemplate>
+
+                            </ItemsControl>
+
+
+                            <!-- LÄGG TILL BOENDE -->
+
+                            <Expander Header="+ Lägg till boende">
+
+                                <StackPanel Margin="10">
+
+
+                                    <TextBlock Text="Antal personer:"/>
+
 
                                     <ComboBox Height="30"
                                               Margin="0,5,0,10"
-                                              ItemsSource="{Binding TillgängligaUtrustningArtikelTyper}"
-                                              SelectedItem="{Binding ValdUtrustningArtikelTyp, Mode=TwoWay}"
-                                              DisplayMemberPath="TypNamn"/>
+                                              ItemsSource="{Binding AntalPersonerAlternativ}"
+                                              SelectedItem="{Binding AntalPersonerTotalt, Mode=TwoWay}"
+                                              IsEnabled="{Binding KanVäljaAntalPersonerTotalt}"/>
+
+
+                                    <TextBlock Text="{Binding BoendePlaceringText}"
+                                               Margin="0,0,0,10"
+                                               FontWeight="SemiBold"/>
+
+
+                                    <TextBlock Text="Boendetyp:"/>
+
+
+                                    <ComboBox Height="30"
+                                              Margin="0,5,0,10"
+                                              ItemsSource="{Binding BoendeTyper}"
+                                              SelectedItem="{Binding ValdBoendeTyp,Mode=TwoWay}"
+                                              IsEnabled="{Binding KanVäljaBoendeTyp}"/>
+
+
+                                    <TextBlock Text="Boende:"/>
+
+
+                                    <ComboBox Height="30"
+                                              Margin="0,5,0,10"
+                                              ItemsSource="{Binding TillgängligaLogi}"
+                                              SelectedItem="{Binding ValtLogi, Mode=TwoWay}"
+                                              DisplayMemberPath="TypDisplayText"
+                                              IsEnabled="{Binding FinnsTillgängligaLogi}"/>
+
+
+                                    <TextBlock Text="Inga boenden är tillgängliga för vald period."
+                                               Foreground="DarkRed"
+                                               FontStyle="Italic"
+                                               Margin="0,0,0,10">
+
+                                        <TextBlock.Style>
+                                            <Style TargetType="TextBlock">
+
+                                                <Setter Property="Visibility"
+                                                        Value="Collapsed"/>
+
+                                                <Style.Triggers>
+
+                                                    <DataTrigger Binding="{Binding VisaIngaTillgängligaLogi}"
+                                                                 Value="True">
+
+                                                        <Setter Property="Visibility"
+                                                                Value="Visible"/>
+
+                                                    </DataTrigger>
+
+                                                </Style.Triggers>
+
+                                            </Style>
+                                        </TextBlock.Style>
+
+                                    </TextBlock>
+
+
+                                    <TextBlock Text="Antal personer i detta boende:"/>
+
+
+                                    <ComboBox Height="30"
+                                              Margin="0,5,0,10"
+                                              ItemsSource="{Binding AntalPersonerValtLogiAlternativ}"
+                                              SelectedItem="{Binding AntalPersonerValtLogi,Mode=TwoWay}"
+                                              IsEnabled="{Binding KanVäljaAntalPersonerValtLogi}"/>
+
+
+                                    <TextBlock Text="Pris:"
+                                               Margin="0,0,0,5"/>
+
+
+                                    <TextBlock Text="{Binding LogiPrisText}"
+                                               FontWeight="Bold"
+                                               Margin="0,0,0,10"/>
+
+
+                                    <Button Content="Lägg till"
+                                            Width="120"
+                                            HorizontalAlignment="Left"
+                                            Command="{Binding LäggTillLogiCommand}"/>
 
                                 </StackPanel>
 
+                            </Expander>
 
-                                <TextBlock Text="Pris:"
-                           Margin="0,0,0,5"/>
+                        </StackPanel>
 
-                                <TextBlock Text="{Binding UtrustningPrisText}"
-                           FontWeight="Bold"
-                           Margin="0,0,0,10"/>
+                    </Border>
 
-                                <Button Content="Lägg till"
-                        Width="120"
-                        HorizontalAlignment="Left"
-                        Command="{Binding LäggTillUtrustningCommand}"
-                        IsEnabled="{Binding KanLäggaTillUtrustning}"/>
 
-                            </StackPanel>
+                    <!-- ===================================== -->
+                    <!-- UTRUSTNING                            -->
+                    <!-- ===================================== -->
 
-                        </Expander>
+                    <Border Background="{StaticResource Snövit}"
+                            CornerRadius="5"
+                            Padding="15"
+                            Margin="0,0,0,15">
 
+                        <Border.Resources>
+                            <BooleanToVisibilityConverter x:Key="BooleanToVisibilityConverter"/>
+                        </Border.Resources>
+
+                        <StackPanel>
+
+                            <TextBlock Text="Utrustning"
+                                       FontSize="20"
+                                       FontWeight="SemiBold"
+                                       Margin="0,0,0,10"/>
+
+
+                            <!-- VALD UTRUSTNING -->
+
+                            <ItemsControl ItemsSource="{Binding UtrustningRader}"
+                                          Margin="0,0,0,10">
+
+                                <ItemsControl.ItemTemplate>
+
+                                    <DataTemplate>
+
+                                        <Border BorderBrush="LightGray"
+                                                BorderThickness="1"
+                                                CornerRadius="4"
+                                                Padding="10"
+                                                Margin="0,0,0,5">
+
+                                            <Grid>
+
+                                                <Grid.ColumnDefinitions>
+                                                    <ColumnDefinition Width="*"/>
+                                                    <ColumnDefinition Width="Auto"/>
+                                                    <ColumnDefinition Width="Auto"/>
+                                                </Grid.ColumnDefinitions>
+
+
+                                                <StackPanel>
+
+                                                    <TextBlock Text="{Binding UtrustningDisplayText}"
+                                                               FontWeight="Bold"/>
+
+                                                    <TextBlock>
+                                                        <Run Text="Period: "/>
+
+                                                        <Run Text="{Binding StartDatum,
+                                                            StringFormat={}{0:yyyy-MM-dd}}"/>
+
+                                                        <Run Text=" - "/>
+
+                                                        <Run Text="{Binding SlutDatum,
+                                                            StringFormat={}{0:yyyy-MM-dd}}"/>
+                                                    </TextBlock>
+
+                                                </StackPanel>
+
+
+                                                <TextBlock Grid.Column="1"
+                                                           Text="{Binding UtrustningBelopp,
+                                                           StringFormat={}{0:N0} kr}"
+                                                           FontWeight="Bold"
+                                                           VerticalAlignment="Center"
+                                                           Margin="20,0,0,0"/>
+
+
+                                                <Button Grid.Column="2"
+                                                        Content="Ta bort"
+                                                        Margin="10,0,0,0"
+                                                        Padding="10,4"
+                                                        VerticalAlignment="Center"
+                                                        Command="{Binding DataContext.TaBortUtrustningRadCommand,
+                                                        RelativeSource={RelativeSource AncestorType=Window}}"
+                                                        CommandParameter="{Binding}"/>
+
+                                            </Grid>
+
+                                        </Border>
+
+                                    </DataTemplate>
+
+                                </ItemsControl.ItemTemplate>
+
+                            </ItemsControl>
+
+
+                            <!-- LÄGG TILL UTRUSTNING -->
+
+                            <Expander Header="+ Lägg till utrustning">
+
+                                <StackPanel Margin="10">
+
+
+                                    <TextBlock Text="Utrustning från:"/>
+
+                                    <DatePicker SelectedDate="{Binding UtrustningStartDatum,
+                                        Mode=TwoWay}"
+                                                Margin="0,5,0,10"/>
+
+
+                                    <TextBlock Text="Utrustning till:"/>
+
+                                    <DatePicker SelectedDate="{Binding UtrustningSlutDatum,
+                                        Mode=TwoWay}"
+                                                Margin="0,5,0,10"/>
+
+
+                                    <TextBlock Text="Boka som:"/>
+
+                                    <ComboBox Height="30"
+                                              Margin="0,5,0,10"
+                                              ItemsSource="{Binding UtrustningTyper}"
+                                              SelectedItem="{Binding ValdUtrustningTyp, Mode=TwoWay}"
+                                              IsEnabled="{Binding KanVäljaUtrustningTyp}"/>
+
+
+                                    <!-- UTRUSTNINGSPAKET -->
+
+                                    <StackPanel Visibility="{Binding VisarUtrustningsPaket,
+                                                Converter={StaticResource BooleanToVisibilityConverter}}">
+
+                                        <TextBlock Text="Utrustningspaket:"/>
+
+                                        <ComboBox Height="30"
+                                                  Margin="0,5,0,10"
+                                                  ItemsSource="{Binding TillgängligaUtrustningsPaket}"
+                                                  SelectedItem="{Binding ValtUtrustningPaket, Mode=TwoWay}"
+                                                  DisplayMemberPath="UtrustningPaketNamn"
+                                                  IsEnabled="{Binding KanVäljaUtrustningsPaket}"/>
+
+
+                                        <TextBlock Text="Antal paket:"/>
+
+
+                                        <ComboBox Height="30"
+                                                  Margin="0,5,0,10"
+                                                  ItemsSource="{Binding AntalUtrustningsPaketAlternativ}"
+                                                  SelectedItem="{Binding AntalUtrustningsPaket, Mode=TwoWay}"
+                                                  IsEnabled="{Binding KanVäljaAntalUtrustningsPaket}"/>
+
+                                    </StackPanel>
+
+
+                                    <!-- ENSKILD UTRUSTNING -->
+
+                                    <StackPanel Visibility="{Binding VisarEnskildUtrustning,
+                                        Converter={StaticResource BooleanToVisibilityConverter}}">
+
+                                        <TextBlock Text="Enskild utrustning:"/>
+
+
+                                        <ComboBox Height="30"
+                                                  Margin="0,5,0,10"
+                                                  ItemsSource="{Binding TillgängligaUtrustningArtikelTyper}"
+                                                  SelectedItem="{Binding ValdUtrustningArtikelTyp, Mode=TwoWay}"
+                                                  DisplayMemberPath="TypNamn"/>
+
+                                        <TextBlock Text="Antal:"/>
+
+                                        <ComboBox Height="30"
+                                                  Margin="0,5,0,10"
+                                                  ItemsSource="{Binding AntalEnskildUtrustningAlternativ}"
+                                                  SelectedItem="{Binding AntalEnskildUtrustning, Mode=TwoWay}"/>
+
+                                    </StackPanel>
+
+
+                                    <TextBlock Text="Pris:"
+                                               Margin="0,0,0,5"/>
+
+
+                                    <TextBlock Text="{Binding UtrustningPrisText}"
+                                               FontWeight="Bold"
+                                               Margin="0,0,0,10"/>
+
+
+                                    <Button Content="Lägg till"
+                                            Width="120"
+                                            HorizontalAlignment="Left"
+                                            Command="{Binding LäggTillUtrustningCommand}"
+                                            IsEnabled="{Binding KanLäggaTillUtrustning}"/>
+
+                                </StackPanel>
+
+                            </Expander>
+
+                        </StackPanel>
+
+                    </Border>
+
+
+                    <!-- ===================================== -->
+                    <!-- KONFERENS                             -->
+                    <!-- ===================================== -->
+
+                    <Border Background="{StaticResource Snövit}"
+                            CornerRadius="5"
+                            Padding="15"
+                            Margin="0,0,0,15">
+
+                        <StackPanel>
+
+                            <TextBlock Text="Konferens"
+                                       FontSize="20"
+                                       FontWeight="SemiBold"
+                                       Margin="0,0,0,10"/>
+
+
+                            <!-- VALDA KONFERENSER -->
+
+                            <ItemsControl ItemsSource="{Binding KonferensRader}"
+                                          Margin="0,0,0,10">
+
+                                <ItemsControl.ItemTemplate>
+
+                                    <DataTemplate>
+
+                                        <Border BorderBrush="LightGray"
+                                                BorderThickness="1"
+                                                CornerRadius="4"
+                                                Padding="10"
+                                                Margin="0,0,0,5">
+
+                                            <Grid>
+
+                                                <Grid.ColumnDefinitions>
+                                                    <ColumnDefinition Width="*"/>
+                                                    <ColumnDefinition Width="Auto"/>
+                                                    <ColumnDefinition Width="Auto"/>
+                                                </Grid.ColumnDefinitions>
+
+
+                                                <StackPanel>
+
+                                                    <TextBlock Text="{Binding KonferensNummer}"
+                                                               FontWeight="Bold"/>
+
+
+                                                    <TextBlock>
+                                                        <Run Text="Antal deltagare: "/>
+                                                        <Run Text="{Binding AntalPersoner}"/>
+                                                    </TextBlock>
+
+
+                                                    <TextBlock>
+                                                        <Run Text="Period: "/>
+
+                                                        <Run Text="{Binding StartTid,
+                                                            StringFormat={}{0:yyyy-MM-dd}}"/>
+
+                                                        <Run Text=" - "/>
+
+                                                        <Run Text="{Binding SlutTid,
+                                                            StringFormat={}{0:yyyy-MM-dd}}"/>
+                                                    </TextBlock>
+
+                                                </StackPanel>
+
+
+                                                <TextBlock Grid.Column="1"
+                                                           Text="{Binding KonferensBelopp,
+                                                           StringFormat={}{0:N0} kr}"
+                                                           FontWeight="Bold"
+                                                           VerticalAlignment="Center"
+                                                           Margin="20,0,0,0"/>
+
+
+                                                <Button Grid.Column="2"
+                                                        Content="Ta bort"
+                                                        Margin="10,0,0,0"
+                                                        Padding="10,4"
+                                                        VerticalAlignment="Center"
+                                                        Command="{Binding DataContext.TaBortKonferensRadCommand,
+                                                        RelativeSource={RelativeSource AncestorType=Window}}"
+                                                        CommandParameter="{Binding}"/>
+
+                                            </Grid>
+
+                                        </Border>
+
+                                    </DataTemplate>
+
+                                </ItemsControl.ItemTemplate>
+
+                            </ItemsControl>
+
+
+                            <!-- LÄGG TILL KONFERENS -->
+
+                            <Expander Header="+ Lägg till konferens">
+
+                                <StackPanel Margin="10">
+
+
+                                    <TextBlock Text="Konferens från:"/>
+
+
+                                    <DatePicker SelectedDate="{Binding KonferensStartTid,
+                                        Mode=TwoWay}"
+                                                Margin="0,5,0,10"/>
+
+
+                                    <TextBlock Text="Konferens till:"/>
+
+
+                                    <DatePicker SelectedDate="{Binding KonferensSlutTid,
+                                        Mode=TwoWay}"
+                                                Margin="0,5,0,10"/>
+
+
+                                    <TextBlock Text="Konferensrum:"/>
+
+
+                                    <ComboBox Height="30"
+                                              Margin="0,5,0,10"
+                                              ItemsSource="{Binding TillgängligaKonferenser}"
+                                              SelectedItem="{Binding ValdKonferens, Mode=TwoWay}"
+                                              DisplayMemberPath="DisplayText"
+                                              IsEnabled="{Binding KanVäljaKonferens}"/>
+
+
+                                    <TextBlock Text="Antal deltagare:"/>
+
+
+                                    <ComboBox Height="30"
+                                              Margin="0,5,0,10"
+                                              ItemsSource="{Binding AntalKonferensDeltagareAlternativ}"
+                                              SelectedItem="{Binding AntalKonferensDeltagare, Mode=TwoWay}"
+                                              IsEnabled="{Binding KanVäljaAntalKonferensDeltagare}"/>
+
+
+                                    <TextBlock Text="Pris:"
+                                               Margin="0,0,0,5"/>
+
+
+                                    <TextBlock Text="{Binding KonferensPrisText}"
+                                               FontWeight="Bold"
+                                               Margin="0,0,0,10"/>
+
+
+                                    <Button Content="Lägg till"
+                                            Width="120"
+                                            HorizontalAlignment="Left"
+                                            Command="{Binding LäggTillKonferensCommand}"
+                                            IsEnabled="{Binding KanLäggaTillKonferens}"/>
+
+                                </StackPanel>
+
+                            </Expander>
+
+                        </StackPanel>
+
+                    </Border>
+
+
+                    <!-- ===================================== -->
+                    <!-- SKIDLEKTION                           -->
+                    <!-- ===================================== -->
+
+                    <Border Background="{StaticResource Snövit}"
+                            CornerRadius="5"
+                            Padding="15"
+                            Margin="0,0,0,15">
+
+                        <StackPanel>
+
+
+                            <TextBlock Text="Skidlektion"
+                                       FontSize="20"
+                                       FontWeight="SemiBold"
+                                       Margin="0,0,0,10"/>
+
+
+                            <!-- VALDA SKIDLEKTIONER -->
+
+                            <ItemsControl ItemsSource="{Binding SkidlektionRader}"
+                                          Margin="0,0,0,10">
+
+                                <ItemsControl.ItemTemplate>
+
+                                    <DataTemplate>
+
+                                        <Border BorderBrush="LightGray"
+                                                BorderThickness="1"
+                                                CornerRadius="4"
+                                                Padding="10"
+                                                Margin="0,0,0,5">
+
+                                            <Grid>
+
+                                                <Grid.ColumnDefinitions>
+                                                    <ColumnDefinition Width="*"/>
+                                                    <ColumnDefinition Width="Auto"/>
+                                                    <ColumnDefinition Width="Auto"/>
+                                                </Grid.ColumnDefinitions>
+
+
+                                                <StackPanel>
+
+                                                    <TextBlock Text="{Binding SkidlektionDisplayText}"
+                                                               FontWeight="Bold"/>
+
+
+                                                    <TextBlock>
+                                                        <Run Text="Antal personer: "/>
+                                                        <Run Text="{Binding AntalPersoner}"/>
+                                                    </TextBlock>
+
+
+                                                    <TextBlock>
+                                                        <Run Text="Datum: "/>
+
+                                                        <Run Text="{Binding Datum,
+                                                            StringFormat={}{0:yyyy-MM-dd}}"/>
+                                                    </TextBlock>
+
+                                                </StackPanel>
+
+
+                                                <TextBlock Grid.Column="1"
+                                                           Text="{Binding SkidlektionBelopp,
+                                                           StringFormat={}{0:N0} kr}"
+                                                           FontWeight="Bold"
+                                                           VerticalAlignment="Center"
+                                                           Margin="20,0,0,0"/>
+
+
+                                                <Button Grid.Column="2"
+                                                        Content="Ta bort"
+                                                        Margin="10,0,0,0"
+                                                        Padding="10,4"
+                                                        VerticalAlignment="Center"
+                                                        Command="{Binding DataContext.TaBortSkidlektionRadCommand,
+                                                        RelativeSource={RelativeSource AncestorType=Window}}"
+                                                        CommandParameter="{Binding}"/>
+
+                                            </Grid>
+
+                                        </Border>
+
+                                    </DataTemplate>
+
+                                </ItemsControl.ItemTemplate>
+
+                            </ItemsControl>
+
+
+
+                            <!-- LÄGG TILL SKIDLEKTION -->
+
+                            <Expander Header="+ Lägg till skidlektion">
+
+                                <StackPanel Margin="10">
+
+
+                                    <TextBlock Text="Datum för skidlektion:"/>
+
+
+                                    <DatePicker SelectedDate="{Binding SkidlektionDatum,
+                                        Mode=TwoWay}"
+                                                Margin="0,5,0,10"/>
+
+
+                                    <TextBlock Text="Skidlektion:"/>
+
+
+                                    <ComboBox Height="30"
+                                              Margin="0,5,0,10"
+                                              ItemsSource="{Binding TillgängligaSkidlektioner}"
+                                              SelectedItem="{Binding ValdSkidlektion,
+                                              Mode=TwoWay}"
+                                              IsEnabled="{Binding FinnsTillgängligaSkidlektioner}">
+
+                                        <ComboBox.ItemTemplate>
+
+                                            <DataTemplate>
+                                                <TextBlock Text="{Binding DisplayText}"/>
+                                            </DataTemplate>
+
+                                        </ComboBox.ItemTemplate>
+
+                                    </ComboBox>
+
+
+                                    <TextBlock Text="Inga skidlektioner är tillgängliga för valt datum."
+                                               Foreground="DarkRed"
+                                               FontStyle="Italic"
+                                               Margin="0,0,0,10">
+
+                                        <TextBlock.Style>
+
+                                            <Style TargetType="TextBlock">
+
+                                                <Setter Property="Visibility"
+                                                        Value="Collapsed"/>
+
+                                                <Style.Triggers>
+
+                                                    <DataTrigger Binding="{Binding VisaIngaTillgängligaSkidlektioner}"
+                                                                 Value="True">
+
+                                                        <Setter Property="Visibility"
+                                                                Value="Visible"/>
+
+                                                    </DataTrigger>
+
+                                                </Style.Triggers>
+
+                                            </Style>
+
+                                        </TextBlock.Style>
+
+                                    </TextBlock>
+
+
+                                    <TextBlock Text="Antal personer:"/>
+
+
+                                    <ComboBox Height="30"
+                                              Margin="0,5,0,10"
+                                              ItemsSource="{Binding AntalSkidlektionPersonerAlternativ}"
+                                              SelectedItem="{Binding AntalSkidlektionPersoner,
+                                              Mode=TwoWay}"
+                                              IsEnabled="{Binding KanVäljaAntalSkidlektionPersoner}"/>
+
+
+                                    <TextBlock Text="Pris:"
+                                               Margin="0,0,0,5"/>
+
+
+                                    <TextBlock Text="{Binding SkidlektionPrisText}"
+                                               FontWeight="Bold"
+                                               Margin="0,0,0,10"/>
+
+
+                                    <Button Content="Lägg till"
+                                            Width="120"
+                                            HorizontalAlignment="Left"
+                                            Command="{Binding LäggTillSkidlektionCommand}"
+                                            IsEnabled="{Binding KanLäggaTillSkidlektion}"/>
+
+                                </StackPanel>
+
+                            </Expander>
+
+                        </StackPanel>
+
+                    </Border>
+
+
+                </StackPanel>
+
+            </ScrollViewer>
+
+            <CheckBox Grid.Row="2"
+              Content="Avbeställningsskydd +300 kr"
+              IsChecked="{Binding HarAvbeställningsskydd}"
+              Margin="5,0,0,15"/>
+
+            <StackPanel Grid.Row="2"
+            Orientation="Horizontal"
+            Margin="5,0,0,15">
+
+                <CheckBox Content="Avbeställningsskydd +300 kr"
+              IsChecked="{Binding HarAvbeställningsskydd}"
+              VerticalAlignment="Top"
+              Margin="0,0,40,0"/>
+
+                <StackPanel>
+                    <CheckBox Content="{Binding RabattText}"
+                  IsChecked="{Binding AnvändRabatt}"
+                  IsEnabled="{Binding KanAnvändaRabatt}"/>
+
+                    <TextBlock Text="Rabatten måste väljas innan boendet läggs till."
+                   FontSize="12"
+                   Foreground="Gray"
+                   Margin="22,2,0,0"/>
+                </StackPanel>
+
+                <StackPanel Width="360">
+
+                    <StackPanel Orientation="Horizontal">
+                        <CheckBox Content="Delbetala"
+                  IsChecked="{Binding Delbetala}"
+                  IsEnabled="{Binding KanDelbetala}"/>
+
+                        <TextBlock Text="{Binding KreditText}"
+                   FontSize="12"
+                   Foreground="Gray"
+                   Margin="25,0,0,0"/>
                     </StackPanel>
 
-                </Border>
-
-
-                <!-- ===================================== -->
-                <!-- KONFERENS                             -->
-                <!-- ===================================== -->
-
-                <Border Background="White"
-                        CornerRadius="5"
-                        Padding="15"
-                        Margin="0,0,0,15">
-
-                    <StackPanel>
-
-
-                        <TextBlock Text="Konferens"
-                                   FontSize="20"
-                                   FontWeight="SemiBold"
-                                   Margin="0,0,0,10"/>
-
-
-                        <TextBlock Text="Ingen konferens vald ännu."
-                                   FontStyle="Italic"
-                                   Margin="0,0,0,10"/>
-
-
-                        <Expander Header="+ Lägg till konferens">
-
-                            <StackPanel Margin="10">
-
-
-                                <TextBlock Text="Konferenslokal:"/>
-
-
-                                <ComboBox Height="30"
-                                          Margin="0,5,0,10"/>
-
-
-                                <TextBlock Text="Antal personer:"/>
-
-
-                                <TextBox Height="30"
-                                         Margin="0,5,0,10"/>
-
-
-                                <TextBlock Text="Starttid:"/>
-
-
-                                <DatePicker Height="30"
-                                            Margin="0,5,0,10"/>
-
-
-                                <TextBlock Text="Sluttid:"/>
-
-
-                                <DatePicker Height="30"
-                                            Margin="0,5,0,10"/>
-
-
-                                <TextBlock Text="Pris:"
-                                           Margin="0,0,0,5"/>
-
-
-                                <TextBlock Text="0 kr"
-                                           FontWeight="Bold"
-                                           Margin="0,0,0,10"/>
-
-
-                                <Button Content="Lägg till"
-                                        Width="120"
-                                        HorizontalAlignment="Left"
-                                        IsEnabled="False"/>
-
-                            </StackPanel>
-
-                        </Expander>
-
-                    </StackPanel>
-
-                </Border>
-
-
-                <!-- ===================================== -->
-                <!-- SKIDLEKTION                           -->
-                <!-- ===================================== -->
-
-                <Border Background="White"
-                        CornerRadius="5"
-                        Padding="15"
-                        Margin="0,0,0,15">
-
-                    <StackPanel>
-
-
-                        <TextBlock Text="Skidlektion"
-                                   FontSize="20"
-                                   FontWeight="SemiBold"
-                                   Margin="0,0,0,10"/>
-
-
-                        <TextBlock Text="Ingen skidlektion vald ännu."
-                                   FontStyle="Italic"
-                                   Margin="0,0,0,10"/>
-
-
-                        <Expander Header="+ Lägg till skidlektion">
-
-                            <StackPanel Margin="10">
-
-
-                                <TextBlock Text="Skidlektion:"/>
-
-
-                                <ComboBox Height="30"
-                                          Margin="0,5,0,10"/>
-
-
-                                <TextBlock Text="Antal personer:"/>
-
-
-                                <TextBox Height="30"
-                                         Margin="0,5,0,10"/>
-
-
-                                <TextBlock Text="Datum:"/>
-
-
-                                <DatePicker Height="30"
-                                            Margin="0,5,0,10"/>
-
-
-                                <TextBlock Text="Pris:"
-                                           Margin="0,0,0,5"/>
-
-
-                                <TextBlock Text="0 kr"
-                                           FontWeight="Bold"
-                                           Margin="0,0,0,10"/>
-
-
-                                <Button Content="Lägg till"
-                                        Width="120"
-                                        HorizontalAlignment="Left"
-                                        IsEnabled="False"/>
-
-                            </StackPanel>
-
-                        </Expander>
-
-                    </StackPanel>
-
-                </Border>
-
+                    <TextBlock Text="{Binding DelbetalningText}"
+               FontSize="12"
+               Foreground="Gray"
+               Margin="22,4,0,0"
+               TextWrapping="Wrap"/>
+
+                </StackPanel>
 
             </StackPanel>
 
-        </ScrollViewer>
+            <!-- ===================================== -->
+            <!-- TOTAL OCH KNAPPAR                     -->
+            <!-- ===================================== -->
+
+            <Grid Grid.Row="4"
+                  Margin="0,20,0,0">
+
+                <Grid.ColumnDefinitions>
+                    <ColumnDefinition Width="*"/>
+                    <ColumnDefinition Width="Auto"/>
+                </Grid.ColumnDefinitions>
 
 
-        <!-- ===================================== -->
-        <!-- TOTAL OCH KNAPPAR                     -->
-        <!-- ===================================== -->
-
-        <Grid Grid.Row="3"
-              Margin="0,20,0,0">
-
-            <Grid.ColumnDefinitions>
-
-                <ColumnDefinition Width="*"/>
-
-                <ColumnDefinition Width="Auto"/>
-
-            </Grid.ColumnDefinitions>
+                <StackPanel Orientation="Horizontal"
+                            VerticalAlignment="Center">
 
 
-            <StackPanel Orientation="Horizontal"
-                        VerticalAlignment="Center">
+                    <TextBlock Text="Totalt:"
+                               FontSize="22"
+                               FontWeight="Bold"
+                               Margin="0,0,10,0"/>
 
 
-                <TextBlock Text="Totalt:"
-                           FontSize="22"
-                           FontWeight="Bold"
-                           Margin="0,0,10,0"/>
+                    <TextBlock Text="{Binding TotalBeloppText}"
+                               FontSize="22"
+                               FontWeight="Bold"/>
+
+                </StackPanel>
 
 
-                <TextBlock Text="{Binding TotalBeloppText}"
-                           FontSize="22"
-                           FontWeight="Bold"/>
-
-            </StackPanel>
+                <StackPanel Grid.Column="1"
+                            Orientation="Horizontal">
 
 
-            <StackPanel Grid.Column="1"
-                        Orientation="Horizontal">
+                    <Button Content="Tillbaka"
+                            Width="120"
+                            Margin="5"
+                            Command="{Binding TillbakaCommand}" 
+                            CommandParameter="{Binding RelativeSource={RelativeSource AncestorType=Window}}" />
 
 
-                <Button Content="Avbryt"
-                        Width="120"
-                        Margin="5"
-                        Command="{Binding AvbrytCommand}"/>
+                    <!-- TA BORT HELA BOKNINGEN -->
+
+                    <Button Content="Avboka bokning"
+                            Width="150"
+                            Margin="5"
+                            Command="{Binding AvbokaBokningCommand}">
+
+                        <Button.Style>
+                            <Style TargetType="Button"
+                                     BasedOn="{StaticResource {x:Type Button}}">
+
+                                <Setter Property="Visibility"
+                                        Value="Collapsed"/>
+
+                                <Style.Triggers>
+                                    <DataTrigger Binding="{Binding ÄrRedigeringsläge}"
+                                                 Value="True">
+
+                                        <Setter Property="Visibility"
+                                                Value="Visible"/>
+
+                                    </DataTrigger>
+                                </Style.Triggers>
+
+                            </Style>
+                        </Button.Style>
+
+                    </Button>
 
 
-                <Button Content="Skapa bokning"
-                        Width="150"
-                        Margin="5"
-                        Command="{Binding SkapaBokningCommand}"/>
+                    <!-- SKAPA NY BOKNING -->
 
-            </StackPanel>
+                    <Button Content="Skapa bokning"
+                            Width="150"
+                            Margin="5"
+                            Command="{Binding SkapaBokningCommand}">
+
+                        <Button.Style>
+                            <Style TargetType="Button" BasedOn="{StaticResource {x:Type Button}}">
+                                <Setter Property="Visibility" Value="Visible"/>
+
+                                <Style.Triggers>
+                                    <DataTrigger Binding="{Binding ÄrRedigeringsläge}" Value="True">
+                                        <Setter Property="Visibility" Value="Collapsed"/>
+                                    </DataTrigger>
+                                </Style.Triggers>
+                            </Style>
+                        </Button.Style>
+
+                    </Button>
+
+
+                    <!-- SPARA ÄNDRINGAR -->
+
+                    <Button Content="Spara ändringar"
+                    Width="150"
+                    Margin="5"
+                    Command="{Binding SparaÄndringarCommand}">
+
+                        <Button.Style>
+                            <Style TargetType="Button"
+                                   BasedOn="{StaticResource {x:Type Button}}">
+
+                                <Setter Property="Visibility"
+                                        Value="Collapsed"/>
+
+                                <Style.Triggers>
+                                    <DataTrigger Binding="{Binding ÄrRedigeringsläge}"
+                                                 Value="True">
+
+                                        <Setter Property="Visibility"
+                                                Value="Visible"/>
+
+                                    </DataTrigger>
+                                </Style.Triggers>
+
+                            </Style>
+                        </Button.Style>
+
+                    </Button>
+
+                </StackPanel>
+
+            </Grid>
 
         </Grid>
+
+
+
+        <!-- ================================================= -->
+        <!-- HÖGER SIDA - SÖK / VÄLJ BEFINTLIG BOKNING        -->
+        <!-- ================================================= -->
+
+        <Border Grid.Column="1"
+                Width="340"
+                Background="{StaticResource Snövit}"
+                CornerRadius="5"
+                Padding="15"
+                Margin="20,0,0,0">
+
+            <Border.Style>
+
+                <Style TargetType="Border">
+
+                    <Setter Property="Visibility"
+                            Value="Collapsed"/>
+
+                    <Style.Triggers>
+
+                        <DataTrigger Binding="{Binding ÄrRedigeringsläge}"
+                                     Value="True">
+
+                            <Setter Property="Visibility"
+                                    Value="Visible"/>
+
+                        </DataTrigger>
+
+                    </Style.Triggers>
+
+                </Style>
+
+            </Border.Style>
+
+
+            <Grid>
+
+                <Grid.RowDefinitions>
+                    <RowDefinition Height="Auto"/>
+                    <RowDefinition Height="Auto"/>
+                    <RowDefinition Height="Auto"/>
+                    <RowDefinition Height="*"/>
+                    <RowDefinition Height="Auto"/>
+                </Grid.RowDefinitions>
+
+
+                <!-- RUBRIK -->
+
+                <TextBlock Grid.Row="0"
+                           Text="Ändra / ta bort bokning"
+                           FontSize="20"
+                           FontWeight="SemiBold"
+                           Margin="0,0,0,15"/>
+
+
+                <!-- SÖKNING -->
+
+                <StackPanel Grid.Row="1">
+
+                    <TextBlock Text="Sök bokning:"
+                               FontWeight="SemiBold"/>
+
+                    <TextBlock Text="Sök på bokningsnummer, kundnummer eller kundnamn."
+                               TextWrapping="Wrap"
+                               FontSize="12"
+                               Foreground="Gray"
+                               Margin="0,3,0,7"/>
+
+
+                    <Grid>
+
+                        <Grid.ColumnDefinitions>
+                            <ColumnDefinition Width="*"/>
+                            <ColumnDefinition Width="Auto"/>
+                        </Grid.ColumnDefinitions>
+
+
+                        <TextBox Grid.Column="0"
+                                 Height="30"
+                                 Margin="0,0,5,0"
+                                 VerticalContentAlignment="Center"
+                                 Text="{Binding BokningSökText,
+                                 UpdateSourceTrigger=PropertyChanged}"/>
+
+
+                        <Button Grid.Column="1"
+                                Content="Sök"
+                                Width="60"
+                                Height="30"
+                                Command="{Binding SökBokningCommand}"/>
+
+                    </Grid>
+
+                </StackPanel>
+
+
+                <Separator Grid.Row="2"
+                           Margin="0,15,0,10"/>
+
+
+                <!-- LISTA MED BOKNINGAR -->
+
+                
+                        <Grid Grid.Row="3">
+
+                    <Grid.RowDefinitions>
+                        <RowDefinition Height="Auto"/>
+                        <RowDefinition Height="*"/>
+                    </Grid.RowDefinitions>
+
+                    <TextBlock Grid.Row="0"
+                               Text="Bokningar"
+                               FontWeight="SemiBold"
+                               Margin="0,0,0,8"/>
+
+                    <ListBox Grid.Row="1"
+                             ItemsSource="{Binding BokningarFörRedigering}"
+                             SelectedItem="{Binding ValdBokningFörRedigering, Mode=TwoWay}"
+                             HorizontalContentAlignment="Stretch"
+                             ScrollViewer.VerticalScrollBarVisibility="Auto">
+
+                        <ListBox.ItemTemplate>
+                            <DataTemplate>
+
+                                <Border BorderBrush="LightGray"
+                                        BorderThickness="0,0,0,1"
+                                        Padding="6">
+
+                                    <TextBlock Text="{Binding BokningDisplayText}"
+                                               FontWeight="SemiBold"
+                                               TextWrapping="Wrap"/>
+
+                                </Border>
+
+                            </DataTemplate>
+                        </ListBox.ItemTemplate>
+
+                    </ListBox>
+ 
+            </Grid>
+                    
+           
+
+                <!-- STÄNG PANEL -->
+
+                <Button Grid.Row="4"
+                        Content="Stäng"
+                        Width="100"
+                        HorizontalAlignment="Right"
+                        Margin="0,15,0,0"
+                        Command="{Binding VäxlaRedigeringslägeCommand}"/>
+
+            </Grid>
+
+        </Border>
 
     </Grid>
 

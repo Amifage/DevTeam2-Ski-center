@@ -19,11 +19,14 @@ namespace Entitetslager
 
 
         public string? KonferensNummer { get; set; }
-        [ForeignKey(nameof(KonferensNummer))] // Kopplar KonferensNummer till konferens, samma som i LogiRad
-        public virtual Konferens konferens { get; set; } //nav prop
+
+        [ForeignKey(nameof(KonferensNummer))]
+        public virtual Konferens? konferens { get; set; }
+
 
         public int? BokningsNummer { get; set; }
-        [ForeignKey(nameof(BokningsNummer))] // Kopplar BokningsNummer till bokning, samma som i LogiRad
-        public virtual Bokning bokning { get; set; }//nav prop
+
+        [ForeignKey(nameof(BokningsNummer))]
+        public virtual Bokning? bokning { get; set; }
     }
 }

@@ -1,7 +1,7 @@
 ﻿<Window x:Class="Presentationslager.Meny"
         xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
         xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
-        Title="Meny" Height="600" Width="800" FontWeight="Bold"
+        Title="Meny" Height="700" Width="850" FontWeight="Bold"
         WindowStartupLocation="CenterScreen">
 
     <Grid Margin="20" Background="{StaticResource IsBlå}">
@@ -11,67 +11,71 @@
             <RowDefinition Height="Auto"/>
         </Grid.RowDefinitions>
 
-        <!-- Header -->
-        <TextBlock Grid.Row="0" 
-                   Text="Välkommen tillbaka!" 
-                   Style="{StaticResource HeaderTextStyle}" 
-                   HorizontalAlignment="Center" 
-                   Margin="0,20,0,40"/>
+        <StackPanel Grid.Row="0" HorizontalAlignment="Center" Margin="0,10,0,30">
+            <Image Source="Meny-header.jpg" 
+                   Height="200" 
+                   Width="800"
+                   Stretch="Uniform" 
+                   HorizontalAlignment="Center"
+                   Margin="0,0,0,15"/>
 
-        <!-- Menyknappar -->
+            <TextBlock Text="Välkommen tillbaka!" 
+                       Style="{StaticResource HeaderTextStyle}" 
+                       HorizontalAlignment="Center" Margin="0,10,0,15"/>
+        </StackPanel>
+
         <UniformGrid Grid.Row="1" Columns="4" Rows="2" HorizontalAlignment="Center" VerticalAlignment="Center">
 
-            <Button Margin="10" Width="160" Height="100" Click="SkapaBokning_Click">
+            <Button Margin="10" Width="160" Height="100" Command="{Binding OppnaBokningCommand}" CommandParameter="{Binding RelativeSource={RelativeSource AncestorType=Window}}">
                 <StackPanel HorizontalAlignment="Center" VerticalAlignment="Center">
                     <TextBlock Text="📅" FontSize="28" HorizontalAlignment="Center" Margin="0,0,0,5"/>
                     <TextBlock Text="Skapa bokning" HorizontalAlignment="Center"/>
                 </StackPanel>
             </Button>
 
-            <Button Margin="10" Width="160" Height="100">
+            <Button Margin="10" Width="160" Height="100" Command="{Binding OppnaLogiCommand}" CommandParameter="{Binding RelativeSource={RelativeSource AncestorType=Window}}">
                 <StackPanel HorizontalAlignment="Center" VerticalAlignment="Center">
                     <TextBlock Text="🛏️" FontSize="28" HorizontalAlignment="Center" Margin="0,0,0,5"/>
                     <TextBlock Text="Logi" HorizontalAlignment="Center"/>
                 </StackPanel>
             </Button>
 
-            <Button Margin="10" Width="160" Height="100">
+            <Button Margin="10" Width="160" Height="100" Command="{Binding OppnaKonferenscommand}" CommandParameter="{Binding RelativeSource={RelativeSource AncestorType=Window}}" >
                 <StackPanel HorizontalAlignment="Center" VerticalAlignment="Center">
                     <TextBlock Text="💼" FontSize="28" HorizontalAlignment="Center" Margin="0,0,0,5"/>
                     <TextBlock Text="Konferens" HorizontalAlignment="Center"/>
                 </StackPanel>
             </Button>
 
-            <Button Margin="10" Width="160" Height="100" Command="{Binding ÖppnaSkidlektionerCommand}" CommandParameter="{Binding RelativeSource={RelativeSource AncestorType=Window}}">
+            <Button Margin="10" Width="160" Height="100" Command="{Binding OppnaSkidlektionerCommand}" CommandParameter="{Binding RelativeSource={RelativeSource AncestorType=Window}}">
                 <StackPanel HorizontalAlignment="Center" VerticalAlignment="Center">
                     <TextBlock Text="⛷️" FontSize="28" HorizontalAlignment="Center" Margin="0,0,0,5"/>
                     <TextBlock Text="Skidlektion" HorizontalAlignment="Center"/>
                 </StackPanel>
             </Button>
 
-            <Button Margin="10" Width="160" Height="100" Command="{Binding ÖppnaUtrustningCommand}">
+            <Button Margin="10" Width="160" Height="100" Command="{Binding OppnaUtrustningCommand}" CommandParameter="{Binding RelativeSource={RelativeSource AncestorType=Window}}" >
                 <StackPanel HorizontalAlignment="Center" VerticalAlignment="Center">
                     <TextBlock Text="🎿" FontSize="28" HorizontalAlignment="Center" Margin="0,0,0,5"/>
                     <TextBlock Text="Utrustning" HorizontalAlignment="Center"/>
                 </StackPanel>
             </Button>
 
-            <!-- NY KNAPP: Statistik (Ersätter Systemadmin i nätverk) -->
-            <Button Margin="10" Width="160" Height="100" Command="{Binding ÖppnaStatistikCommand}" CommandParameter="{Binding RelativeSource={RelativeSource AncestorType=Window}}">
+            <Button Margin="10" Width="160" Height="100">
                 <StackPanel HorizontalAlignment="Center" VerticalAlignment="Center">
                     <TextBlock Text="📊" FontSize="28" HorizontalAlignment="Center" Margin="0,0,0,5"/>
                     <TextBlock Text="Statistik" HorizontalAlignment="Center"/>
                 </StackPanel>
             </Button>
 
-            <Button Margin="10" Width="160" Height="100" Command="{Binding ÖppnaKundregisterCommand}" CommandParameter="{Binding RelativeSource={RelativeSource AncestorType=Window}}" >
+            <Button Margin="10" Width="160" Height="100" Command="{Binding OppnaKundregisterCommand}" CommandParameter="{Binding RelativeSource={RelativeSource AncestorType=Window}}" >
                 <StackPanel HorizontalAlignment="Center" VerticalAlignment="Center">
                     <TextBlock Text="👥" FontSize="28" HorizontalAlignment="Center" Margin="0,0,0,5"/>
                     <TextBlock Text="Kundregister" HorizontalAlignment="Center"/>
                 </StackPanel>
             </Button>
 
-            <Button Margin="10" Width="160" Height="100">
+            <Button Margin="10" Width="160" Height="100" Command="{Binding OppnaBetalstatusCommand}" CommandParameter="{Binding RelativeSource={RelativeSource AncestorType=Window}}">
                 <StackPanel HorizontalAlignment="Center" VerticalAlignment="Center">
                     <TextBlock Text="💳" FontSize="28" HorizontalAlignment="Center" Margin="0,0,0,5"/>
                     <TextBlock Text="Betalstatus" HorizontalAlignment="Center"/>
@@ -80,7 +84,6 @@
 
         </UniformGrid>
 
-        <!-- Logga ut -->
         <Button Grid.Row="2" 
                 Command="{Binding LoggaUtCommand}"
                 CommandParameter="{Binding RelativeSource={RelativeSource AncestorType=Window}}"

@@ -15,19 +15,19 @@ namespace Presentationslager.ViewModel
 
         public StartsidaViewModel()
         {
-            OpenMenuCommand = new RelayCommand(ExecuteOpenMenu);
+            OpenMenuCommand = new RelayCommand(OppnaMeny);
         }
 
         public event PropertyChangedEventHandler? PropertyChanged;
 
-        private void ExecuteOpenMenu(object parameter)
+        private void OppnaMeny(object obj)
         {
-            Meny menyFönster = new Meny();
-            menyFönster.Show();
+            Meny window = new Meny();
+            window.Show();
 
-            if (parameter is Window window)
+            if (obj is Window nuvarandeFonster)
             {
-                window.Close();
+                nuvarandeFonster.Close();
             }
         }
     }

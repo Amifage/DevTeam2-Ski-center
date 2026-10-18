@@ -1,4 +1,5 @@
-﻿using System.Windows;
+﻿using Presentationslager.ViewModel;
+using System.Windows;
 
 namespace Presentationslager
 {
@@ -7,6 +8,7 @@ namespace Presentationslager
         public Skidlektion()
         {
             InitializeComponent();
+            DataContext = new SkidlektionViewModel();
         }
     }
 }

@@ -9,11 +9,11 @@
         Title="Utrustning" Height="700" Width="1000"
         WindowStartupLocation="CenterScreen">
 
-    <Window.DataContext>
-        <vm:UtrustningViewModel />
-    </Window.DataContext>
-
     <Grid Background="{StaticResource IsBlå}" Margin="20">
+        <Grid.ColumnDefinitions>
+            <ColumnDefinition Width="301*"/>
+            <ColumnDefinition Width="19*"/>
+        </Grid.ColumnDefinitions>
         <Grid.RowDefinitions>
             <RowDefinition Height="Auto"/>
             <RowDefinition Height="Auto"/>
@@ -21,14 +21,12 @@
             <RowDefinition Height="Auto"/>
         </Grid.RowDefinitions>
 
-        <!-- Rubrik -->
         <TextBlock Grid.Row="0"
                    Text="Utrustning" 
                    Style="{StaticResource HeaderTextStyle}"
-                   Margin="0,0,0,20"/>
+                   Margin="0,0,0,20" Grid.ColumnSpan="2"/>
 
-        <!-- Sök- och filtreringssektion i vitt kort -->
-        <Border Grid.Row="1" Background="White" CornerRadius="5" Padding="15" Margin="0,0,0,15">
+        <Border Grid.Row="1" Background="{StaticResource Snövit}" CornerRadius="5" Padding="15" Margin="0,0,0,15" Grid.ColumnSpan="2">
             <WrapPanel Orientation="Horizontal">
                 <StackPanel Orientation="Vertical" Margin="0,0,15,10">
                     <TextBlock Text="Utrustningsnummer:" Margin="0,0,0,5"/>
@@ -49,16 +47,20 @@
                     <Button Content="Sök" Command="{Binding SokCommand}" Width="90" Height="30" Margin="0,0,10,0"/>
                     <Button Content="Rensa" Command="{Binding RensaCommand}" Width="90" Height="30"/>
                 </StackPanel>
+                <Grid Height="90" Width="120" Margin="25,-25,0,0" VerticalAlignment="Bottom">
+                    <Image Source="Utrustning-ikon.png" 
+                           Stretch="Uniform" RenderOptions.BitmapScalingMode="HighQuality"/>
+                </Grid>
+                
             </WrapPanel>
         </Border>
 
-        <!-- Tabell för utrustning i vitt kort -->
-        <Border Grid.Row="2" Background="White" CornerRadius="5" Padding="10" Margin="0,0,0,15">
+        <Border Grid.Row="2" Background="White" CornerRadius="5" Padding="10" Margin="0,0,0,15" Grid.ColumnSpan="2">
             <DataGrid ItemsSource="{Binding UtrustningsLista}" 
                       SelectedItem="{Binding ValdUtrustning}"
                       AutoGenerateColumns="False" 
                       IsReadOnly="True"
-                      Background="White"
+                      Background="{StaticResource Snövit}"
                       RowBackground="White"
                       AlternatingRowBackground="#F9F9F9"
                       Foreground="Black"
@@ -74,8 +76,7 @@
             </DataGrid>
         </Border>
 
-        <!-- Åtgärdsknappar längst ner -->
-        <StackPanel Grid.Row="3" Orientation="Horizontal" HorizontalAlignment="Right" Margin="0,10,0,0">
+        <StackPanel Grid.Row="3" Orientation="Horizontal" HorizontalAlignment="Right" Margin="0,10,0,0" Grid.ColumnSpan="2">
             <Button Content="Uppdatera status" Command="{Binding UppdateraStatusCommand}" Width="150" Height="35" Margin="0,0,10,0"/>
             <Button Content="Tillbaka" 
                     Command="{Binding TillbakaCommand}" 

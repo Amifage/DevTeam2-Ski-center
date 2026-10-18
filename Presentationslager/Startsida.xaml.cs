@@ -13,10 +13,6 @@ namespace Presentationslager
             DataContext = new StartsidaViewModel();
         }
 
-        // Lägg till denna metod så att den matchar händelsen i XAML
-        private void BtnLoggaIn_Click(object sender, RoutedEventArgs e)
-        {
-            MessageBox.Show("Inloggningsknappen klickad!");
-        }
+        
     }
 }

@@ -29,24 +29,20 @@ namespace Servicelager
 
         public List<Utrustning> SokUtrustning(string utrustningNummer, string status, string artikelTypNamn)
         {
-            // 1. Hämta alla utrustningar till minnet
             var resultat = _unitOfWork.UtrustningRepository.GetAll().ToList();
 
-            // 2. Sökning i Utrustning på UtrustningNummer
             if (!string.IsNullOrWhiteSpace(utrustningNummer))
             {
                 resultat = resultat.Where(u => u.UtrustningNummer != null &&
                     u.UtrustningNummer.IndexOf(utrustningNummer, StringComparison.OrdinalIgnoreCase) >= 0).ToList();
             }
 
-            // 3. Sökning i Utrustning på Status
             if (!string.IsNullOrWhiteSpace(status))
             {
                 resultat = resultat.Where(u => u.Status != null &&
                     u.Status.IndexOf(status, StringComparison.OrdinalIgnoreCase) >= 0).ToList();
             }
 
-            // 4. Sökning i ArtikelTyp på TypNamn
             if (!string.IsNullOrWhiteSpace(artikelTypNamn))
             {
                 var matchandeArtikelTypNummer = _unitOfWork.ArtikelTypRepository.GetAll()
@@ -100,7 +96,7 @@ namespace Servicelager
         }
 
 
-        //För bokning /Sara
+        //Bokning
         public List<UtrustningPaketInnehåll> HamtaPaketInnehall(int utrustningPaketNummer)
         {
             return _unitOfWork.UtrustningPaketInnehållRepository
@@ -109,17 +105,25 @@ namespace Servicelager
                 .ToList();
         }
 
-        public HashSet<string> HamtaUpptagnaUtrustningsNummer(
+        private HashSet<string> HamtaUpptagnaUtrustningsNummer(
             DateTime startDatum,
             DateTime slutDatum)
         {
             HashSet<string> upptagna = new HashSet<string>();
 
+            var avbokadeBokningsNummer = _unitOfWork.BokningRepository
+                .GetAll()
+                .Where(b => b.Status == "Avbokad")
+                .Select(b => b.BokningsNummer)
+                .ToHashSet();
+
             var upptagnaRader = _unitOfWork.UtrustningRadRepository
                 .GetAll()
                 .Where(r =>
                     r.StartDatum < slutDatum &&
-                    r.SlutDatum > startDatum)
+                    r.SlutDatum > startDatum &&
+                    (!r.BokningsNummer.HasValue ||
+                     !avbokadeBokningsNummer.Contains(r.BokningsNummer.Value)))
                 .ToList();
 
             foreach (UtrustningRad rad in upptagnaRader)
@@ -152,16 +156,16 @@ namespace Servicelager
             return upptagna;
         }
 
-        public List<Utrustning> HamtaLedigaUtrustningar(
-            DateTime startDatum,
-            DateTime slutDatum)
+        public List<Utrustning> HamtaLedigaUtrustningar(DateTime startDatum, DateTime slutDatum)
         {
             HashSet<string> upptagna =
                 HamtaUpptagnaUtrustningsNummer(startDatum, slutDatum);
 
             return _unitOfWork.UtrustningRepository
                 .GetAll()
-                .Where(u => !upptagna.Contains(u.UtrustningNummer))
+                .Where(u => 
+                u.Status != "Trasig" && 
+                !upptagna.Contains(u.UtrustningNummer))
                 .ToList();
         }
     }

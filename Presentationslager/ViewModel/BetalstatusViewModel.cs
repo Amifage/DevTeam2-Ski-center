@@ -1,0 +1,241 @@
+﻿using Presentationslager.Command;
+using Servicelager;
+using Entitetslager; 
+using System;
+using System.Collections.Generic;
+using System.Collections.ObjectModel;
+using System.ComponentModel;
+using System.Linq;
+using System.Runtime.CompilerServices;
+using System.Windows;
+using System.Windows.Input;
+
+namespace Presentationslager.ViewModel
+{
+    public class BetalstatusViewModel : INotifyPropertyChanged
+    {
+        public event PropertyChangedEventHandler? PropertyChanged;
+
+        private readonly FakturaController fakturaController;
+
+        public ICommand TillbakaCommand { get; set; }
+        public ICommand SokCommand { get; set; }
+        public ICommand RensaCommand { get; set; }
+
+        public ICommand UppdateraStatusCommand { get; }
+
+        private List<Faktura> _allaFakturor;
+
+        private string _sokFakturaNummer;
+        public string SokFakturaNummer
+        {
+            get { return _sokFakturaNummer; }
+            set { _sokFakturaNummer = value; OnPropertyChanged(); }
+        }
+
+        public List<string> Status { get; set; }
+
+        private string _valdStatus;
+        public string ValdStatus
+        {
+            get { return _valdStatus; }
+            set { _valdStatus = value; OnPropertyChanged(); }
+        }
+
+        private ObservableCollection<Faktura> _fakturaLista;
+        public ObservableCollection<Faktura> FakturaLista
+        {
+            get { return _fakturaLista; }
+            set { _fakturaLista = value; OnPropertyChanged(); }
+        }
+
+        private Faktura _valdFaktura;
+        public Faktura ValdFaktura
+        {
+            get { return _valdFaktura; }
+            set { _valdFaktura = value; OnPropertyChanged(); }
+        }
+
+        public BetalstatusViewModel()
+        {
+            fakturaController = new FakturaController();
+
+            Status = new List<string> { "Alla", "Betald", "Obetald" };
+            ValdStatus = "Alla";
+
+            TillbakaCommand = new RelayCommand(TillbakaTillMeny);
+            SokCommand = new RelayCommand(SokFakturor);
+            RensaCommand = new RelayCommand(RensaSokning);
+            UppdateraStatusCommand = new RelayCommand(UppdateraStatus, CanUppdateraStatus);
+
+            LaddaData();
+        }
+
+        private void LaddaData()
+        {
+            
+            _allaFakturor = fakturaController.HamtaAllaFakturor();
+
+            if (_allaFakturor != null)
+            {
+                FakturaLista = new ObservableCollection<Faktura>(_allaFakturor);
+            }
+            else
+            {
+                _allaFakturor = new List<Faktura>();
+                FakturaLista = new ObservableCollection<Faktura>();
+            }
+        }
+
+        private void SokFakturor(object obj)
+        {
+            var resultat = _allaFakturor.AsEnumerable();
+
+            if (!string.IsNullOrWhiteSpace(SokFakturaNummer))
+            {
+                resultat = resultat.Where(f => f.FakturaNummer.ToString().Contains(SokFakturaNummer));
+            }
+
+            if (!string.IsNullOrWhiteSpace(ValdStatus) && ValdStatus != "Alla")
+            {
+                resultat = resultat.Where(f => f.Status == ValdStatus);
+            }
+
+            FakturaLista = new ObservableCollection<Faktura>(resultat);
+        }
+
+        private void RensaSokning(object obj)
+        {
+            SokFakturaNummer = string.Empty;
+            ValdStatus = "Alla";
+
+            FakturaLista = new ObservableCollection<Faktura>(_allaFakturor);
+            ValdFaktura = null;
+        }
+
+        private void TillbakaTillMeny(object obj)
+        {
+            Meny window = new Meny();
+            window.Show();
+
+            if (obj is Window nuvarandeFonster)
+            {
+                nuvarandeFonster.Close();
+            }
+        }
+
+        private bool CanUppdateraStatus(object obj)
+        {
+            return ValdFaktura != null;
+        }
+
+        //private void UppdateraStatus(object obj)
+        //{           
+
+        //    if (ValdFaktura != null)
+        //    {
+        //        if (ValdFaktura.Status == "Obetald")
+        //        {
+        //            ValdFaktura.Status = "Betald";
+        //        }
+        //        else
+        //        {
+        //            ValdFaktura.Status = "Obetald";
+        //        }
+
+        //        fakturaController.UppdateraFaktura(ValdFaktura);
+
+        //        MessageBox.Show($"Status för faktura {ValdFaktura.FakturaNummer} har ändrats till: {ValdFaktura.Status}",
+        //                        "Status uppdaterad",
+        //                        MessageBoxButton.OK,
+        //                        MessageBoxImage.Information);
+
+        //        LaddaData();
+
+        //    }
+        //    else
+        //    {
+        //        MessageBox.Show("Vänligen markera en faktura i listan först.",
+        //                        "Ingen faktura vald",
+        //                        MessageBoxButton.OK,
+        //                        MessageBoxImage.Warning);
+
+        //    }
+
+        //}
+
+        private void UppdateraStatus(object obj) //Denna tillåter bara obetald --> betald
+        {
+            if (ValdFaktura == null)
+            {
+                MessageBox.Show(
+                    "Vänligen markera en faktura i listan först.",
+                    "Ingen faktura vald",
+                    MessageBoxButton.OK,
+                    MessageBoxImage.Warning);
+
+                return;
+            }
+
+            if (ValdFaktura.Status == "Betald")
+            {
+                MessageBox.Show(
+                    "Fakturan är redan betald.",
+                    "Ingen ändring",
+                    MessageBoxButton.OK,
+                    MessageBoxImage.Information);
+
+                return;
+            }
+
+            BokningController bokningController = new BokningController();
+            Entitetslager.Bokning? bokning =
+                bokningController.HamtaBokningMedRader(
+                    ValdFaktura.BokningsNummer);
+
+            decimal kreditAttAterstalla = 0;
+
+            if (bokning != null && bokning.Delbetala)
+            {
+                decimal logiBelopp =
+                    bokning.LogiRader?.Sum(r => r.LogiBelopp) ?? 0;
+
+                if (ValdFaktura.Anteckning == "Första delbetalningen")
+                {
+                    kreditAttAterstalla = logiBelopp * 0.20m;
+                }
+                else if (ValdFaktura.Anteckning == "Andra delbetalningen")
+                {
+                    kreditAttAterstalla = logiBelopp * 0.80m;
+                }
+            }
+
+            ValdFaktura.Status = "Betald";
+            fakturaController.UppdateraFaktura(ValdFaktura);
+
+            if (kreditAttAterstalla > 0 &&
+                bokning != null &&
+                bokning.KundNummer.HasValue)
+            {
+                KundController kundController = new KundController();
+
+                kundController.OkaKredit(
+                    bokning.KundNummer.Value,
+                    kreditAttAterstalla);
+            }
+
+            MessageBox.Show(
+                $"Status för faktura {ValdFaktura.FakturaNummer} har ändrats till: Betald",
+                "Status uppdaterad",
+                MessageBoxButton.OK,
+                MessageBoxImage.Information);
+
+            LaddaData();
+        }
+
+        protected void OnPropertyChanged([CallerMemberName] string name = null)
+        {
+            PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(name));
+        }
+    }
+}

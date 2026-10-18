@@ -14,15 +14,25 @@ namespace Entitetslager
         public DateTime BokningsDatum { get; set; }
         public string Status { get; set; }
 
-        public virtual List<KonferensRad>? KonferansRader { get; set; }
+        public virtual List<KonferensRad>? KonferensRader { get; set; }
         public virtual List<LogiRad>? LogiRader { get; set; }
         public virtual List<UtrustningRad>? UtrustningRader { get; set; }
         public virtual List<SkidlektionRad>? SkidlektionRader { get; set; }
 
+        public bool HarAvbeställningsskydd { get; set; }
+        public decimal RabattProcent { get; set; }
+        public bool Delbetala { get; set; }
 
         public int? KundNummer { get; set; }
-        [ForeignKey(nameof(KundNummer))]
+        [ForeignKey("KundNummer")]
         public virtual Kund kund { get; set; }
+
+
+        [NotMapped]
+        public string BokningDisplayText =>
+                    $"Bokning {BokningsNummer} | " +
+                    $"Kund {KundNummer} | " +
+                    $"{kund?.VisningsNamn ?? "Okänd kund"}";
 
     }
 }

@@ -151,29 +151,24 @@ namespace Presentationslager.ViewModel
         {
             if (ValdUtrustning == null) return;
 
-            // Spara en lokal referens till det valda objektet
             var vald = ValdUtrustning;
 
-            // Om statusen är "Tillgänglig" sätt den till "Trasig", annars sätt den till "Tillgänglig"
-            string nyStatus = (vald.Status != null && vald.Status.Equals("Tillgänglig", StringComparison.OrdinalIgnoreCase))
-                ? "Trasig"
-                : "Tillgänglig";
+            string nyStatus = (vald.Status != null && vald.Status.Equals("Trasig", StringComparison.OrdinalIgnoreCase))
+                ? "Tillgänglig"
+                : "Trasig";
 
             bool lyckades = _utrustningController.UppdateraUtrustningsStatus(vald.UtrustningNummer, nyStatus);
 
             if (lyckades)
             {
-                // 1. Uppdatera statusen i objektet
                 vald.Status = nyStatus;
 
-                // 2. Ersätt objektet i samlingen för att tvinga DataGrid att rita om raden i fönstret
                 int index = UtrustningsLista.IndexOf(vald);
                 if (index >= 0)
                 {
                     UtrustningsLista[index] = vald;
                 }
 
-                // 3. Sätt tillbaka markeringen så att fönstret behåller raden vald
                 ValdUtrustning = vald;
 
                 MessageBox.Show($"Status för utrustning {vald.UtrustningNummer} uppdaterades till: {nyStatus}",
@@ -197,7 +192,6 @@ namespace Presentationslager.ViewModel
             Meny menyFonster = new Meny();
             menyFonster.Show();
 
-            // Stäng det nuvarande fönstret
             if (obj is Window nuvarandeFonster)
             {
                 nuvarandeFonster.Close();

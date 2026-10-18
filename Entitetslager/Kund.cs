@@ -20,7 +20,9 @@ namespace Entitetslager
         public string Ort { get; set; } 
         public DateTime SenastUppdaterad { get; set; }
 
+        public virtual ICollection<Bokning> Bokningar { get; set; }
 
+        [NotMapped]
         public string VisningsNamn
         {
             get

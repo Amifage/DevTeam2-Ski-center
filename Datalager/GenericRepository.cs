@@ -16,7 +16,7 @@ namespace Datalager
         {
             _dbSet = dbSet;
         }
-
+          
 
         #region Generella metoder
 
@@ -43,6 +43,11 @@ namespace Datalager
         public IEnumerable<T> Find(Expression<Func<T, bool>> predicate)
         {
             return _dbSet.Where(predicate).ToList();
+        }
+
+        public IQueryable<T> GetQueryable()
+        {
+            return _dbSet;
         }
 
         #endregion
