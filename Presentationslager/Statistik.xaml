@@ -1,7 +1,7 @@
 ﻿<Window x:Class="Presentationslager.Statistik"
         xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
         xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
-        Title="Statistik" Height="700" Width="850" FontWeight="Bold"
+        Title="Statistik" Height="800" Width="850" FontWeight="Bold"
         WindowStartupLocation="CenterScreen"
         Language="sv-SE">
 
@@ -48,6 +48,9 @@
             <StackPanel Margin="20,10">
                 <TextBlock Text="📅 Bokningar" FontSize="16" Margin="0,0,0,10"/>
                 <TextBlock Text="{Binding Resultat.AntalBokningar, StringFormat='Antal: {0}'}"/>
+                <TextBlock Text="{Binding Resultat.Föregående.AntalBokningar, StringFormat='Föreg. period: {0}'}" Foreground="Gray" Margin="0,8,0,0"/>
+                <TextBlock Text="{Binding Resultat.Föregående.StartDatum, StringFormat='Från: {0:yyyy-MM-dd}'}" Foreground="Gray"/>
+                <TextBlock Text="{Binding Resultat.Föregående.SlutDatum, StringFormat='Till: {0:yyyy-MM-dd}'}" Foreground="Gray"/>
             </StackPanel>
 
             <StackPanel Margin="20,10">
@@ -57,6 +60,7 @@
                 <TextBlock Text="{Binding Resultat.IntäktSkidlektion, StringFormat='Skidlektion: {0:N0} kr'}"/>
                 <TextBlock Text="{Binding Resultat.IntäktKonferens, StringFormat='Konferens: {0:N0} kr'}"/>
                 <TextBlock Text="{Binding Resultat.TotalIntäkt, StringFormat='Totalt: {0:N0} kr'}" Margin="0,8,0,0"/>
+                <TextBlock Text="{Binding Resultat.Föregående.TotalIntäkt, StringFormat='Föreg. period: {0:N0} kr'}" Foreground="Gray"/>
             </StackPanel>
 
             <StackPanel Margin="20,10">
@@ -66,9 +70,12 @@
                 <TextBlock Text="{Binding Resultat.BeläggningSkidlektionProcent, StringFormat='Skidlektioner: {0} %'}"/>
                 <TextBlock Text="{Binding Resultat.AntalLektioner, StringFormat='Antal lektioner: {0}'}" Margin="0,8,0,0"/>
                 <TextBlock Text="{Binding Resultat.BokadeLektionsPlatser, StringFormat='Bokade platser: {0}'}"/>
+                <TextBlock Text="Föregående period:" Foreground="Gray" Margin="0,8,0,0"/>
+                <TextBlock Text="{Binding Resultat.Föregående.BeläggningLogiProcent, StringFormat='Logi: {0} %'}" Foreground="Gray"/>
+                <TextBlock Text="{Binding Resultat.Föregående.BeläggningUtrustningProcent, StringFormat='Utrustning: {0} %'}" Foreground="Gray"/>
+                <TextBlock Text="{Binding Resultat.Föregående.BeläggningSkidlektionProcent, StringFormat='Skidlektioner: {0} %'}" Foreground="Gray"/>
             </StackPanel>
         </UniformGrid>
-
         <!-- Logi per logialternativ -->
         <StackPanel Grid.Row="3" Margin="20,10,20,0">
             <TextBlock Text="🛏️ Logi per logialternativ" FontSize="16" Margin="0,0,0,10"/>
@@ -84,6 +91,8 @@
                     <DataGridTextColumn Header="Bokade nätter" Binding="{Binding BokadeNätter}" Width="Auto"/>
                     <DataGridTextColumn Header="Beläggning" Binding="{Binding BeläggningProcent, StringFormat='{}{0} %'}" Width="Auto"/>
                     <DataGridTextColumn Header="Intäkt" Binding="{Binding Intäkt, StringFormat='{}{0:N0} kr'}" Width="Auto"/>
+                    <DataGridTextColumn Header="Beläggning föreg." Binding="{Binding FöregåendeBeläggningProcent, StringFormat='{}{0} %'}" Width="Auto"/>
+                    <DataGridTextColumn Header="Intäkt föreg." Binding="{Binding FöregåendeIntäkt, StringFormat='{}{0:N0} kr'}" Width="Auto"/>
                 </DataGrid.Columns>
             </DataGrid>
         </StackPanel>

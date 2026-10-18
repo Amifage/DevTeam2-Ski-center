@@ -211,6 +211,32 @@ namespace Servicelager
             return Math.Round(100.0 * del / helhet, 1);
         }
 
+        public StatistikResultat HämtaStatistikMedJämförelse(DateTime startDatum, DateTime slutDatum)
+        {
+            StatistikResultat resultat = HämtaStatistik(startDatum, slutDatum);
+
+            int antalDagar = (slutDatum.Date - startDatum.Date).Days + 1;
+            DateTime föregåendeSlut = startDatum.Date.AddDays(-1);
+            DateTime föregåendeStart = föregåendeSlut.AddDays(-(antalDagar - 1));
+
+            resultat.Föregående = HämtaStatistik(föregåendeStart, föregåendeSlut);
+
+            // Koppla ihop logialternativen så att tabellen kan visa båda perioderna
+            foreach (var rad in resultat.LogiPerAlternativ)
+            {
+                var föregåendeRad = resultat.Föregående.LogiPerAlternativ
+                    .FirstOrDefault(f => f.Logialternativ == rad.Logialternativ);
+
+                if (föregåendeRad != null)
+                {
+                    rad.FöregåendeBeläggningProcent = föregåendeRad.BeläggningProcent;
+                    rad.FöregåendeIntäkt = föregåendeRad.Intäkt;
+                }
+            }
+
+            return resultat;
+        }
+
         #endregion
     }
 
@@ -247,6 +273,7 @@ namespace Servicelager
         public int BokadeLektionsPlatser { get; set; }
         public int TillgängligaLektionsPlatser { get; set; }
         public double BeläggningSkidlektionProcent { get; set; }
+        public StatistikResultat? Föregående { get; set; }
     }
 
     // En rad i tabellen "Logi per logialternativ"
@@ -258,5 +285,7 @@ namespace Servicelager
         public int TillgängligaNätter { get; set; }
         public double BeläggningProcent { get; set; }
         public decimal Intäkt { get; set; }
+        public double FöregåendeBeläggningProcent { get; set; }
+        public decimal FöregåendeIntäkt { get; set; }
     }
 }

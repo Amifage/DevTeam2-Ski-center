@@ -68,7 +68,7 @@ namespace Presentationslager.ViewModel
 
             try
             {
-                Resultat = _statistikController.HämtaStatistik(StartDatum.Value, SlutDatum.Value);
+                Resultat = _statistikController.HämtaStatistikMedJämförelse(StartDatum.Value, SlutDatum.Value);
             }
             catch (Exception ex)
             {
