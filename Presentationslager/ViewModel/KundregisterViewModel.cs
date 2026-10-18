@@ -55,6 +55,11 @@ namespace Presentationslager.ViewModel
         public decimal NyKredit { get; set; }
         public string NyttFöretagsnamn { get; set; }
 
+        public bool KanÄndraKreditOchRabatt
+        {
+            get { return InloggningController.KanSättaKreditOchRabatt; }
+        }
+
         #region Metoder
         private string _sokText;
         public string SokText
@@ -174,7 +179,7 @@ namespace Presentationslager.ViewModel
                     Adress = NyAdress,
                     Postnummer = NyPostnummer,
                     Ort = NyOrt,
-                    Rabatt = NyRabatt,
+                    Rabatt = KanÄndraKreditOchRabatt ? NyRabatt : 0,
                     Kredit = 0,
                     SenastUppdaterad = DateTime.Now,
                 };
@@ -258,6 +263,8 @@ namespace Presentationslager.ViewModel
                 NyKredit = foretag.Kredit;
             }
             OnPropertyChanged(string.Empty);
+
+
         }
 
         private bool CanUppdateraKund(object obj)
@@ -280,13 +287,17 @@ namespace Presentationslager.ViewModel
             {
                 privat.Förnamn = NyttFörnamn;
                 privat.Efternamn = NyttEfternamn;
-            
             }
             else if (ValdKund is FöretagsKund foretag)
             {
                 foretag.FöretagsNamn = NyttFöretagsnamn;
-                foretag.Rabatt = NyRabatt;
-                foretag.Kredit = NyKredit;
+
+                // Bara admin och marknadschef får ändra rabatt och kredit
+                if (KanÄndraKreditOchRabatt)
+                {
+                    foretag.Rabatt = NyRabatt;
+                    foretag.Kredit = NyKredit;
+                }
             }
 
             _kundController.UppdateraKund(ValdKund);
