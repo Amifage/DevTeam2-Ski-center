@@ -58,7 +58,11 @@ namespace Servicelager
                 .Find(r => r.StartTid < intervallSlut && r.SlutTid >= intervallStart)
                 .ToList();
 
-            int antalLogi = unitOfWork.LogiRepository.GetAll().Count();
+            var lektioner = unitOfWork.SkidlektionRepository
+                .Find(l => l.Datum >= intervallStart && l.Datum < intervallSlut)
+                .ToList();
+
+            var allaLogi = unitOfWork.LogiRepository.GetAll().ToList();
             int antalUtrustning = unitOfWork.UtrustningRepository.GetAll().Count();
 
             var resultat = new StatistikResultat
@@ -67,6 +71,22 @@ namespace Servicelager
                 SlutDatum = slutDatum.Date
             };
 
+            // Förbered en rad per logialternativ (grupperat på artikeltyp, t.ex. "Stuga")
+            var perAlternativ = new Dictionary<string, LogiStatistikRad>();
+            var typPerLogi = new Dictionary<string, string>();
+
+            foreach (var logi in allaLogi)
+            {
+                string typ = logi.artikelTyp?.TypNamn ?? "Övrigt";
+                typPerLogi[logi.LogiNummer] = typ;
+
+                if (!perAlternativ.ContainsKey(typ))
+                {
+                    perAlternativ[typ] = new LogiStatistikRad { Logialternativ = typ };
+                }
+                perAlternativ[typ].AntalEnheter++;
+            }
+
             // Logi: räknas i nätter
             foreach (var rad in logiRader)
             {
@@ -74,9 +94,18 @@ namespace Servicelager
                 DateTime slut = rad.SlutDatum.Date;
                 int totalaNätter = (slut - start).Days;
                 int nätterInom = Överlapp(start, slut, intervallStart, intervallSlut);
+                decimal intäkt = Andel(rad.LogiBelopp, nätterInom, totalaNätter);
 
                 resultat.BokadeLogiNätter += nätterInom;
-                resultat.IntäktLogi += Andel(rad.LogiBelopp, nätterInom, totalaNätter);
+                resultat.IntäktLogi += intäkt;
+
+                // Lägg även till på rätt logialternativ
+                if (rad.LogiNummer != null && typPerLogi.ContainsKey(rad.LogiNummer))
+                {
+                    var alternativ = perAlternativ[typPerLogi[rad.LogiNummer]];
+                    alternativ.BokadeNätter += nätterInom;
+                    alternativ.Intäkt += intäkt;
+                }
             }
 
             // Utrustning: räknas i dagar, sista dagen räknas med
@@ -95,10 +124,11 @@ namespace Servicelager
                 }
             }
 
-            // Skidlektioner: en dag, hela beloppet räknas
+            // Skidlektioner: intäkt och bokade platser
             foreach (var rad in skidlektionRader)
             {
                 resultat.IntäktSkidlektion += rad.SkidlektionBelopp;
+                resultat.BokadeLektionsPlatser += rad.AntalPersoner;
             }
 
             // Konferens: räknas i dagar, sista dagen räknas med
@@ -121,12 +151,27 @@ namespace Servicelager
                 .Distinct()
                 .Count();
 
-            // Beläggning
-            resultat.TillgängligaLogiNätter = antalLogi * antalDagarIIntervall;
+            // Beläggning logi (totalt)
+            resultat.TillgängligaLogiNätter = allaLogi.Count * antalDagarIIntervall;
             resultat.BeläggningLogiProcent = Procent(resultat.BokadeLogiNätter, resultat.TillgängligaLogiNätter);
 
+            // Beläggning logi per logialternativ
+            foreach (var alternativ in perAlternativ.Values)
+            {
+                alternativ.TillgängligaNätter = alternativ.AntalEnheter * antalDagarIIntervall;
+                alternativ.BeläggningProcent = Procent(alternativ.BokadeNätter, alternativ.TillgängligaNätter);
+                alternativ.Intäkt = Math.Round(alternativ.Intäkt, 2);
+            }
+            resultat.LogiPerAlternativ = perAlternativ.Values.OrderBy(a => a.Logialternativ).ToList();
+
+            // Beläggning utrustning
             resultat.TillgängligaUtrustningDagar = antalUtrustning * antalDagarIIntervall;
             resultat.BeläggningUtrustningProcent = Procent(resultat.BokadeUtrustningDagar, resultat.TillgängligaUtrustningDagar);
+
+            // Beläggning skidlektioner: bokade platser / kapacitet för lektioner inom intervallet
+            resultat.AntalLektioner = lektioner.Count;
+            resultat.TillgängligaLektionsPlatser = lektioner.Sum(l => l.Kapacitet);
+            resultat.BeläggningSkidlektionProcent = Procent(resultat.BokadeLektionsPlatser, resultat.TillgängligaLektionsPlatser);
 
             resultat.IntäktLogi = Math.Round(resultat.IntäktLogi, 2);
             resultat.IntäktUtrustning = Math.Round(resultat.IntäktUtrustning, 2);
@@ -177,18 +222,41 @@ namespace Servicelager
 
         public int AntalBokningar { get; set; }
 
+        // Intäkter
         public decimal IntäktLogi { get; set; }
         public decimal IntäktUtrustning { get; set; }
         public decimal IntäktSkidlektion { get; set; }
         public decimal IntäktKonferens { get; set; }
         public decimal TotalIntäkt => IntäktLogi + IntäktUtrustning + IntäktSkidlektion + IntäktKonferens;
 
+        // Beläggning logi (totalt)
         public int BokadeLogiNätter { get; set; }
         public int TillgängligaLogiNätter { get; set; }
         public double BeläggningLogiProcent { get; set; }
 
+        // Statistik per logialternativ
+        public List<LogiStatistikRad> LogiPerAlternativ { get; set; } = new List<LogiStatistikRad>();
+
+        // Beläggning utrustning
         public int BokadeUtrustningDagar { get; set; }
         public int TillgängligaUtrustningDagar { get; set; }
         public double BeläggningUtrustningProcent { get; set; }
+
+        // Beläggning skidlektioner
+        public int AntalLektioner { get; set; }
+        public int BokadeLektionsPlatser { get; set; }
+        public int TillgängligaLektionsPlatser { get; set; }
+        public double BeläggningSkidlektionProcent { get; set; }
+    }
+
+    // En rad i tabellen "Logi per logialternativ"
+    public class LogiStatistikRad
+    {
+        public string Logialternativ { get; set; } = string.Empty;
+        public int AntalEnheter { get; set; }
+        public int BokadeNätter { get; set; }
+        public int TillgängligaNätter { get; set; }
+        public double BeläggningProcent { get; set; }
+        public decimal Intäkt { get; set; }
     }
 }
