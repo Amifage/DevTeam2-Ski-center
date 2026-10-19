@@ -368,9 +368,7 @@ namespace Presentationslager.ViewModel
                                 MessageBoxButton.OK,
                                 MessageBoxImage.Information);
             }
-        }
-
-      
+        } 
         #endregion  
     }
 }
