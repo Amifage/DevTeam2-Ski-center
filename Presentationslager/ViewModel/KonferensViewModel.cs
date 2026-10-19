@@ -138,7 +138,7 @@ namespace Presentationslager.ViewModel
 
         private bool CanUppdateraStatus(object obj)
         {
-            return ValdKonferensrum != null;
+            return ValdKonferensrum != null && InloggningController.KanAndraStatus;
         }
 
         private void UppdateraStatus(object obj)

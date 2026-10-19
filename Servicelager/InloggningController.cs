@@ -36,18 +36,18 @@ namespace Servicelager
 
         public static bool ÄrAdmin
         {
-            get { return HarRoll("administrat"); }
+            get { return HarRoll("Administratör"); }
         }
 
         public static bool ÄrMarknadschef
         {
-            get { return HarRoll("marknad"); }
+            get { return HarRoll("Marknadschef"); }
         }
 
         // Admin och marknadschef får sätta kredit och rabatt för företagskunder
         public static bool KanSättaKreditOchRabatt
         {
-            get { return ÄrAdmin || ÄrMarknadschef; }
+            get { return ÄrMarknadschef; }
         }
 
         // Bara admin får ändra inloggningar
@@ -55,6 +55,12 @@ namespace Servicelager
         {
             get { return ÄrAdmin; }
         }
+
+        public static bool KanAndraStatus
+        {
+            get { return ÄrAdmin; }
+        }
+
 
         private static bool HarRoll(string roll)
         {
