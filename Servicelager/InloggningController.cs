@@ -44,17 +44,16 @@ namespace Servicelager
             get { return HarRoll("Marknadschef"); }
         }
 
-        // Admin och marknadschef får sätta kredit och rabatt för företagskunder
         public static bool KanSattaKreditOchRabatt
         {
             get { return ArMarknadschef; }
         }
 
         // Bara admin får ändra inloggningar
-        public static bool KanAndraInloggningar
-        {
-            get { return ArAdmin; }
-        }
+        //public static bool KanAndraInloggningar
+        //{
+        //    get { return ArAdmin; }
+        //}
 
         public static bool KanAndraStatus
         {
