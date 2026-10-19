@@ -11,6 +11,7 @@ namespace Presentationslager.ViewModel
 {
     public class SkidlektionViewModel : INotifyPropertyChanged
     {
+        private readonly SkidlektionController _skidlektionController;
         private readonly PersonalController _personalController;
 
         private ObservableCollection<Entitetslager.Skidlektion> _skidlektionsLista;
@@ -98,6 +99,7 @@ namespace Presentationslager.ViewModel
 
         public SkidlektionViewModel()
         {
+            _skidlektionController = new SkidlektionController();
             _personalController = new PersonalController();
 
             SkidlektionsLista = new ObservableCollection<Entitetslager.Skidlektion>();
@@ -114,7 +116,7 @@ namespace Presentationslager.ViewModel
 
         public void LaddaData()
         {
-            var lektioner = _personalController.HamtaAktuellaSkidlektioner();
+            var lektioner = _skidlektionController.HamtaAktuellaSkidlektioner();
             SkidlektionsLista.Clear();
             if (lektioner != null)
             {
@@ -124,7 +126,7 @@ namespace Presentationslager.ViewModel
                 }
             }
 
-            var typer = _personalController.HamtaAllaArtikelTyper();
+            var typer = _skidlektionController.HamtaAllaArtikelTyper();
             ArtikelTyper.Clear();
             if (typer != null)
             {
@@ -162,7 +164,7 @@ namespace Presentationslager.ViewModel
 
         private void UtforSokning(object obj)
         {
-            var resultat = _personalController.SokSkidlektioner(
+            var resultat = _skidlektionController.SokSkidlektioner(
                 SokDatum,
                 SokStatus,
                 ValdArtikelTyp,
@@ -203,14 +205,14 @@ namespace Presentationslager.ViewModel
             var vald = ValdSkidlektion;
             var nyInstruktor = NyInstruktor;
 
-            if (_personalController.HarOverlappandeLektion(vald.SkidlektionNummer, nyInstruktor.AnställningsNummer))
+            if (_skidlektionController.HarOverlappandeLektion(vald.SkidlektionNummer, nyInstruktor.AnställningsNummer))
             {
                 MessageBox.Show("Den valda anställda har redan en annan lektion som överlappar i tid.",
                                 "Kan inte byta instruktör", MessageBoxButton.OK, MessageBoxImage.Warning);
                 return;
             }
 
-            bool lyckades = _personalController.UppdateraInstruktor(vald.SkidlektionNummer, nyInstruktor.AnställningsNummer);
+            bool lyckades = _skidlektionController.UppdateraInstruktor(vald.SkidlektionNummer, nyInstruktor.AnställningsNummer);
 
             if (lyckades)
             {

@@ -93,30 +93,6 @@ namespace Servicelager
             return _unitOfWork.ArtikelTypRepository.GetAll().ToList();
         }
 
-        public List<Personal> HamtaInstruktorer()
-        {
-            var anställningsNummer = _unitOfWork.SkidlektionRepository
-                .GetAll()
-                .Where(s => s.AnställningsNummer.HasValue)
-                .Select(s => s.AnställningsNummer!.Value)
-                .Distinct()
-                .ToList();
-
-            return _unitOfWork.PersonalRepository
-                .Find(p => anställningsNummer.Contains(p.AnställningsNummer))
-                .OrderBy(p => p.Förnamn)
-                .ToList();
-        }
-
-        public List<Personal> HamtaAllaAnstallda()
-        {
-            return _unitOfWork.PersonalRepository
-                .GetAll()
-                .OrderBy(p => p.Förnamn)
-                .ThenBy(p => p.Efternamn)
-                .ToList();
-        }
-
         public bool HarOverlappandeLektion(int skidlektionNummer, int anstallningsNummer)
         {
             Skidlektion? lektion = _unitOfWork.SkidlektionRepository
@@ -142,7 +118,11 @@ namespace Servicelager
                 .Find(s => s.SkidlektionNummer == skidlektionNummer)
                 .FirstOrDefault();
 
-            if (lektion == null)
+            Personal? nyInstruktor = _unitOfWork.PersonalRepository
+                .Find(p => p.AnställningsNummer == nyttAnstallningsNummer)
+                .FirstOrDefault();
+
+            if (lektion == null || nyInstruktor == null || !PersonalController.ArOrdinarieAnstalld(nyInstruktor))
                 return false;
 
             int? gammaltNummer = lektion.AnställningsNummer;
