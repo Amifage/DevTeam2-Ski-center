@@ -55,9 +55,9 @@ namespace Presentationslager.ViewModel
         public decimal NyKredit { get; set; }
         public string NyttFöretagsnamn { get; set; }
 
-        public bool KanÄndraKreditOchRabatt
+        public bool KanAndraKreditOchRabatt
         {
-            get { return InloggningController.KanSättaKreditOchRabatt; }
+            get { return InloggningController.KanSattaKreditOchRabatt; }
         }
 
         #region Metoder
@@ -179,7 +179,7 @@ namespace Presentationslager.ViewModel
                     Adress = NyAdress,
                     Postnummer = NyPostnummer,
                     Ort = NyOrt,
-                    Rabatt = KanÄndraKreditOchRabatt ? NyRabatt : 0,
+                    Rabatt = KanAndraKreditOchRabatt ? NyRabatt : 0,
                     Kredit = 0,
                     SenastUppdaterad = DateTime.Now,
                 };
@@ -293,7 +293,7 @@ namespace Presentationslager.ViewModel
                 foretag.FöretagsNamn = NyttFöretagsnamn;
 
                 // Bara admin och marknadschef får ändra rabatt och kredit
-                if (KanÄndraKreditOchRabatt)
+                if (KanAndraKreditOchRabatt)
                 {
                     foretag.Rabatt = NyRabatt;
                     foretag.Kredit = NyKredit;
