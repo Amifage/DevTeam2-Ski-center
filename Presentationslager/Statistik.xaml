@@ -20,6 +20,10 @@
                    Style="{StaticResource HeaderTextStyle}"
                    HorizontalAlignment="Center"
                    Margin="0,10,0,20"/>
+        <Grid Height="80" Width="100" Margin="240,-10,0,0" VerticalAlignment="Bottom">
+            <Image Source="Statistik-ikon.png" 
+        Stretch="Uniform" RenderOptions.BitmapScalingMode="HighQuality"/>
+        </Grid>
 
         <!-- Val av datumintervall -->
         <StackPanel Grid.Row="1" Orientation="Horizontal" HorizontalAlignment="Center">
@@ -106,7 +110,7 @@
                 Margin="0,10,0,0"
                 Width="150" Height="50">
             <StackPanel Orientation="Horizontal" HorizontalAlignment="Center" VerticalAlignment="Center">
-                <TextBlock Text="⬅️" FontSize="18" Margin="0,0,8,0" VerticalAlignment="Center"/>
+                <TextBlock Margin="0,0,8,0" VerticalAlignment="Center"/>
                 <TextBlock Text="Tillbaka" VerticalAlignment="Center"/>
             </StackPanel>
         </Button>
