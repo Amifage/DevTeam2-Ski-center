@@ -116,7 +116,7 @@
                                                     <Setter Property="Background" Value="#EEEEEE"/>
                                                     <Setter Property="Foreground" Value="DimGray"/>
                                                 </DataTrigger>
-                                                <DataTrigger Binding="{Binding KanÄndraKreditOchRabatt}" Value="False">
+                                                <DataTrigger Binding="{Binding KanAndraKreditOchRabatt}" Value="False">
                                                     <Setter Property="IsReadOnly" Value="True"/>
                                                     <Setter Property="Background" Value="#EEEEEE"/>
                                                     <Setter Property="Foreground" Value="DimGray"/>
@@ -140,7 +140,7 @@
                                                     <Setter Property="Background" Value="#EEEEEE"/>
                                                     <Setter Property="Foreground" Value="DimGray"/>
                                                 </DataTrigger>
-                                                <DataTrigger Binding="{Binding KanÄndraKreditOchRabatt}" Value="False">
+                                                <DataTrigger Binding="{Binding KanAndraKreditOchRabatt}" Value="False">
                                                     <Setter Property="IsReadOnly" Value="True"/>
                                                     <Setter Property="Background" Value="#EEEEEE"/>
                                                     <Setter Property="Foreground" Value="DimGray"/>
