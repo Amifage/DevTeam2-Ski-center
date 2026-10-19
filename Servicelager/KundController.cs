@@ -77,11 +77,16 @@ namespace Servicelager
             foreach (var kund in allaKunder)
             {
                 bool harNyligBokning = kund.Bokningar != null &&
-                                        kund.Bokningar.Any(b => b.BokningsDatum >= gransDatum);
+                                       kund.Bokningar.Any(b => b.BokningsDatum >= gransDatum && b.Status == "Aktiv");
 
                 if (harNyligBokning && kund.Rabatt != 8)
                 {
                     kund.Rabatt = 8;
+                    _unitofwork.KundRepository.Update(kund);
+                }
+                else if (!harNyligBokning && kund.Rabatt == 8)
+                {
+                    kund.Rabatt = 0; 
                     _unitofwork.KundRepository.Update(kund);
                 }
             }
