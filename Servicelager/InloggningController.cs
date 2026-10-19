@@ -49,11 +49,11 @@ namespace Servicelager
             get { return ArMarknadschef; }
         }
 
-        // Bara admin får ändra inloggningar
-        //public static bool KanAndraInloggningar
-        //{
-        //    get { return ArAdmin; }
-        //}
+        //Bara admin får ändra inloggningar
+        public static bool KanAndraInloggningar
+        {
+            get { return ArAdmin; }
+        }
 
         public static bool KanAndraStatus
         {
