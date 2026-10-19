@@ -34,31 +34,31 @@ namespace Servicelager
             InloggadPersonal = null;
         }
 
-        public static bool ÄrAdmin
+        public static bool ArAdmin
         {
             get { return HarRoll("Administratör"); }
         }
 
-        public static bool ÄrMarknadschef
+        public static bool ArMarknadschef
         {
             get { return HarRoll("Marknadschef"); }
         }
 
         // Admin och marknadschef får sätta kredit och rabatt för företagskunder
-        public static bool KanSättaKreditOchRabatt
+        public static bool KanSattaKreditOchRabatt
         {
-            get { return ÄrMarknadschef; }
+            get { return ArMarknadschef; }
         }
 
         // Bara admin får ändra inloggningar
-        public static bool KanÄndraInloggningar
+        public static bool KanAndraInloggningar
         {
-            get { return ÄrAdmin; }
+            get { return ArAdmin; }
         }
 
         public static bool KanAndraStatus
         {
-            get { return ÄrAdmin; }
+            get { return ArAdmin; }
         }
 
 
