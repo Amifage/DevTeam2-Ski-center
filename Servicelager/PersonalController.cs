@@ -5,7 +5,7 @@ namespace Servicelager
 {
     public class PersonalController
     {
-        private static readonly string[] ExkluderadeRoller = { "marknad", "administrat" };
+        private static readonly string[] ExkluderadeRoller = { "Marknadschef", "Administratör" };
 
         private readonly UnitOfWork _unitOfWork;
 
