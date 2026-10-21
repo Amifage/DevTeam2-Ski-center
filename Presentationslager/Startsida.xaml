@@ -6,11 +6,13 @@
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
         xmlns:local="clr-namespace:Presentationslager"
         mc:Ignorable="d" FontFamily="OpenSans-Medium"
-        Title="Ski-Center Startsida" Height="600" Width="800"
+        Title="Ski-Center Startsida" Height="800"
+        Width="1300"
+        MinWidth="1000"
         FocusManager.FocusedElement="{Binding ElementName=txtEmailInlogg}"
-         WindowStartupLocation="CenterScreen">
+         WindowStartupLocation="CenterScreen" >
 
-    <Grid Background="{StaticResource Snövit}">
+    <Grid Background="{StaticResource FjällBlå}">
 
         <Border Background="{StaticResource IsBlå}" 
                 Margin="40" 
