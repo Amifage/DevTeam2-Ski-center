@@ -55,6 +55,17 @@ namespace Servicelager
                 .Find(r => r.StartTid < intervallSlut && r.SlutTid >= intervallStart)
                 .ToList();
 
+            // Avbokade bokningar ska inte räknas med i statistiken
+            var avbokade = unitOfWork.BokningRepository
+                .Find(b => b.Status == "Avbokad")
+                .Select(b => b.BokningsNummer)
+                .ToList();
+
+            logiRader = logiRader.Where(r => r.BokningsNummer == null || !avbokade.Contains(r.BokningsNummer.Value)).ToList();
+            utrustningRader = utrustningRader.Where(r => r.BokningsNummer == null || !avbokade.Contains(r.BokningsNummer.Value)).ToList();
+            skidlektionRader = skidlektionRader.Where(r => r.BokningsNummer == null || !avbokade.Contains(r.BokningsNummer.Value)).ToList();
+            konferensRader = konferensRader.Where(r => r.BokningsNummer == null || !avbokade.Contains(r.BokningsNummer.Value)).ToList();
+
             var lektioner = unitOfWork.SkidlektionRepository
                 .Find(l => l.Datum >= intervallStart && l.Datum < intervallSlut)
                 .ToList();
@@ -198,15 +209,12 @@ namespace Servicelager
             return Math.Round(100.0 * del / helhet, 1);
         }
 
-        public StatistikResultat HämtaStatistikMedJämförelse(DateTime startDatum, DateTime slutDatum)
+        // Hämtar statistik för valt intervall och för en jämförelseperiod som användaren väljer
+        public StatistikResultat HämtaStatistikMedJämförelse(DateTime startDatum, DateTime slutDatum,
+                                                             DateTime jämförStartDatum, DateTime jämförSlutDatum)
         {
             StatistikResultat resultat = HämtaStatistik(startDatum, slutDatum);
-
-            int antalDagar = (slutDatum.Date - startDatum.Date).Days + 1;
-            DateTime föregåendeSlut = startDatum.Date.AddDays(-1);
-            DateTime föregåendeStart = föregåendeSlut.AddDays(-(antalDagar - 1));
-
-            resultat.Föregående = HämtaStatistik(föregåendeStart, föregåendeSlut);
+            resultat.Föregående = HämtaStatistik(jämförStartDatum, jämförSlutDatum);
 
             // Koppla ihop logialternativen så att tabellen kan visa båda perioderna
             foreach (var rad in resultat.LogiPerAlternativ)
@@ -222,6 +230,7 @@ namespace Servicelager
             }
 
             return resultat;
+        
         }
 
         #endregion

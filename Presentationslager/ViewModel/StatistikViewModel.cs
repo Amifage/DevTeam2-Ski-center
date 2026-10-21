@@ -18,6 +18,13 @@ namespace Presentationslager.ViewModel
         {
             _statistikController = new StatistikController();
 
+            // Förval: denna månad, jämfört med föregående månad
+            DateTime förstaDennaMånad = new DateTime(DateTime.Today.Year, DateTime.Today.Month, 1);
+            StartDatum = förstaDennaMånad;
+            SlutDatum = förstaDennaMånad.AddMonths(1).AddDays(-1);
+            JämförStartDatum = förstaDennaMånad.AddMonths(-1);
+            JämförSlutDatum = förstaDennaMånad.AddDays(-1);
+
             VisaStatistikCommand = new RelayCommand(VisaStatistik);
             TillbakaCommand = new RelayCommand(TillbakaTillMeny);
         }
@@ -44,6 +51,28 @@ namespace Presentationslager.ViewModel
             }
         }
 
+        private DateTime? _jämförStartDatum;
+        public DateTime? JämförStartDatum
+        {
+            get { return _jämförStartDatum; }
+            set
+            {
+                _jämförStartDatum = value;
+                OnPropertyChanged(nameof(JämförStartDatum));
+            }
+        }
+
+        private DateTime? _jämförSlutDatum;
+        public DateTime? JämförSlutDatum
+        {
+            get { return _jämförSlutDatum; }
+            set
+            {
+                _jämförSlutDatum = value;
+                OnPropertyChanged(nameof(JämförSlutDatum));
+            }
+        }
+
         private StatistikResultat? _resultat;
         public StatistikResultat? Resultat
         {
@@ -66,9 +95,20 @@ namespace Presentationslager.ViewModel
                 return;
             }
 
+            // Jämförelseperioden måste också vara giltig
+            if (!_statistikController.ÄrGiltigtIntervall(JämförStartDatum, JämförSlutDatum, out string jämförFel))
+            {
+                Resultat = null;
+                MessageBox.Show("Jämförelseperiod: " + jämförFel, "Ogiltig jämförelseperiod",
+                                MessageBoxButton.OK, MessageBoxImage.Warning);
+                return;
+            }
+
             try
             {
-                Resultat = _statistikController.HämtaStatistikMedJämförelse(StartDatum.Value, SlutDatum.Value);
+                Resultat = _statistikController.HämtaStatistikMedJämförelse(
+                    StartDatum.Value, SlutDatum.Value,
+                    JämförStartDatum.Value, JämförSlutDatum.Value);
             }
             catch (Exception ex)
             {
