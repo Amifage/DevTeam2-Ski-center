@@ -5,12 +5,10 @@ using System.Linq;
 
 namespace Servicelager
 {
-    // Sköter inloggningen och håller reda på vem som är inloggad medan programmet körs
-    public static class InloggningController
+    public class InloggningController
     {
         public static Personal? InloggadPersonal { get; private set; }
 
-        // Returnerar true om e-post och lösenord stämmer
         public static bool LoggaIn(string epost, string lösenord)
         {
             using var unitOfWork = new UnitOfWork(new SkiContext());
@@ -19,7 +17,6 @@ namespace Servicelager
                 .Find(p => p.Epost == epost)
                 .FirstOrDefault();
 
-            // Lösenordet jämförs här i C# så att stora/små bokstäver spelar roll
             if (personal == null || personal.Lösenord != lösenord)
             {
                 return false;
@@ -49,7 +46,6 @@ namespace Servicelager
             get { return ArMarknadschef; }
         }
 
-        //Bara admin får ändra inloggningar
         public static bool KanAndraInloggningar
         {
             get { return ArAdmin; }
@@ -59,7 +55,6 @@ namespace Servicelager
         {
             get { return ArAdmin; }
         }
-
 
         private static bool HarRoll(string roll)
         {

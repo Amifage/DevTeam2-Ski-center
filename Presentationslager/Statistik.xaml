@@ -16,7 +16,6 @@ MinWidth="1000" FontWeight="Bold"
             <RowDefinition Height="Auto"/>
         </Grid.RowDefinitions>
 
-        <!-- Header -->
         <TextBlock Grid.Row="0"
                    Text="Statistik"
                    Style="{StaticResource HeaderTextStyle}"
@@ -27,7 +26,6 @@ MinWidth="1000" FontWeight="Bold"
         Stretch="Uniform" RenderOptions.BitmapScalingMode="HighQuality"/>
         </Grid>
 
-        <!-- Val av datumintervall -->
         <StackPanel Grid.Row="1" Orientation="Horizontal" HorizontalAlignment="Center">
             <StackPanel Margin="10">
                 <TextBlock Text="Startdatum"/>
@@ -48,7 +46,6 @@ MinWidth="1000" FontWeight="Bold"
             </Button>
         </StackPanel>
 
-        <!-- Översikt -->
         <UniformGrid Grid.Row="2" Columns="3" Margin="0,10,0,0" HorizontalAlignment="Center">
 
             <StackPanel Margin="20,10">
@@ -82,7 +79,6 @@ MinWidth="1000" FontWeight="Bold"
                 <TextBlock Text="{Binding Resultat.Föregående.BeläggningSkidlektionProcent, StringFormat='Skidlektioner: {0} %'}" Foreground="Gray"/>
             </StackPanel>
         </UniformGrid>
-        <!-- Logi per logialternativ -->
         <StackPanel Grid.Row="3" Margin="20,10,20,0">
             <TextBlock Text="🛏️ Logi per logialternativ" FontSize="16" Margin="0,0,0,10"/>
             <DataGrid ItemsSource="{Binding Resultat.LogiPerAlternativ}"
@@ -103,7 +99,6 @@ MinWidth="1000" FontWeight="Bold"
             </DataGrid>
         </StackPanel>
 
-        <!-- Tillbaka -->
         <Button Grid.Row="4"
                 Command="{Binding TillbakaCommand}"
                 CommandParameter="{Binding RelativeSource={RelativeSource AncestorType=Window}}"

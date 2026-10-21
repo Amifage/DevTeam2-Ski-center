@@ -143,8 +143,6 @@ namespace Servicelager
             }
         }
 
-
-        //Bokning
         public int HamtaAntalLedigaPlatser(int skidlektionNummer)
         {
             Skidlektion? skidlektion = _unitOfWork.SkidlektionRepository
