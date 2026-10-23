@@ -93,13 +93,13 @@
                       CanUserAddRows="False"
                       MaxHeight="180">
                 <DataGrid.Columns>
-                    <DataGridTextColumn Header="Logialternativ" Binding="{Binding Logialternativ}" Width="*"/>
-                    <DataGridTextColumn Header="Antal enheter" Binding="{Binding AntalEnheter}" Width="Auto"/>
-                    <DataGridTextColumn Header="Bokade nätter" Binding="{Binding BokadeNätter}" Width="Auto"/>
-                    <DataGridTextColumn Header="Beläggning" Binding="{Binding BeläggningProcent, StringFormat='{}{0} %'}" Width="Auto"/>
-                    <DataGridTextColumn Header="Intäkt" Binding="{Binding Intäkt, StringFormat='{}{0:N0} kr'}" Width="Auto"/>
-                    <DataGridTextColumn Header="Beläggning jämförelse" Binding="{Binding FöregåendeBeläggningProcent, StringFormat='{}{0} %'}" Width="Auto"/>
-                    <DataGridTextColumn Header="Intäkt jämförelse" Binding="{Binding FöregåendeIntäkt, StringFormat='{}{0:N0} kr'}" Width="Auto"/>
+                    <DataGridTextColumn Header="Logialternativ" Binding="{Binding Logialternativ}" Width="180"/>
+                    <DataGridTextColumn Header="Antal enheter" Binding="{Binding AntalEnheter}" Width="180"/>
+                    <DataGridTextColumn Header="Bokade nätter" Binding="{Binding BokadeNätter}" Width="180"/>
+                    <DataGridTextColumn Header="Beläggning" Binding="{Binding BeläggningProcent, StringFormat='{}{0} %'}" Width="150"/>
+                    <DataGridTextColumn Header="Intäkt" Binding="{Binding Intäkt, StringFormat='{}{0:N0} kr'}" Width="100"/>
+                    <DataGridTextColumn Header="Beläggning jämförelse" Binding="{Binding FöregåendeBeläggningProcent, StringFormat='{}{0} %'}" Width="180"/>
+                    <DataGridTextColumn Header="Intäkt jämförelse" Binding="{Binding FöregåendeIntäkt, StringFormat='{}{0:N0} kr'}" Width="*"/>
                 </DataGrid.Columns>
             </DataGrid>
         </StackPanel>
