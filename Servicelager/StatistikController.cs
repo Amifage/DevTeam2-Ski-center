@@ -8,7 +8,7 @@ namespace Servicelager
 {
     public class StatistikController
     {
-        public bool ÄrGiltigtIntervall(DateTime? startDatum, DateTime? slutDatum, out string felmeddelande)
+        public bool ArGiltigtIntervall(DateTime? startDatum, DateTime? slutDatum, out string felmeddelande)
         {
             if (startDatum == null || slutDatum == null)
             {
@@ -26,9 +26,9 @@ namespace Servicelager
             return true;
         }
 
-        public StatistikResultat HämtaStatistik(DateTime startDatum, DateTime slutDatum)
+        public StatistikResultat HamtaStatistik(DateTime startDatum, DateTime slutDatum)
         {
-            if (!ÄrGiltigtIntervall(startDatum, slutDatum, out string felmeddelande))
+            if (!ArGiltigtIntervall(startDatum, slutDatum, out string felmeddelande))
             {
                 throw new ArgumentException(felmeddelande);
             }
@@ -55,7 +55,6 @@ namespace Servicelager
                 .Find(r => r.StartTid < intervallSlut && r.SlutTid >= intervallStart)
                 .ToList();
 
-            // Avbokade bokningar ska inte räknas med i statistiken
             var avbokade = unitOfWork.BokningRepository
                 .Find(b => b.Status == "Avbokad")
                 .Select(b => b.BokningsNummer)
@@ -100,7 +99,7 @@ namespace Servicelager
                 DateTime start = rad.StartDatum.Date;
                 DateTime slut = rad.SlutDatum.Date;
                 int totalaNätter = (slut - start).Days;
-                int nätterInom = Överlapp(start, slut, intervallStart, intervallSlut);
+                int nätterInom = Overlapp(start, slut, intervallStart, intervallSlut);
                 decimal intäkt = Andel(rad.LogiBelopp, nätterInom, totalaNätter);
 
                 resultat.BokadeLogiNätter += nätterInom;
@@ -119,7 +118,7 @@ namespace Servicelager
                 DateTime start = rad.StartDatum.Date;
                 DateTime slut = rad.SlutDatum.Date.AddDays(1);
                 int totalaDagar = (slut - start).Days;
-                int dagarInom = Överlapp(start, slut, intervallStart, intervallSlut);
+                int dagarInom = Overlapp(start, slut, intervallStart, intervallSlut);
 
                 resultat.IntäktUtrustning += Andel(rad.UtrustningBelopp, dagarInom, totalaDagar);
 
@@ -140,7 +139,7 @@ namespace Servicelager
                 DateTime start = rad.StartTid.Date;
                 DateTime slut = rad.SlutTid.Date.AddDays(1);
                 int totalaDagar = (slut - start).Days;
-                int dagarInom = Överlapp(start, slut, intervallStart, intervallSlut);
+                int dagarInom = Overlapp(start, slut, intervallStart, intervallSlut);
 
                 resultat.IntäktKonferens += Andel(rad.KonferensBelopp, dagarInom, totalaDagar);
             }
@@ -182,7 +181,7 @@ namespace Servicelager
         #region Hjälpmetoder
 
         // Antal dagar som en period överlappar intervallet
-        private int Överlapp(DateTime start, DateTime slut, DateTime intervallStart, DateTime intervallSlut)
+        private int Overlapp(DateTime start, DateTime slut, DateTime intervallStart, DateTime intervallSlut)
         {
             DateTime senasteStart = start > intervallStart ? start : intervallStart;
             DateTime tidigasteSlut = slut < intervallSlut ? slut : intervallSlut;
@@ -213,8 +212,8 @@ namespace Servicelager
         public StatistikResultat HämtaStatistikMedJämförelse(DateTime startDatum, DateTime slutDatum,
                                                              DateTime jämförStartDatum, DateTime jämförSlutDatum)
         {
-            StatistikResultat resultat = HämtaStatistik(startDatum, slutDatum);
-            resultat.Föregående = HämtaStatistik(jämförStartDatum, jämförSlutDatum);
+            StatistikResultat resultat = HamtaStatistik(startDatum, slutDatum);
+            resultat.Föregående = HamtaStatistik(jämförStartDatum, jämförSlutDatum);
 
             // Koppla ihop logialternativen så att tabellen kan visa båda perioderna
             foreach (var rad in resultat.LogiPerAlternativ)

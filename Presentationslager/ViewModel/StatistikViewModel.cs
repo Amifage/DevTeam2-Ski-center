@@ -18,7 +18,6 @@ namespace Presentationslager.ViewModel
         {
             _statistikController = new StatistikController();
 
-            // Förval: denna månad, jämfört med föregående månad
             DateTime förstaDennaMånad = new DateTime(DateTime.Today.Year, DateTime.Today.Month, 1);
             StartDatum = förstaDennaMånad;
             SlutDatum = förstaDennaMånad.AddMonths(1).AddDays(-1);
@@ -86,8 +85,7 @@ namespace Presentationslager.ViewModel
 
         private void VisaStatistik(object obj)
         {
-            // Ett ogiltigt datumintervall ska inte accepteras
-            if (!_statistikController.ÄrGiltigtIntervall(StartDatum, SlutDatum, out string felmeddelande))
+            if (!_statistikController.ArGiltigtIntervall(StartDatum, SlutDatum, out string felmeddelande))
             {
                 Resultat = null;
                 MessageBox.Show(felmeddelande, "Ogiltigt datumintervall",
@@ -95,8 +93,7 @@ namespace Presentationslager.ViewModel
                 return;
             }
 
-            // Jämförelseperioden måste också vara giltig
-            if (!_statistikController.ÄrGiltigtIntervall(JämförStartDatum, JämförSlutDatum, out string jämförFel))
+            if (!_statistikController.ArGiltigtIntervall(JämförStartDatum, JämförSlutDatum, out string jämförFel))
             {
                 Resultat = null;
                 MessageBox.Show("Jämförelseperiod: " + jämförFel, "Ogiltig jämförelseperiod",

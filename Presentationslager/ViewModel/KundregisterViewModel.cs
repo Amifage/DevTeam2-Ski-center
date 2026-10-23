@@ -188,7 +188,7 @@ namespace Presentationslager.ViewModel
 
             UppdateraKundLista();
             RensaFormular(null);
-            MessageBox.Show("Kunden har sparats i registret!", "Sparning genomförd", MessageBoxButton.OK, MessageBoxImage.Information);
+            MessageBox.Show("En ny kund har välkomnats till SKi-Center familjen!", "Sparning genomförd", MessageBoxButton.OK, MessageBoxImage.Information);
         }
 
         private void RensaFormular(object obj)
@@ -292,7 +292,6 @@ namespace Presentationslager.ViewModel
             {
                 foretag.FöretagsNamn = NyttFöretagsnamn;
 
-                // Bara admin och marknadschef får ändra rabatt och kredit
                 if (KanAndraKreditOchRabatt)
                 {
                     foretag.Rabatt = NyRabatt;
@@ -304,7 +303,7 @@ namespace Presentationslager.ViewModel
             UppdateraKundLista();
             RensaFormular(null);
 
-            MessageBox.Show("Kunden har uppdaterats i registret!", "Uppdatering genomförd", MessageBoxButton.OK, MessageBoxImage.Information);
+            MessageBox.Show("Uppdaterat och klart! Nu stämmer allt till punkt och pricka.", "Uppdatering genomförd", MessageBoxButton.OK, MessageBoxImage.Information);
         }
 
         private bool ValideraInmatning()
@@ -315,7 +314,7 @@ namespace Presentationslager.ViewModel
                 string.IsNullOrWhiteSpace(NyPostnummer) ||
                 string.IsNullOrWhiteSpace(NyOrt))
             {
-                MessageBox.Show("Alla gemensamma fält (E-post, Telefon, Adress, Postnummer, Ort) måste vara ifyllda.",
+                MessageBox.Show("Vi saknar lite information, alla fält måste vara ifyllda! (E-post, Telefon, Adress, Postnummer, Ort)",
                                 "Information saknas", MessageBoxButton.OK, MessageBoxImage.Warning);
                 return false;
             }
@@ -324,7 +323,7 @@ namespace Presentationslager.ViewModel
             {
                 if (string.IsNullOrWhiteSpace(NyttFörnamn) || string.IsNullOrWhiteSpace(NyttEfternamn))
                 {
-                    MessageBox.Show("Förnamn och efternamn måste anges för privatkunder.",
+                    MessageBox.Show("Vi behöver veta exakt vem kunden är! Fyll i både för-och efternamn för att kunna spara.",
                                     "Information saknas", MessageBoxButton.OK, MessageBoxImage.Warning);
                     return false;
                 }
@@ -333,7 +332,7 @@ namespace Presentationslager.ViewModel
             {
                 if (string.IsNullOrWhiteSpace(NyttFöretagsnamn))
                 {
-                    MessageBox.Show("Företagsnamn måste anges för företagskunder.",
+                    MessageBox.Show("Hoppsan, namnet på företaget glömdes visst! Skriv in det så vi kan spara dem!",
                                     "Information saknas", MessageBoxButton.OK, MessageBoxImage.Warning);
                     return false;
                 }
@@ -343,16 +342,10 @@ namespace Presentationslager.ViewModel
         }
 
         private void TaBortKund(object obj)
-        {
-            if (ValdKund == null)
-            {
-                MessageBox.Show("Du måste välja en kund i listan först.",
-                                "Ingen kund vald", MessageBoxButton.OK, MessageBoxImage.Warning);
-                return;
-            }
+        {       
 
             MessageBoxResult svar = MessageBox.Show(
-                $"Är du säker på att du vill ta bort {ValdKund.Epost} permanent?",
+                $"Är du säker på att du vill ta bort {ValdKund.VisningsNamn} permanent?",
                 "Bekräfta borttagning",
                 MessageBoxButton.YesNo,
                 MessageBoxImage.Warning);
@@ -363,7 +356,7 @@ namespace Presentationslager.ViewModel
                 UppdateraKundLista();
                 RensaFormular(null);
 
-                MessageBox.Show("Kunden har tagits bort från registret.",
+                MessageBox.Show("Kunden har lämnat Ski-Center familjen :(",
                                 "Kund borttagen",
                                 MessageBoxButton.OK,
                                 MessageBoxImage.Information);
