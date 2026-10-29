@@ -54,6 +54,7 @@ namespace Presentationslager.ViewModel
         public decimal NyRabatt { get; set; }
         public decimal NyKredit { get; set; }
         public string NyttFöretagsnamn { get; set; }
+        public bool NyStatus {  get; set; }
 
         public bool KanAndraKreditOchRabatt
         {
@@ -164,6 +165,7 @@ namespace Presentationslager.ViewModel
                     Efternamn = NyttEfternamn,
                     Rabatt = NyRabatt,
                     Kredit = 12000,
+                    Aktiv = true,
                     SenastUppdaterad = DateTime.Now,
                 };
                 _kundController.SkapaKund(nyPrivatkund);
@@ -181,6 +183,7 @@ namespace Presentationslager.ViewModel
                     Ort = NyOrt,
                     Rabatt = KanAndraKreditOchRabatt ? NyRabatt : 0,
                     Kredit = 0,
+                    Aktiv = true,
                     SenastUppdaterad = DateTime.Now,
                 };
                 _kundController.SkapaKund(nyForetagsKund);
@@ -345,14 +348,14 @@ namespace Presentationslager.ViewModel
         {       
 
             MessageBoxResult svar = MessageBox.Show(
-                $"Är du säker på att du vill ta bort {ValdKund.VisningsNamn} permanent?",
-                "Bekräfta borttagning",
+                $"Är du säker på att du vill avaktivera {ValdKund.VisningsNamn} permanent?",
+                "Bekräfta avaktivering",
                 MessageBoxButton.YesNo,
                 MessageBoxImage.Warning);
 
             if (svar == MessageBoxResult.Yes)
             {
-                _kundController.TaBortKund(ValdKund);
+                _kundController.AvaktiveraKund(ValdKund);
                 UppdateraKundLista();
                 RensaFormular(null);
 

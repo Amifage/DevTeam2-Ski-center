@@ -18,6 +18,7 @@ namespace Entitetslager
         public string Adress { get; set; }
         public string Postnummer { get; set; } 
         public string Ort { get; set; } 
+        public bool Aktiv {  get; set; }
         public DateTime SenastUppdaterad { get; set; }
 
         public virtual ICollection<Bokning> Bokningar { get; set; }

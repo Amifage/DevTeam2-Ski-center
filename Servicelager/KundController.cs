@@ -21,7 +21,7 @@ namespace Servicelager
         public List<Kund> HamtaAllaKunder()
         {
             using var _unitofwork = new UnitOfWork(new SkiContext());
-            return _unitofwork.KundRepository.GetAll().ToList();
+            return _unitofwork.KundRepository.Find(k => k.Aktiv == true).ToList();
         }
 
         //SokKunder används i bokning
@@ -59,11 +59,13 @@ namespace Servicelager
             _unitofwork.Save(); 
         }
 
-        public void TaBortKund (Kund kund)
+        public void AvaktiveraKund (Kund kund)
         {
             using var _unitofwork = new UnitOfWork(new SkiContext());
 
-            _unitofwork.KundRepository.Remove(kund);
+            kund.Aktiv = false;
+
+            _unitofwork.KundRepository.Update(kund);
             _unitofwork.Save();
         }
 
